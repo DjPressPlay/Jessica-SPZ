@@ -180,6 +180,20 @@
     -webkit-mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
     -webkit-mask-composite:xor; mask-composite:exclude; pointer-events:none;
   }
+  .social-head{
+    display:flex; align-items:center; gap:10px;
+  }
+  .avatar{
+    width:32px; height:32px; border-radius:999px; overflow:hidden; flex:none;
+    background:#0d1924; border:1px solid rgba(255,255,255,.08);
+  }
+  .avatar img{width:100%; height:100%; object-fit:cover; display:block}
+  .name-row{
+    display:flex; flex-wrap:wrap; gap:6px; align-items:baseline;
+  }
+  .display-name{font-weight:800; letter-spacing:.2px}
+  .handle{color:#9bbad2; font-size:12px}
+  .dot{opacity:.5}
   .social-media{width:100%; border-radius:10px; overflow:hidden; border:1px solid rgba(255,255,255,.06); background:#0d1924}
   .social-media img{width:100%; height:150px; object-fit:cover; display:block}
   .social-media video{width:100%; height:150px; object-fit:cover; display:block}
@@ -219,7 +233,8 @@
 (function(){
   const root = document.getElementById('root');
 
-  function esc(s){ return String(s||"").replace(/[&<>"]/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c])); }
+  const escMap = { "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" };
+  function esc(s){ return String(s||"").replace(/[&<>"]/g, c => escMap[c]); }
   function b64ToJSON(b64){
     const bin = atob((b64||"").replace(/[^A-Za-z0-9+/=]/g,""));
     const bytes = Uint8Array.from(bin, c => c.charCodeAt(0));
@@ -229,59 +244,52 @@
 
   function getSourceLinks(data){
     const candidates = [];
-    const push = (v)=>{
-      if(!v) return;
-      if(Array.isArray(v)) v.forEach(push);
-      else if(typeof v === "string") candidates.push(v);
-    };
-    push(data.sourceLinks);
-    push(data.sources);
-    push(data.links);
+    const push = (v)=>{ if(!v) return; if(Array.isArray(v)) v.forEach(push); else if(typeof v==="string") candidates.push(v); };
+    push(data.sourceLinks); push(data.sources); push(data.links);
     if (data.meta && data.meta.sources) push(data.meta.sources);
-    if (data.hero){
-      push(data.hero.ctaLink);
-      if (data.hero.links) push(data.hero.links);
-    }
+    if (data.hero){ push(data.hero.ctaLink); if (data.hero.links) push(data.hero.links); }
     (Array.isArray(data.products)?data.products:[]).forEach(p=> push(p.link));
     (Array.isArray(data.articles)?data.articles:[]).forEach(a=> push(a.link));
-
-    const seen = new Set();
-    return candidates
-      .filter(u=>/^https?:\/\//i.test(u||""))
-      .filter(u=>{ if(seen.has(u)) return false; seen.add(u); return true; });
+    const seen=new Set();
+    return candidates.filter(u=>/^https?:\/\//i.test(u||"")).filter(u=>{if(seen.has(u))return false; seen.add(u); return true;});
   }
 
-  // ---- Multi-source brand detection ----
+  // ---- Brand detection (unchanged) ----
   function titleCase(s){ return s.replace(/\b([a-z])/g, m=>m.toUpperCase()); }
   function prettyFromHost(host){
-    const h = (host||"").toLowerCase().replace(/^www\./,'');
-    const map = {
-      'instagram':'Instagram','ig':'Instagram','facebook':'Facebook','fb':'Facebook',
-      'x':'X','twitter':'Twitter','t':'Twitter','youtube':'YouTube','youtu':'YouTube',
-      'github':'GitHub','medium':'Medium','tiktok':'TikTok','shopify':'Shopify',
-      'nike':'Nike','adidas':'Adidas'
-    };
-    const base = h.split('.')[0];
-    if(map[base]) return map[base];
-    return titleCase(base);
+    const h=(host||"").toLowerCase().replace(/^www\./,'');
+    const map={instagram:'Instagram',ig:'Instagram',facebook:'Facebook',fb:'Facebook',x:'X',twitter:'Twitter',t:'Twitter',youtube:'YouTube',youtu:'YouTube',github:'GitHub',medium:'Medium',tiktok:'TikTok',shopify:'Shopify',nike:'Nike',adidas:'Adidas'};
+    const base=h.split('.')[0]; return map[base]||titleCase(base);
   }
-  function detectBrands(data, sources){
-    const found = new Set();
-    const prods = Array.isArray(data.products) ? data.products : [];
-    for(const p of prods){
-      if (p && typeof p.brand === 'string' && p.brand.trim()) found.add(p.brand.trim());
-    }
-    const knownBrands = ['Nike','Adidas','Supreme','Puma','Gucci','Louis Vuitton','Apple','Samsung','Sony'];
-    for(const p of prods){
-      const nm = (p && p.name) ? String(p.name) : '';
-      for(const kb of knownBrands){ if (nm.toLowerCase().includes(kb.toLowerCase())) found.add(kb); }
-    }
-    for(const s of sources){ try{ const url = new URL(s); found.add(prettyFromHost(url.hostname)); }catch{} }
-    const list = Array.from(found).filter(Boolean);
-    return list.length ? list.join(' × ') : 'SporeZ Fusion Page';
+  function detectBrands(data,sources){
+    const found=new Set(); const prods=Array.isArray(data.products)?data.products:[];
+    for(const p of prods){ if(p&&typeof p.brand==='string'&&p.brand.trim()) found.add(p.brand.trim()); }
+    const known=['Nike','Adidas','Supreme','Puma','Gucci','Louis Vuitton','Apple','Samsung','Sony'];
+    for(const p of prods){ const nm=(p&&p.name)?String(p.name):''; for(const kb of known){ if(nm.toLowerCase().includes(kb.toLowerCase())) found.add(kb); } }
+    for(const s of sources){ try{ const url=new URL(s); found.add(prettyFromHost(url.hostname)); }catch{} }
+    const list=Array.from(found).filter(Boolean); return list.length?list.join(' × '):'SporeZ Fusion Page';
   }
 
-  // ======= NEW: collect social info from fused JSON (universal, no network) =======
+  // ======= NEW: robust path getter and normalization =======
+  function get(obj, path){
+    if(!obj||!path) return undefined;
+    const segs = Array.isArray(path)? path : String(path).split('.');
+    let cur=obj;
+    for(const k of segs){
+      if(cur==null) return undefined;
+      if(typeof k==='number') { cur = Array.isArray(cur)? cur[k] : undefined; }
+      else cur = cur[k];
+    }
+    return cur;
+  }
+  function first(...vals){
+    for(const v of vals){
+      if(v==null) continue;
+      if(Array.isArray(v)) { if(v.length) return v[0]; }
+      else if(String(v).trim()!=='') return v;
+    }
+    return '';
+  }
   function numish(v){
     if (typeof v === 'number') return v;
     if (typeof v === 'string'){
@@ -294,72 +302,119 @@
     }
     return 0;
   }
+  function faviconFromUrl(u){
+    try{
+      const url=new URL(u);
+      return `${url.protocol}//${url.hostname}/favicon.ico`;
+    }catch{ return ''; }
+  }
+  function normalizeProfile(x){
+    const url = x.url || x.link || x.permalink || '';
+    const platform = x.platform || (()=>{ try{ return prettyFromHost(new URL(url).hostname); }catch{return ''; } })();
+    const profile =
+      x.profile || x.authorProfile || x.user || x.owner || x.channel || {};
+    const name = first(
+      profile.displayName, profile.fullName, profile.name, x.authorName, x.author, x.username, x.handle, x.channelTitle
+    );
+    const handleRaw = first(
+      profile.handle, profile.username, x.handle, x.username, x.userHandle
+    );
+    const handle = handleRaw ? (String(handleRaw).startsWith('@')? handleRaw : '@'+handleRaw) : '';
+    const avatar = first(
+      profile.avatar, profile.avatarUrl, profile.image, profile.photo,
+      x.authorAvatar, x.userProfileImageUrl,
+      get(x,'snippet.thumbnails.default.url'),
+      get(x,'snippet.thumbnails.medium.url'),
+      get(x,'owner.avatar'),
+      faviconFromUrl(url)
+    );
+    return { platform, name, handle, avatar };
+  }
+  function normalizeMedia(x){
+    // images
+    const img = first(
+      x.image, x.thumbnail, x.previewImage, x.thumb, get(x,'media.image'),
+      get(x,'images[0]'), get(x,'photos[0]'),
+      get(x,'meta.og:image'), get(x,'meta.twitter:image'),
+      get(x,'meta.og:image:secure_url'),
+      get(x,'snippet.thumbnails.high.url'),
+      get(x,'snippet.thumbnails.medium.url')
+    );
+    // videos (prefer explicit)
+    const vid = first(
+      x.video, get(x,'media.video'), get(x,'meta.og:video'), get(x,'meta.twitter:player'),
+      get(x,'players[0]'), get(x,'videoUrl')
+    );
+    return { image: img || '', video: vid || '' };
+  }
   function unifySocialItem(x){
     if (!x) return null;
     const url = x.url || x.link || x.permalink || '';
     let platform = '';
     try{ platform = url ? prettyFromHost(new URL(url).hostname) : (x.platform||''); }catch{ platform = x.platform||''; }
+
+    const title = first(
+      x.title, x.heading, x.name, get(x,'snippet.title'), get(x,'meta.og:title'), get(x,'meta.twitter:title'), x.pageTitle
+    );
+    const description = first(
+      x.description, x.desc, x.caption, x.summary, x.text,
+      get(x,'snippet.description'), get(x,'meta.og:description'), get(x,'meta.description'), get(x,'meta.twitter:description')
+    );
+
+    const { image, video } = normalizeMedia(x);
+    const likes = numish(first(x.likes, x.likeCount, x.reactions, x.favoriteCount));
+    const comments = numish(first(x.comments, x.commentCount, x.repliesCount));
+    const shares = numish(first(x.shares, x.shareCount, x.retweets, x.repostCount));
+    const views  = numish(first(x.views, x.viewCount, get(x,'statistics.viewCount')));
+
+    const prof = normalizeProfile({ ...x, url, platform });
+
     return {
-      url,
-      platform,
-      title: x.title || x.heading || x.name || '',
-      description: x.description || x.desc || x.caption || x.summary || '',
-      image: x.image || x.thumbnail || (x.media && x.media.image) || '',
-      video: x.video || (x.media && x.media.video) || '',
-      likes: numish(x.likes || x.likeCount || x.reactions),
-      comments: numish(x.comments || x.commentCount),
-      shares: numish(x.shares || x.shareCount),
-      author: x.author || x.user || x.handle || ''
+      url, platform, title, description, image, video,
+      likes, comments, shares, views,
+      author: prof.name || x.author || '',
+      handle: prof.handle || '',
+      avatar: prof.avatar || ''
     };
   }
+
   function collectSocial(data){
-    const out = [];
+    const out=[];
     const push = (v)=>{
+      if(!v) return;
       if(Array.isArray(v)) v.forEach(push);
       else if (v && typeof v==='object'){
         const u = unifySocialItem(v);
-        if (u && (u.image||u.video||u.description||u.likes||u.comments||u.shares)) out.push(u);
+        if (u && (u.image||u.video||u.description||u.likes||u.comments||u.shares||u.views)) out.push(u);
       }
     };
-
-    // common places the fuse might put things
-    push(data.social);
-    push(data.media);
-    push(data.posts);
-    push(data.signals);
-    push(data.embeds);
-
-    // objects keyed by URL: meta/byUrl/etc.
-    const objBuckets = [data.meta?.byUrl, data.linkMeta, data.sourcesDetailed, data.sourceMeta, data.extracted];
+    // common buckets
+    push(data.social); push(data.media); push(data.posts); push(data.signals); push(data.embeds);
+    // key/value by url
+    const objBuckets=[data.meta?.byUrl, data.linkMeta, data.sourcesDetailed, data.sourceMeta, data.extracted];
     objBuckets.forEach(obj=>{
-      if (obj && typeof obj==='object'){
-        Object.keys(obj).forEach(k=>{
-          const v = obj[k];
-          if (v && typeof v==='object') push({ url:k, ...v });
-        });
+      if(obj && typeof obj==='object'){
+        Object.keys(obj).forEach(k=> push({ url:k, ...(obj[k]||{}) }));
       }
     });
-
-    // de-dupe by url + description
-    const seen = new Set();
+    // dedupe
+    const seen=new Set();
     return out.filter(it=>{
-      const key = (it.url||'')+'|'+(it.description||'')+'|'+(it.image||it.video||'');
-      if (seen.has(key)) return false;
-      seen.add(key); return true;
+      const key=(it.url||'')+'|'+(it.title||'')+'|'+(it.image||it.video||'');
+      if(seen.has(key)) return false; seen.add(key); return true;
     });
   }
 
-  // ======= NEW: small randomized reactions to stats =======
-  function reactToStats({likes=0,comments=0,shares=0}={}){
-    const L = likes, C = comments, S = shares;
-    const picks = [];
-    if (L>1000 && C>100) picks.push(`🔥 This post is blowing up with ${L.toLocaleString()} likes and ${C.toLocaleString()} comments!`);
-    if (L>0 && C>0) picks.push(`💬 ${C.toLocaleString()} comments and ${L.toLocaleString()} likes — people are talking.`);
-    if (L>0) picks.push(`💖 Loved by ${L.toLocaleString()} people.`);
-    if (C>0) picks.push(`👏 ${C.toLocaleString()} comments — strong engagement.`);
-    if (S>0) picks.push(`📢 ${S.toLocaleString()} shares spreading the signal.`);
-    if (!picks.length && (L||C||S)) picks.push(`⭐ Nice engagement on this one.`);
-    return picks.length ? picks[Math.floor(Math.random()*picks.length)] : '';
+  // Reactions
+  function reactToStats({likes=0,comments=0,shares=0,views=0}={}){
+    const L=likes,C=comments,S=shares,V=views;
+    const a=[];
+    if(V>0) a.push(`👀 ${V.toLocaleString()} views.`);
+    if(L>1000&&C>100) a.push(`🔥 ${L.toLocaleString()} likes & ${C.toLocaleString()} comments!`);
+    if(L>0&&C>0) a.push(`💬 ${C.toLocaleString()} comments with ${L.toLocaleString()} likes.`);
+    if(S>0) a.push(`🔁 ${S.toLocaleString()} shares — signal’s spreading.`);
+    if(!a.length && (L||C||S||V)) a.push(`⭐ Solid engagement.`);
+    return a[Math.floor(Math.random()*a.length)]||'';
   }
 
   function render(data){
@@ -367,7 +422,7 @@
     const products = Array.isArray(data.products)? data.products : [];
     const articles = Array.isArray(data.articles)? data.articles : [];
     const sources = getSourceLinks(data);
-    const socials = collectSocial(data); // << NEW
+    const socials = collectSocial(data);
 
     const brandLogo = (data.brand && data.brand.logo) ? `<img src="${esc(data.brand.logo)}" alt="Brand">` : "";
     const brandWord = esc(detectBrands(data, sources));
@@ -385,7 +440,6 @@
         <a href="https://sporez.netlify.app/" target="_blank" rel="noopener">SporeZ</a>
       </div>`;
 
-    // build social list HTML (only if we have items)
     const socialHTML = socials.length ? `
       <section class="section" id="social">
         <div class="title">Social Signals</div>
@@ -395,20 +449,28 @@
             const media = m.video
               ? `<div class="social-media"><video src="${esc(m.video)}" controls></video></div>`
               : (m.image ? `<div class="social-media"><img src="${esc(m.image)}" alt=""></div>` : ``);
+            const avatar = m.avatar ? `<div class="avatar"><img src="${esc(m.avatar)}" alt=""></div>` : `<div class="avatar"></div>`;
+            const handle = m.handle ? ` <span class="dot">•</span> <span class="handle">${esc(m.handle)}</span>` : '';
+            const platform = m.platform ? ` <span class="dot">•</span> <span class="handle">${esc(m.platform)}</span>` : '';
             return `
               <div class="social-card">
+                <div class="social-head">
+                  ${avatar}
+                  <div class="name-row">
+                    <span class="display-name">${esc(m.author||m.title||'Post')}</span>${handle}${platform}
+                  </div>
+                </div>
                 ${media}
-                <div class="social-title">${esc(m.title || (m.platform?`${m.platform} post`:'Post'))}</div>
+                ${m.title && m.author ? `<div class="social-title">${esc(m.title)}</div>` : ``}
                 ${m.description ? `<div class="social-desc">${esc(m.description)}</div>` : ``}
                 <div class="social-meta">
-                  ${m.platform?`<span class="pill">${esc(m.platform)}</span>`:""}
-                  ${m.author?`<span class="pill">@${esc(m.author)}</span>`:""}
                   ${m.likes?`<span class="pill">❤️ ${esc(m.likes.toLocaleString ? m.likes.toLocaleString() : String(m.likes))}</span>`:""}
                   ${m.comments?`<span class="pill">💬 ${esc(m.comments.toLocaleString ? m.comments.toLocaleString() : String(m.comments))}</span>`:""}
                   ${m.shares?`<span class="pill">🔁 ${esc(m.shares.toLocaleString ? m.shares.toLocaleString() : String(m.shares))}</span>`:""}
+                  ${m.views?`<span class="pill">👀 ${esc(m.views.toLocaleString ? m.views.toLocaleString() : String(m.views))}</span>`:""}
+                  ${m.url?`<a class="pill" href="${esc(m.url)}" target="_blank" rel="noopener" style="text-decoration:none">Open</a>`:""}
                 </div>
                 ${rx?`<div class="social-react">${esc(rx)}</div>`:""}
-                ${m.url?`<div><a href="${esc(m.url)}" target="_blank" rel="noopener" style="color:var(--accent);font-weight:800;text-decoration:none">Open</a></div>`:""}
               </div>`;
           }).join("")}
         </div>
