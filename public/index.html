@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Jessica-SPZ • SporeZ Link Fusion</title>
+  <style>
+    :root{
+      --bg:#0a0f14; --panel:#0f1620; --muted:#7e95ad;
+      --line:#102534; --glow1:#00f0ff; --glow2:#00ff88; --white:#e8f1ff;
+      --accent:#70ffe0; --danger:#ff4d6d; --ok:#66ff99;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0; background:radial-gradient(1200px 800px at 50% -10%, #0e1824 0%, var(--bg) 60%);
+      color:var(--white); font:14px/1.5 system-ui,Segoe UI,Roboto,Inter,Arial;
+      display:flex; align-items:center; justify-content:center;
+    }
+    .wrap{width:min(1100px,95vw); padding:28px 20px 32px}
+    header{display:grid; gap:10px; place-items:center; text-align:center; margin-bottom:18px}
+    h1{
+      margin:0;
+      font-size:28px; letter-spacing:.5px; text-transform:uppercase;
+      background:linear-gradient(90deg,var(--glow1),var(--glow2));
+      -webkit-background-clip:text; background-clip:text; color:transparent;
+      text-align:center;
+    }
+    .sub{color:var(--muted); text-align:center}
+    .grid{display:grid; grid-template-columns:1.2fr .8fr; gap:16px}
+    .panel{
+      background:linear-gradient(180deg,rgba(255,255,255,.02),rgba(255,255,255,.00));
+      border:1px solid var(--line); border-radius:16px; padding:14px;
+      box-shadow:0 0 0 1px rgba(0,0,0,.3), 0 10px 30px rgba(0,0,0,.35);
+    }
+    .panel h2{
+      margin:0 0 10px; font-size:13px; font-weight:700; letter-spacing:.2px; text-transform:uppercase;
+      color:var(--muted); text-align:center;
+    }
+    textarea, input[type="text"]{
+      width:100%; background:#0b121a; color:var(--white); border:1px solid #142131; border-radius:10px;
+      padding:10px 12px; outline:none; font:13px/1.4 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    }
+    textarea{min-height:140px; resize:vertical}
+    .row{display:flex; gap:10px; align-items:center; flex-wrap:wrap; justify-content:center}
+    .row > * { flex:1 1 auto }
+    .controls{display:grid; gap:10px}
+    .btn{
+      appearance:none; border:1px solid #143244; background:#0e1b26; color:var(--white);
+      padding:10px 14px; border-radius:12px; font-weight:700; letter-spacing:.2px; cursor:pointer;
+      transition:.18s transform ease,.18s box-shadow ease,.18s border-color ease;
+      text-align:center;
+    }
+    .btn:hover{transform:translateY(-1px); box-shadow:0 8px 22px rgba(0,0,0,.35); border-color:#18465f}
+    .btn.primary{background:linear-gradient(90deg,var(--glow1),var(--glow2)); color:#001b1f; border-color:transparent}
+    .btn.warn{border-color:#3a2230; background:#1a0e14; color:#ffd6de}
+    .pill{
+      display:inline-flex; align-items:center; gap:8px; padding:6px 10px; border-radius:999px; font-size:12px;
+      border:1px solid #173346; background:#0c1720; color:var(--muted); justify-content:center
+    }
+    .stack{display:grid; gap:10px}
+    pre{
+      margin:0; max-height:220px; overflow:auto; background:#071018; color:#bfe7ff;
+      border:1px solid #0f2536; border-radius:10px; padding:10px; font-size:12px;
+    }
+
+    /* Preview / TCG card */
+    .preview{display:grid; gap:12px}
+    .card{
+      position:relative; border-radius:18px; padding:16px; overflow:hidden;
+      border:2px solid rgba(255,255,255,.08);
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,0)) ,
+        radial-gradient(100% 70% at 0% 0%, rgba(0,240,255,.08), transparent 60%),
+        radial-gradient(100% 70% at 100% 0%, rgba(0,255,136,.08), transparent 60%),
+        #0b1219;
+      box-shadow:
+        0 0 0 1px rgba(0,0,0,.5) inset,
+        0 30px 50px rgba(0,0,0,.35), 0 0 60px rgba(0,240,255,.05);
+    }
+    .card .frame{
+      position:absolute; inset:0; pointer-events:none;
+      background:conic-gradient(from 0deg, rgba(0,240,255,.25), rgba(0,255,136,.25), rgba(0,240,255,.25));
+      mask:linear-gradient(#000,transparent 30%);
+      opacity:.15;
+    }
+    .hero{display:grid; gap:8px; place-items:center; text-align:center}
+    .hero img{
+      width:100%; height:220px; object-fit:cover; border-radius:14px; border:1px solid rgba(255,255,255,.08);
+      background:linear-gradient(135deg,#0d1720,#0a1219)
+    }
+    .hero h3{margin:6px 0 0; font-size:20px; text-align:center}
+    .hero p{margin:0; color:var(--muted); font-size:13px; text-align:center}
+    .cta{margin-top:8px}
+    .cta a{
+      display:inline-block; padding:10px 14px; border-radius:999px; text-decoration:none; font-weight:800;
+      color:#001b1f; background:linear-gradient(90deg,var(--glow1),var(--glow2));
+      border:0; box-shadow:0 8px 24px rgba(0,255,200,.18);
+      text-align:center;
+    }
+    .columns{display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:12px}
+    .box{
+      border:1px solid #142131; border-radius:14px; padding:12px; background:#0c141caa;
+    }
+    .products{display:grid; grid-template-columns:repeat(2,1fr); gap:10px}
+    .prod{
+      border:1px solid #162535; border-radius:12px; padding:10px; background:#0b131b;
+      display:grid; gap:8px; text-align:center;
+    }
+    .prod img{width:100%; height:120px; object-fit:cover; border-radius:10px; background:#0d1924}
+    .prod .name{font-weight:700}
+    .prod .price{color:var(--ok); font-weight:700}
+    .prod a{color:var(--accent); text-decoration:none; font-weight:700}
+    footer{margin-top:8px; text-align:center; color:var(--muted); font-size:12px}
+    .center{text-align:center}
+    .bad{color:var(--danger)}
+    @media (max-width:900px){ .grid{grid-template-columns:1fr} .columns{grid-template-columns:1fr} }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <h1>Jessica-SPZ — SporeZ Link Fusion</h1>
+      <div class="sub">
+        <span class="pill" id="sid-pill">Session: <b id="sid">…</b></span>
+      </div>
+    </header>
+
+    <div class="grid">
+      <!-- LEFT: Controls -->
+      <section class="panel controls">
+        <h2>Input Links</h2>
+        <textarea id="links" placeholder="Paste 1 link per line"></textarea>
+
+        <div class="row">
+          <label class="pill"><input type="radio" name="mode" value="auto" checked />&nbsp;Auto</label>
+          <label class="pill"><input type="radio" name="mode" value="sell" />&nbsp;Sell</label>
+          <label class="pill"><input type="radio" name="mode" value="info" />&nbsp;Info</label>
+          <label class="pill"><input type="radio" name="mode" value="hybrid" />&nbsp;Hybrid</label>
+        </div>
+
+        <div class="row">
+          <label class="pill"><input type="checkbox" id="defSell" checked />&nbsp;Default: Sell product</label>
+          <label class="pill"><input type="checkbox" id="defInfo" />&nbsp;Default: Show info</label>
+        </div>
+
+        <div class="row">
+          <input id="slug" type="text" placeholder="slug (optional, e.g. my-drop)" />
+        </div>
+
+        <div class="row">
+          <button class="btn primary" id="btn-run">Crawl + Fuse</button>
+          <button class="btn" id="btn-preview">Preview</button>
+          <button class="btn" id="btn-publish">Publish</button>
+        </div>
+
+        <div class="stack">
+          <h2>Log</h2>
+          <pre id="log">ready.</pre>
+          <h2>Fused JSON</h2>
+          <pre id="json">{}</pre>
+        </div>
+      </section>
+
+      <!-- RIGHT: Preview -->
+      <section class="panel preview">
+        <h2>Live Preview</h2>
+        <div class="card" id="card">
+          <div class="frame"></div>
+          <div class="hero" id="hero">
+            <img id="heroImg" alt="Hero" />
+            <h3 id="heroTitle" class="center">Your Fused Page Will Appear Here</h3>
+            <p id="heroSub" class="center">Paste links on the left and run <b>Crawl + Fuse</b>.</p>
+            <div class="cta" id="heroCta"></div>
+          </div>
+
+          <div class="columns">
+            <div class="box">
+              <div class="center" style="margin-bottom:8px; color:var(--muted); font-weight:700;">Products</div>
+              <div class="products" id="products"></div>
+            </div>
+            <div class="box">
+              <div class="center" style="margin-bottom:8px; color:var(--muted); font-weight:700;">Info</div>
+              <div id="info"></div>
+            </div>
+          </div>
+
+          <footer id="footer">SporeZ • Jessica-SPZ • Auto-Fusion</footer>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <script>
+    // --- Session ID (SporeZ-style) ---
+    function getOrCreateSessionId() {
+      try {
+        const k = "spz_session_id";
+        let v = sessionStorage.getItem(k);
+        if (!v) {
+          v = "spz_" + Date.now().toString(36) + "_" + Math.random().toString(36).slice(2,8);
+          sessionStorage.setItem(k, v);
+        }
+        return v;
+      } catch { return "spz_local_"+Date.now(); }
+    }
+    const SID = getOrCreateSessionId();
+    document.getElementById("sid").textContent = SID;
+
+    // --- UI refs ---
+    const elLinks   = document.getElementById("links");
+    const elLog     = document.getElementById("log");
+    const elJSON    = document.getElementById("json");
+    const elSlug    = document.getElementById("slug");
+    const elHeroImg = document.getElementById("heroImg");
+    const elHeroTitle = document.getElementById("heroTitle");
+    const elHeroSub = document.getElementById("heroSub");
+    const elHeroCta = document.getElementById("heroCta");
+    const elProducts = document.getElementById("products");
+    const elInfo = document.getElementById("info");
+    const elFooter = document.getElementById("footer");
+
+    const $ = (s) => document.querySelector(s);
+    const getMode = () => (document.querySelector('input[name="mode"]:checked')?.value || "auto");
+    const defaults = () => ({ sell: $('#defSell').checked, info: $('#defInfo').checked });
+
+    function log(msg, isErr=false){
+      elLog.textContent += "\n" + (isErr ? "⛔ " : "• ") + msg;
+      elLog.scrollTop = elLog.scrollHeight;
+    }
+
+    async function postJSON(path, body){
+      const res = await fetch(path, {
+        method:"POST",
+        headers:{ "Content-Type":"application/json" },
+        body: JSON.stringify(body || {})
+      });
+      if(!res.ok) throw new Error(`HTTP ${res.status}`);
+      return res.json();
+    }
+
+    // State
+    let lastCrawl = null;
+    let fused = null;
+
+    // Fallback sample (so Preview works even before backend exists)
+    const sampleFused = {
+      mode:"hybrid",
+      slug:"sample-" + Date.now().toString(36),
+      hero:{
+        title:"Zetsu-Grade Fusion Page",
+        subtitle:"Auto-built from your links",
+        image:"",
+        ctaText:"Claim Your Drop",
+        ctaLink:"#"
+      },
+      products:[
+        {name:"Holo Tee", price:"$29", image:"", link:"#", description:"Shimmer print • Limited"},
+        {name:"Z-Cap", price:"$19", image:"", link:"#", description:"Low-profile • Night mode"},
+        {name:"Signal Tag", price:"$9", image:"", link:"#", description:"Metal core • NFC"}
+      ],
+      articles:[
+        {heading:"What This Page Does", content:"Jessica-SPZ crawls your links, extracts key info and products, and fuses it into a single, market-ready SporeZ page."},
+        {heading:"How It Chooses Layout", content:"Mode: Auto (or Sell/Info/Hybrid). Defaults guarantee a complete page even if a site blocks scraping."}
+      ],
+      media:[]
+    };
+
+    // --- Actions ---
+    async function runCrawlAndFuse(){
+      try{
+        elLog.textContent = "running…";
+        const links = elLinks.value.split(/\n+/).map(s=>s.trim()).filter(Boolean);
+        if(!links.length){ log("Add at least one link.", true); return; }
+
+        log("Crawling links…");
+        const crawl = await postJSON("/api/crawl", { links, session: SID });
+        lastCrawl = crawl;
+        log("Crawl complete.");
+
+        log("Fusing content…");
+        const fuseReq = {
+          results: crawl.results || [],
+          mode: getMode(),
+          defaults: defaults(),
+          session: SID
+        };
+        fused = await postJSON("/api/fuse", fuseReq);
+        elJSON.textContent = JSON.stringify(fused, null, 2);
+        log("Fusion complete.");
+        renderPreview(fused);
+      }catch(e){
+        log("Error: " + e.message, true);
+      }
+    }
+
+    function ensure(value, fallback){
+      return (value === undefined || value === null || value === "") ? fallback : value;
+    }
+
+    function renderPreview(data){
+      const d = data || sampleFused;
+      const hero = d.hero || {};
+      const prods = Array.isArray(d.products) ? d.products : [];
+      const arts = Array.isArray(d.articles) ? d.articles : [];
+
+      elHeroTitle.textContent = ensure(hero.title, "Your Fused Page");
+      elHeroSub.textContent   = ensure(hero.subtitle, "Merged info + offers in one TCG-style layout.");
+      elHeroImg.src = hero.image || "";
+      elHeroImg.style.display = hero.image ? "block" : "none";
+
+      elHeroCta.innerHTML = "";
+      if(hero.ctaText){
+        const a = document.createElement("a");
+        a.href = hero.ctaLink || "#";
+        a.textContent = hero.ctaText;
+        a.target = "_blank";
+        elHeroCta.appendChild(a);
+      }
+
+      // Products
+      elProducts.innerHTML = "";
+      if(!prods.length){
+        const f = defaults();
+        if(f.sell){
+          // insert safe placeholders so the page never looks empty
+          ["Starter Pack","Mystery Drop"].forEach((n,i)=>{
+            elProducts.appendChild(prodNode({name:n, price:i? "$19":"$29", link:"#"}));
+          });
+        }
+      }else{
+        prods.slice(0,6).forEach(p=> elProducts.appendChild(prodNode(p)));
+      }
+
+      // Info
+      elInfo.innerHTML = "";
+      if(!arts.length){
+        const f = defaults();
+        if(f.info){
+          elInfo.appendChild(infoNode({heading:"About", content:"This section will summarize your fused links: brand purpose, key features, and how to act."}));
+        }
+      }else{
+        arts.slice(0,4).forEach(a=> elInfo.appendChild(infoNode(a)));
+      }
+
+      elFooter.textContent = (d.mode ? d.mode.toUpperCase()+" • " : "") + "SporeZ • Jessica-SPZ";
+    }
+
+    function prodNode(p){
+      const div = document.createElement("div");
+      div.className = "prod";
+      const img = document.createElement("img");
+      img.src = p.image || "";
+      img.style.display = p.image ? "block" : "none";
+      const name = document.createElement("div");
+      name.className = "name"; name.textContent = p.name || "Unnamed";
+      const price = document.createElement("div");
+      price.className = "price"; price.textContent = p.price || "";
+      const link = document.createElement("a");
+      link.href = p.link || "#"; link.target = "_blank"; link.textContent = "View";
+      const desc = document.createElement("div");
+      desc.style.color = "var(--muted)"; desc.style.fontSize = "12px";
+      desc.textContent = p.description || "";
+      div.append(img,name, price, desc, link);
+      return div;
+    }
+
+    function infoNode(a){
+      const box = document.createElement("div");
+      box.style.display = "grid"; box.style.gap = "6px";
+      const h = document.createElement("div");
+      h.style.fontWeight = "800"; h.textContent = a.heading || "Info";
+      const c = document.createElement("div");
+      c.style.whiteSpace = "pre-wrap"; c.style.color = "var(--white)";
+      c.textContent = a.content || "";
+      box.append(h,c);
+      return box;
+    }
+
+    async function publish(){
+      try{
+        if(!fused){ log("Nothing fused yet. Using sample.", true); fused = sampleFused; }
+        let slug = elSlug.value.trim();
+        if(!slug){
+          const base = (fused.hero?.title || "drop").toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"");
+          slug = base || ("drop-" + Date.now().toString(36));
+        }
+        fused.slug = slug;
+
+        log(`Publishing "${slug}"…`);
+        const out = await postJSON("/api/publish", { fused, session: SID });
+        elJSON.textContent = JSON.stringify(fused, null, 2);
+        if(out && out.url){
+          log("Published: " + out.url);
+          navigator.clipboard?.writeText(out.url).catch(()=>{});
+          alert("Published!\n" + out.url + "\n(copied)");
+        }else{
+          log("Publish complete (no URL returned).");
+        }
+      }catch(e){
+        log("Publish error: " + e.message, true);
+      }
+    }
+
+    // Buttons
+    document.getElementById("btn-run").addEventListener("click", runCrawlAndFuse);
+    document.getElementById("btn-preview").addEventListener("click", ()=> renderPreview(fused || sampleFused));
+    document.getElementById("btn-publish").addEventListener("click", publish);
+
+    // First paint
+    renderPreview(sampleFused);
+  </script>
+</body>
+</html>
