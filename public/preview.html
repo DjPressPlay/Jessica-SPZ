@@ -92,7 +92,7 @@
   }
   .sources-nav a:hover{background:#e7f3ff; border-color:#cbe3f6; transform:translateY(-1px)}
 
-  /* ======= NEW: TOP SITEMAP (slightly larger) ======= */
+  /* ======= TOP SITEMAP (slightly larger) ======= */
   .top-sitemap{
     display:flex; flex-wrap:wrap; gap:10px; justify-content:center; margin:6px 0 16px;
   }
@@ -218,10 +218,73 @@
     }
     (Array.isArray(data.products)?data.products:[]).forEach(p=> push(p.link));
     (Array.isArray(data.articles)?data.articles:[]).forEach(a=> push(a.link));
+
+    // Dedup & only http(s)
     const seen = new Set();
     return candidates
       .filter(u=>/^https?:\/\//i.test(u||""))
       .filter(u=>{ if(seen.has(u)) return false; seen.add(u); return true; });
+  }
+
+  // ---- Multi-source brand detection ----
+  function titleCase(s){
+    return s.replace(/\b([a-z])/g, m=>m.toUpperCase());
+  }
+  function prettyFromHost(host){
+    const h = (host||"").toLowerCase().replace(/^www\./,'');
+    // common mappings to nicer brand strings
+    const map = {
+      'instagram':'Instagram',
+      'ig':'Instagram',
+      'facebook':'Facebook',
+      'fb':'Facebook',
+      'x':'X',
+      'twitter':'Twitter',
+      't':'Twitter',
+      'youtube':'YouTube',
+      'youtu':'YouTube',
+      'github':'GitHub',
+      'medium':'Medium',
+      'tiktok':'TikTok',
+      'shopify':'Shopify',
+      'nike':'Nike',
+      'adidas':'Adidas'
+    };
+    const base = h.split('.')[0];
+    if(map[base]) return map[base];
+    return titleCase(base);
+  }
+  function detectBrands(data, sources){
+    const found = new Set();
+    const prods = Array.isArray(data.products) ? data.products : [];
+
+    // 1) explicit product brand fields
+    for(const p of prods){
+      if (p && typeof p.brand === 'string' && p.brand.trim()){
+        found.add(p.brand.trim());
+      }
+    }
+
+    // 2) known brands from product names (expand as needed)
+    const knownBrands = ['Nike','Adidas','Supreme','Puma','Gucci','Louis Vuitton','Apple','Samsung','Sony'];
+    for(const p of prods){
+      const nm = (p && p.name) ? String(p.name) : '';
+      for(const kb of knownBrands){
+        if (nm.toLowerCase().includes(kb.toLowerCase())) found.add(kb);
+      }
+    }
+
+    // 3) hostnames from sources
+    for(const s of sources){
+      try{
+        const url = new URL(s);
+        found.add(prettyFromHost(url.hostname));
+      }catch{}
+    }
+
+    // 4) output
+    const list = Array.from(found).filter(Boolean);
+    return list.length ? list.join(' × ') : 'SporeZ Fusion Page';
   }
 
   function render(data){
@@ -231,13 +294,12 @@
     const sources = getSourceLinks(data);
 
     const brandLogo = (data.brand && data.brand.logo) ? `<img src="${esc(data.brand.logo)}" alt="Brand">` : "";
-    const brandWord = esc((data.brand && data.brand.name) || "SporeZ");
+    const brandWord = esc(detectBrands(data, sources)); // << multi-source brands with fallback
 
     const sourcesHTML = sources.length
       ? sources.map((u,i)=>`<a href="${esc(u)}" target="_blank" rel="noopener">Source${i+1}</a>`).join("")
       : "";
 
-    // NEW: top sitemap bar (larger pills)
     const topSitemap = `
       <div class="top-sitemap">
         <a href="https://sporez.netlify.app/" target="_blank" rel="noopener">Home</a>
@@ -261,7 +323,7 @@
         <div class="fb-bar">
           <nav class="sources-nav">${sourcesHTML}</nav>
         </div>
-        <!-- NEW: Top sitemap -->
+        <!-- Top sitemap -->
         ${topSitemap}
       </div>
 
