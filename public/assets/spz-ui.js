@@ -1,4 +1,5 @@
 // Jessica-SPZ Frontend Logic — Pure JS
+// Jessica-SPZ Frontend Logic — Pure JS
 
 const sid = document.getElementById("sid");
 const logEl = document.getElementById("log");
@@ -13,20 +14,22 @@ const footerEl = document.getElementById("footer");
 
 let fusedData = {};
 let sessionId = "sess-" + Date.now().toString(36);
-sid.textContent = sessionId;
+if (sid) sid.textContent = sessionId;
 
 function log(msg) {
+  if (!logEl) return;
   logEl.textContent += "\n" + msg;
   logEl.scrollTop = logEl.scrollHeight;
 }
 
 function setJSON(data) {
+  if (!jsonEl) return;
   jsonEl.textContent = JSON.stringify(data, null, 2);
 }
 
 async function runCrawlAndFuse() {
   log("Starting Crawl…");
-  const links = document.getElementById("links").value
+  const links = (document.getElementById("links")?.value || "")
     .split("\n").map(l => l.trim()).filter(Boolean);
 
   if (!links.length) {
@@ -34,10 +37,10 @@ async function runCrawlAndFuse() {
     return;
   }
 
-  const mode = document.querySelector("input[name=mode]:checked").value;
+  const mode = document.querySelector("input[name=mode]:checked")?.value || "auto";
   const defaults = {
-    sell: document.getElementById("defSell").checked,
-    info: document.getElementById("defInfo").checked
+    sell: document.getElementById("defSell")?.checked ?? true,
+    info: document.getElementById("defInfo")?.checked ?? false
   };
 
   try {
@@ -48,7 +51,7 @@ async function runCrawlAndFuse() {
       headers: { "Content-Type": "application/json" }
     });
     if (!crawlRes.ok) {
-      const t = await crawlRes.text().catch(() => "");
+      const t = await crawlRes.text().catch(()=> "");
       log(`⛔ Crawl failed: ${crawlRes.status} ${t}`);
       return;
     }
@@ -68,7 +71,7 @@ async function runCrawlAndFuse() {
       headers: { "Content-Type": "application/json" }
     });
     if (!fuseRes.ok) {
-      const t = await fuseRes.text().catch(() => "");
+      const t = await fuseRes.text().catch(()=> "");
       log(`⛔ Fuse failed: ${fuseRes.status} ${t}`);
       return;
     }
@@ -76,7 +79,7 @@ async function runCrawlAndFuse() {
     setJSON(fusedData);
     log("Fusion complete. Mode: " + (fusedData.mode || "n/a"));
 
-    // Render preview
+    // Render preview panel
     renderPreview(fusedData);
   } catch (err) {
     log("⛔ Error: " + err.message);
@@ -85,39 +88,60 @@ async function runCrawlAndFuse() {
 
 function renderPreview(data) {
   const hero = data?.hero || {};
-  heroImg.src = hero.image || "";
-  heroImg.style.display = hero.image ? "block" : "none";
-  heroTitle.textContent = hero.title || "No Title";
-  heroSub.textContent = hero.subtitle || "";
-  heroCta.innerHTML = hero.ctaText
-    ? `<a href="${hero.ctaLink || "#"}" target="_blank" style="background:#00f0ff;color:#000;padding:6px 12px;border-radius:6px;text-decoration:none">${hero.ctaText}</a>`
-    : "";
+  if (heroImg) {
+    heroImg.src = hero.image || "";
+    heroImg.style.display = hero.image ? "block" : "none";
+  }
+  if (heroTitle) heroTitle.textContent = hero.title || "No Title";
+  if (heroSub) heroSub.textContent = hero.subtitle || "";
+  if (heroCta) {
+    heroCta.innerHTML = hero.ctaText
+      ? `<a href="${hero.ctaLink || "#"}" target="_blank" style="background:#00f0ff;color:#000;padding:6px 12px;border-radius:6px;text-decoration:none">${hero.ctaText}</a>`
+      : "";
+  }
 
   // Products
-  productsEl.innerHTML = "";
-  (data.products || []).forEach(p => {
-    const el = document.createElement("div");
-    el.className = "prod";
-    el.innerHTML = `
-      ${p.image ? `<img src="${p.image}" alt="">` : ""}
-      <div class="name">${p.name || ""}</div>
-      <div class="price">${p.price || ""}</div>
-      ${p.description ? `<div style="color:#9db3c9;font-size:12px">${p.description}</div>` : ""}
-      ${p.link ? `<a href="${p.link}" target="_blank">View</a>` : ""}
-    `;
-    productsEl.appendChild(el);
-  });
+  if (productsEl) {
+    productsEl.innerHTML = "";
+    (data.products || []).forEach(p => {
+      const el = document.createElement("div");
+      el.className = "prod";
+      el.innerHTML = `
+        ${p.image ? `<img src="${p.image}" alt="">` : ""}
+        <div class="name">${p.name || ""}</div>
+        <div class="price">${p.price || ""}</div>
+        ${p.description ? `<div style="color:#9db3c9;font-size:12px">${p.description}</div>` : ""}
+        ${p.link ? `<a href="${p.link}" target="_blank">View</a>` : ""}
+      `;
+      productsEl.appendChild(el);
+    });
+  }
 
   // Info
-  infoEl.innerHTML = "";
-  (data.articles || []).forEach(a => {
-    const div = document.createElement("div");
-    div.className = "article";
-    div.innerHTML = `<h3>${a.heading || ""}</h3><div>${a.content || ""}</div>`;
-    infoEl.appendChild(div);
-  });
+  if (infoEl) {
+    infoEl.innerHTML = "";
+    (data.articles || []).forEach(a => {
+      const div = document.createElement("div");
+      div.className = "article";
+      div.innerHTML = `<h3>${a.heading || ""}</h3><div>${a.content || ""}</div>`;
+      infoEl.appendChild(div);
+    });
+  }
 
-  footerEl.textContent = `SporeZ • Jessica-SPZ • ${data.slug || ""}`;
+  if (footerEl) footerEl.textContent = `SporeZ • Jessica-SPZ • ${data.slug || ""}`;
+}
+
+// Open a real preview page (no deploy needed)
+function openLivePreview(data) {
+  if (!data || !data.hero) {
+    alert("Run Crawl + Fuse first.");
+    return;
+  }
+  const json = JSON.stringify(data);
+  const bytes = new TextEncoder().encode(json);
+  const b64 = btoa(Array.from(bytes, b => String.fromCharCode(b)).join(""));
+  const url = `/preview.html#j=${b64}`;
+  window.open(url, "_blank");
 }
 
 async function publishPage() {
@@ -125,17 +149,18 @@ async function publishPage() {
     alert("Run Crawl + Fuse first.");
     return;
   }
-  const slugInput = document.getElementById("slug").value.trim();
+  const slugInput = document.getElementById("slug")?.value.trim();
   if (slugInput) fusedData.slug = slugInput;
 
   try {
-    const res = await fetch("/api/publish", {
+    // Use Deploy API version (no GitHub)
+    const res = await fetch("/api/publish_via_deploy", {
       method: "POST",
       body: JSON.stringify({ fused: fusedData, session: sessionId }),
       headers: { "Content-Type": "application/json" }
     });
     if (!res.ok) {
-      const t = await res.text().catch(() => "");
+      const t = await res.text().catch(()=> "");
       log(`⛔ Publish error: ${res.status} ${t}`);
       return;
     }
@@ -148,6 +173,6 @@ async function publishPage() {
 }
 
 // Button bindings
-document.getElementById("btn-run").addEventListener("click", runCrawlAndFuse);
-document.getElementById("btn-preview").addEventListener("click", () => renderPreview(fusedData));
-document.getElementById("btn-publish").addEventListener("click", publishPage);
+document.getElementById("btn-run")?.addEventListener("click", runCrawlAndFuse);
+document.getElementById("btn-preview")?.addEventListener("click", () => openLivePreview(fusedData));
+document.getElementById("btn-publish")?.addEventListener("click", publishPage);
