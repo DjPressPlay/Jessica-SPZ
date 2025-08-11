@@ -146,7 +146,7 @@
         <div class="row">
           <button class="btn primary" id="btn-run">Crawl + Fuse</button>
           <button class="btn" id="btn-preview">Preview</button>
-          <button class="btn" id="btn-publish">Publish</button>
+          <!-- Publish button removed -->
         </div>
 
         <div class="stack">
@@ -326,33 +326,9 @@
       window.open(url, "_blank");
     }
 
-    async function publish(){
-      try{
-        if(!fused){ log("Nothing fused yet. Using sample.", true); fused = structuredClone(sampleFused); }
-        let slug = elSlug.value.trim();
-        if(!slug){
-          const base = (fused.hero?.title || "drop").toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"");
-          slug = base || ("drop-" + Date.now().toString(36));
-        }
-        fused.slug = slug;
-
-        log(`Publishing "${slug}"…`);
-        const out = await postJSON("/api/publish_via_deploy", { fused, session: SID }); // << Deploy API mode
-        elJSON.textContent = JSON.stringify(fused, null, 2);
-        if(out && out.url){
-          log("Published: " + out.url);
-          try{ navigator.clipboard?.writeText(out.url); }catch{}
-          window.open(out.url, "_blank");
-        }else{
-          log("Publish complete (no URL returned).");
-        }
-      }catch(e){ log("Publish error: " + e.message, true); }
-    }
-
     // Buttons
     document.getElementById("btn-run").addEventListener("click", runCrawlAndFuse);
     document.getElementById("btn-preview").addEventListener("click", ()=> openLivePreview(fused || sampleFused));
-    document.getElementById("btn-publish").addEventListener("click", publish);
 
     // First paint
     renderPreview(sampleFused);
