@@ -153,8 +153,8 @@
   }
   .prod img{width:100%;height:120px;object-fit:cover;border-radius:10px;background:#0d1924;display:block;border:1px solid rgba(255,255,255,.06)}
   .prod .name{font-weight:800;letter-spacing:.2px}
-  .prod .price{color:var(--ok);font-weight:800}
-  .prod a{color:var(--accent);text-decoration:none;font-weight:800}
+  .prod .price{color:#66ff99;font-weight:800}
+  .prod a{color:#70ffe0;text-decoration:none;font-weight:800}
 
   .articles{display:grid; gap:10px}
   .article{
@@ -162,6 +162,32 @@
     box-shadow: inset 0 0 0 1px rgba(0,0,0,.45), 0 10px 22px rgba(0,0,0,.2);
   }
   .article h3{margin:0 0 6px}
+
+  /* ======= NEW: SOCIAL SIGNALS ======= */
+  .social-list{
+    display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:12px;
+  }
+  .social-card{
+    position:relative; border-radius:12px; padding:10px; background:#0f1620; color:#eaf5ff;
+    border:2px solid transparent; background-clip:padding-box;
+    box-shadow: inset 0 0 0 1px rgba(0,0,0,.45), 0 10px 22px rgba(0,0,0,.2);
+    display:grid; gap:8px;
+  }
+  .social-card::before{
+    content:""; position:absolute; inset:-2px; border-radius:14px; padding:2px;
+    background: linear-gradient(135deg, var(--glow1), var(--iris), var(--glow2));
+    background-size:300% 300%; animation: iridescentMove 8s ease infinite;
+    -webkit-mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite:xor; mask-composite:exclude; pointer-events:none;
+  }
+  .social-media{width:100%; border-radius:10px; overflow:hidden; border:1px solid rgba(255,255,255,.06); background:#0d1924}
+  .social-media img{width:100%; height:150px; object-fit:cover; display:block}
+  .social-media video{width:100%; height:150px; object-fit:cover; display:block}
+  .social-title{font-weight:800; letter-spacing:.2px}
+  .social-desc{color:#c6ecff; font-size:12px}
+  .social-meta{display:flex; gap:8px; flex-wrap:wrap; align-items:center; color:#8fb8cf; font-weight:700; font-size:12px}
+  .social-meta .pill{background:#0e1b26; border:1px solid #173346; color:#8fb8cf; border-radius:999px; padding:3px 8px}
+  .social-react{color:#9dd8ff; font-style:italic; font-size:12px}
 
   /* ======= FOOTER SEO + MINI SITEMAP ======= */
   .site-footer{
@@ -219,7 +245,6 @@
     (Array.isArray(data.products)?data.products:[]).forEach(p=> push(p.link));
     (Array.isArray(data.articles)?data.articles:[]).forEach(a=> push(a.link));
 
-    // Dedup & only http(s)
     const seen = new Set();
     return candidates
       .filter(u=>/^https?:\/\//i.test(u||""))
@@ -227,28 +252,14 @@
   }
 
   // ---- Multi-source brand detection ----
-  function titleCase(s){
-    return s.replace(/\b([a-z])/g, m=>m.toUpperCase());
-  }
+  function titleCase(s){ return s.replace(/\b([a-z])/g, m=>m.toUpperCase()); }
   function prettyFromHost(host){
     const h = (host||"").toLowerCase().replace(/^www\./,'');
-    // common mappings to nicer brand strings
     const map = {
-      'instagram':'Instagram',
-      'ig':'Instagram',
-      'facebook':'Facebook',
-      'fb':'Facebook',
-      'x':'X',
-      'twitter':'Twitter',
-      't':'Twitter',
-      'youtube':'YouTube',
-      'youtu':'YouTube',
-      'github':'GitHub',
-      'medium':'Medium',
-      'tiktok':'TikTok',
-      'shopify':'Shopify',
-      'nike':'Nike',
-      'adidas':'Adidas'
+      'instagram':'Instagram','ig':'Instagram','facebook':'Facebook','fb':'Facebook',
+      'x':'X','twitter':'Twitter','t':'Twitter','youtube':'YouTube','youtu':'YouTube',
+      'github':'GitHub','medium':'Medium','tiktok':'TikTok','shopify':'Shopify',
+      'nike':'Nike','adidas':'Adidas'
     };
     const base = h.split('.')[0];
     if(map[base]) return map[base];
@@ -257,34 +268,98 @@
   function detectBrands(data, sources){
     const found = new Set();
     const prods = Array.isArray(data.products) ? data.products : [];
-
-    // 1) explicit product brand fields
     for(const p of prods){
-      if (p && typeof p.brand === 'string' && p.brand.trim()){
-        found.add(p.brand.trim());
-      }
+      if (p && typeof p.brand === 'string' && p.brand.trim()) found.add(p.brand.trim());
     }
-
-    // 2) known brands from product names (expand as needed)
     const knownBrands = ['Nike','Adidas','Supreme','Puma','Gucci','Louis Vuitton','Apple','Samsung','Sony'];
     for(const p of prods){
       const nm = (p && p.name) ? String(p.name) : '';
-      for(const kb of knownBrands){
-        if (nm.toLowerCase().includes(kb.toLowerCase())) found.add(kb);
-      }
+      for(const kb of knownBrands){ if (nm.toLowerCase().includes(kb.toLowerCase())) found.add(kb); }
     }
-
-    // 3) hostnames from sources
-    for(const s of sources){
-      try{
-        const url = new URL(s);
-        found.add(prettyFromHost(url.hostname));
-      }catch{}
-    }
-
-    // 4) output
+    for(const s of sources){ try{ const url = new URL(s); found.add(prettyFromHost(url.hostname)); }catch{} }
     const list = Array.from(found).filter(Boolean);
     return list.length ? list.join(' × ') : 'SporeZ Fusion Page';
+  }
+
+  // ======= NEW: collect social info from fused JSON (universal, no network) =======
+  function numish(v){
+    if (typeof v === 'number') return v;
+    if (typeof v === 'string'){
+      const m = v.trim().match(/^([\d.,]+)\s*([kKmM]?)$/);
+      if(!m) return parseFloat(v) || 0;
+      let n = parseFloat(m[1].replace(/,/g,''));
+      const suf = m[2].toLowerCase();
+      if (suf==='k') n*=1e3; else if (suf==='m') n*=1e6;
+      return n;
+    }
+    return 0;
+  }
+  function unifySocialItem(x){
+    if (!x) return null;
+    const url = x.url || x.link || x.permalink || '';
+    let platform = '';
+    try{ platform = url ? prettyFromHost(new URL(url).hostname) : (x.platform||''); }catch{ platform = x.platform||''; }
+    return {
+      url,
+      platform,
+      title: x.title || x.heading || x.name || '',
+      description: x.description || x.desc || x.caption || x.summary || '',
+      image: x.image || x.thumbnail || (x.media && x.media.image) || '',
+      video: x.video || (x.media && x.media.video) || '',
+      likes: numish(x.likes || x.likeCount || x.reactions),
+      comments: numish(x.comments || x.commentCount),
+      shares: numish(x.shares || x.shareCount),
+      author: x.author || x.user || x.handle || ''
+    };
+  }
+  function collectSocial(data){
+    const out = [];
+    const push = (v)=>{
+      if(Array.isArray(v)) v.forEach(push);
+      else if (v && typeof v==='object'){
+        const u = unifySocialItem(v);
+        if (u && (u.image||u.video||u.description||u.likes||u.comments||u.shares)) out.push(u);
+      }
+    };
+
+    // common places the fuse might put things
+    push(data.social);
+    push(data.media);
+    push(data.posts);
+    push(data.signals);
+    push(data.embeds);
+
+    // objects keyed by URL: meta/byUrl/etc.
+    const objBuckets = [data.meta?.byUrl, data.linkMeta, data.sourcesDetailed, data.sourceMeta, data.extracted];
+    objBuckets.forEach(obj=>{
+      if (obj && typeof obj==='object'){
+        Object.keys(obj).forEach(k=>{
+          const v = obj[k];
+          if (v && typeof v==='object') push({ url:k, ...v });
+        });
+      }
+    });
+
+    // de-dupe by url + description
+    const seen = new Set();
+    return out.filter(it=>{
+      const key = (it.url||'')+'|'+(it.description||'')+'|'+(it.image||it.video||'');
+      if (seen.has(key)) return false;
+      seen.add(key); return true;
+    });
+  }
+
+  // ======= NEW: small randomized reactions to stats =======
+  function reactToStats({likes=0,comments=0,shares=0}={}){
+    const L = likes, C = comments, S = shares;
+    const picks = [];
+    if (L>1000 && C>100) picks.push(`🔥 This post is blowing up with ${L.toLocaleString()} likes and ${C.toLocaleString()} comments!`);
+    if (L>0 && C>0) picks.push(`💬 ${C.toLocaleString()} comments and ${L.toLocaleString()} likes — people are talking.`);
+    if (L>0) picks.push(`💖 Loved by ${L.toLocaleString()} people.`);
+    if (C>0) picks.push(`👏 ${C.toLocaleString()} comments — strong engagement.`);
+    if (S>0) picks.push(`📢 ${S.toLocaleString()} shares spreading the signal.`);
+    if (!picks.length && (L||C||S)) picks.push(`⭐ Nice engagement on this one.`);
+    return picks.length ? picks[Math.floor(Math.random()*picks.length)] : '';
   }
 
   function render(data){
@@ -292,9 +367,10 @@
     const products = Array.isArray(data.products)? data.products : [];
     const articles = Array.isArray(data.articles)? data.articles : [];
     const sources = getSourceLinks(data);
+    const socials = collectSocial(data); // << NEW
 
     const brandLogo = (data.brand && data.brand.logo) ? `<img src="${esc(data.brand.logo)}" alt="Brand">` : "";
-    const brandWord = esc(detectBrands(data, sources)); // << multi-source brands with fallback
+    const brandWord = esc(detectBrands(data, sources));
 
     const sourcesHTML = sources.length
       ? sources.map((u,i)=>`<a href="${esc(u)}" target="_blank" rel="noopener">Source${i+1}</a>`).join("")
@@ -308,6 +384,36 @@
         <a href="https://zetsumetsu.webnode.page" target="_blank" rel="noopener">Zetsumetsu Eoe™</a>
         <a href="https://sporez.netlify.app/" target="_blank" rel="noopener">SporeZ</a>
       </div>`;
+
+    // build social list HTML (only if we have items)
+    const socialHTML = socials.length ? `
+      <section class="section" id="social">
+        <div class="title">Social Signals</div>
+        <div class="social-list">
+          ${socials.slice(0,8).map(m=>{
+            const rx = reactToStats(m);
+            const media = m.video
+              ? `<div class="social-media"><video src="${esc(m.video)}" controls></video></div>`
+              : (m.image ? `<div class="social-media"><img src="${esc(m.image)}" alt=""></div>` : ``);
+            return `
+              <div class="social-card">
+                ${media}
+                <div class="social-title">${esc(m.title || (m.platform?`${m.platform} post`:'Post'))}</div>
+                ${m.description ? `<div class="social-desc">${esc(m.description)}</div>` : ``}
+                <div class="social-meta">
+                  ${m.platform?`<span class="pill">${esc(m.platform)}</span>`:""}
+                  ${m.author?`<span class="pill">@${esc(m.author)}</span>`:""}
+                  ${m.likes?`<span class="pill">❤️ ${esc(m.likes.toLocaleString ? m.likes.toLocaleString() : String(m.likes))}</span>`:""}
+                  ${m.comments?`<span class="pill">💬 ${esc(m.comments.toLocaleString ? m.comments.toLocaleString() : String(m.comments))}</span>`:""}
+                  ${m.shares?`<span class="pill">🔁 ${esc(m.shares.toLocaleString ? m.shares.toLocaleString() : String(m.shares))}</span>`:""}
+                </div>
+                ${rx?`<div class="social-react">${esc(rx)}</div>`:""}
+                ${m.url?`<div><a href="${esc(m.url)}" target="_blank" rel="noopener" style="color:var(--accent);font-weight:800;text-decoration:none">Open</a></div>`:""}
+              </div>`;
+          }).join("")}
+        </div>
+      </section>
+    ` : ``;
 
     root.innerHTML = `
       <!-- BRAND HEADER -->
@@ -363,6 +469,8 @@
             `).join("")}
           </div>
         </section>` : ""}
+
+      ${socialHTML}
 
       <!-- FOOTER SEO + MINI SITEMAP -->
       <div class="site-footer">
