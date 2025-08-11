@@ -47,40 +47,50 @@ async function runCrawlAndFuse() {
       body: JSON.stringify({ links, session: sessionId }),
       headers: { "Content-Type": "application/json" }
     });
+    if (!crawlRes.ok) {
+      const t = await crawlRes.text().catch(() => "");
+      log(`⛔ Crawl failed: ${crawlRes.status} ${t}`);
+      return;
+    }
     const crawlData = await crawlRes.json();
-    log("Crawl complete. Results: " + crawlData.results.length);
+    log("Crawl complete. Results: " + (crawlData.results?.length || 0));
 
     // Fuse
     log("Fusing content…");
     const fuseRes = await fetch("/api/fuse", {
       method: "POST",
       body: JSON.stringify({
-        results: crawlData.results,
+        results: crawlData.results || [],
         mode,
         defaults,
         session: sessionId
       }),
       headers: { "Content-Type": "application/json" }
     });
+    if (!fuseRes.ok) {
+      const t = await fuseRes.text().catch(() => "");
+      log(`⛔ Fuse failed: ${fuseRes.status} ${t}`);
+      return;
+    }
     fusedData = await fuseRes.json();
     setJSON(fusedData);
-    log("Fusion complete. Mode: " + fusedData.mode);
+    log("Fusion complete. Mode: " + (fusedData.mode || "n/a"));
 
     // Render preview
     renderPreview(fusedData);
   } catch (err) {
-    log("Error: " + err.message);
+    log("⛔ Error: " + err.message);
   }
 }
 
 function renderPreview(data) {
-  const hero = data.hero || {};
+  const hero = data?.hero || {};
   heroImg.src = hero.image || "";
   heroImg.style.display = hero.image ? "block" : "none";
   heroTitle.textContent = hero.title || "No Title";
   heroSub.textContent = hero.subtitle || "";
   heroCta.innerHTML = hero.ctaText
-    ? `<a href="${hero.ctaLink}" target="_blank" style="background:#00f0ff;color:#000;padding:6px 12px;border-radius:6px;text-decoration:none">${hero.ctaText}</a>`
+    ? `<a href="${hero.ctaLink || "#"}" target="_blank" style="background:#00f0ff;color:#000;padding:6px 12px;border-radius:6px;text-decoration:none">${hero.ctaText}</a>`
     : "";
 
   // Products
@@ -93,7 +103,7 @@ function renderPreview(data) {
       <div class="name">${p.name || ""}</div>
       <div class="price">${p.price || ""}</div>
       ${p.description ? `<div style="color:#9db3c9;font-size:12px">${p.description}</div>` : ""}
-      <a href="${p.link}" target="_blank">View</a>
+      ${p.link ? `<a href="${p.link}" target="_blank">View</a>` : ""}
     `;
     productsEl.appendChild(el);
   });
@@ -103,7 +113,7 @@ function renderPreview(data) {
   (data.articles || []).forEach(a => {
     const div = document.createElement("div");
     div.className = "article";
-    div.innerHTML = `<h3>${a.heading}</h3><div>${a.content}</div>`;
+    div.innerHTML = `<h3>${a.heading || ""}</h3><div>${a.content || ""}</div>`;
     infoEl.appendChild(div);
   });
 
@@ -124,13 +134,16 @@ async function publishPage() {
       body: JSON.stringify({ fused: fusedData, session: sessionId }),
       headers: { "Content-Type": "application/json" }
     });
-    const out = await res.json();
-    log("Published at: " + out.url);
-    if (out.url) {
-      window.open(out.url, "_blank");
+    if (!res.ok) {
+      const t = await res.text().catch(() => "");
+      log(`⛔ Publish error: ${res.status} ${t}`);
+      return;
     }
+    const out = await res.json();
+    log("Published at: " + (out.url || "(no url)"));
+    if (out.url) window.open(out.url, "_blank");
   } catch (err) {
-    log("Publish error: " + err.message);
+    log("⛔ Publish error: " + err.message);
   }
 }
 
