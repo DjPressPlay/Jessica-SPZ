@@ -21,7 +21,6 @@
       #0a0f14;
   }
 
-  /* Subtle checkerboard overlay */
   .stage{
     min-height:100vh; display:flex; align-items:center; justify-content:center; padding:28px 14px;
     background-image:
@@ -31,14 +30,8 @@
     background-position: 0 0, 13px 13px;
   }
 
-  /* Iridescent animation */
-  @keyframes iridescentMove{
-    0%{background-position:0% 50%}
-    50%{background-position:100% 50%}
-    100%{background-position:0% 50%}
-  }
+  @keyframes iridescentMove{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
 
-  /* Holo glow “iframe” shell */
   .iframe-shell{
     width:min(980px, 96vw);
     border-radius:22px; padding:12px; position:relative;
@@ -54,7 +47,6 @@
     -webkit-mask-composite:xor; mask-composite:exclude; pointer-events:none;
   }
 
-  /* White embossed paper container */
   .paper{
     border-radius:16px; overflow:hidden; background: var(--white); color: var(--ink);
     border:1px solid #e8eef6;
@@ -67,7 +59,31 @@
 
   .wrap{max-width:900px;margin:auto;padding:22px}
 
-  /* Heading / hero */
+  /* ======= NEW: Brand header + nav ======= */
+  .brand-bar{
+    display:flex; align-items:center; justify-content:space-between; gap:12px;
+    padding:6px 0 14px; border-bottom:1px solid #eef3fa;
+  }
+  .brand{
+    display:flex; align-items:center; gap:10px; font-weight:900; letter-spacing:.3px;
+  }
+  .brand img{height:28px;width:auto;display:block}
+  .brand .wordmark{
+    font-size:18px; text-transform:uppercase;
+    background:linear-gradient(90deg,var(--glow1),var(--iris),var(--glow2));
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+  }
+  .nav{
+    display:flex; flex-wrap:wrap; gap:8px; justify-content:flex-end;
+  }
+  .nav a{
+    display:inline-block; padding:6px 10px; border-radius:999px; font-weight:700; text-decoration:none;
+    color:#0a2430; background:#f2f9ff; border:1px solid #d9e9f7;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.9);
+  }
+  .nav a:hover{background:#e7f3ff}
+
+  /* ======= Existing hero/sections (kept) ======= */
   .hero{text-align:center; display:grid; gap:10px}
   .img-wrap{border-radius:16px; position:relative; border:2px solid transparent; background-clip:padding-box;}
   .img-wrap::before{
@@ -92,7 +108,6 @@
     border:0; box-shadow:0 8px 24px rgba(0,255,200,.18);
   }
 
-  /* Sections */
   .section{
     margin-top:16px; border-radius:14px; padding:12px;
     background:#f7fbff; border:1px solid #e3edf7;
@@ -102,7 +117,6 @@
     text-align:center; color:#5a6b7a; font-weight:800; letter-spacing:.2px; margin-bottom:10px; text-transform:uppercase;
   }
 
-  /* Products grid */
   .products{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px}
   .prod{
     position:relative; border-radius:12px; padding:10px; background:#0f1620; color:#eaf5ff;
@@ -121,7 +135,6 @@
   .prod .price{color:var(--ok);font-weight:800}
   .prod a{color:var(--accent);text-decoration:none;font-weight:800}
 
-  /* Articles */
   .articles{display:grid; gap:10px}
   .article{
     background:#0f1620; color:#eaf5ff; padding:12px; border-radius:12px; border:1px solid #142131;
@@ -129,14 +142,22 @@
   }
   .article h3{margin:0 0 6px}
 
-  footer{margin:14px 0 2px;color:#6b7f94;text-align:center;font-size:12px}
+  /* ======= NEW: Footer SEO block + mini sitemap ======= */
+  .site-footer{
+    margin-top:18px; padding-top:12px; border-top:1px solid #e9f0f8; color:#5a6b7a; font-size:12px;
+  }
+  .sitemap{
+    margin-top:8px; display:flex; gap:10px; flex-wrap:wrap;
+  }
+  .sitemap a{
+    color:#0a2430; text-decoration:none; border-bottom:1px dotted #a9c8de;
+  }
+  .sitemap a:hover{border-bottom-color:#6fb0d6}
 </style>
 </head>
 <body>
   <div class="stage">
-    <!-- Glowing iframe-like shell -->
     <div class="iframe-shell">
-      <!-- White embossed 3D container -->
       <div class="paper">
         <div class="wrap" id="root">Loading…</div>
       </div>
@@ -155,12 +176,63 @@
     return JSON.parse(text);
   }
 
+  // NEW: collect source links if present in fused payload; fall back to links found in content
+  function getSourceLinks(data){
+    const candidates = [];
+    const push = (v)=>{
+      if(!v) return;
+      if(Array.isArray(v)) v.forEach(push);
+      else if(typeof v === "string") candidates.push(v);
+    };
+
+    // Preferred explicit fields (any one may exist depending on fuse)
+    push(data.sourceLinks);
+    push(data.sources);
+    push(data.links);
+    if (data.meta && data.meta.sources) push(data.meta.sources);
+
+    // Fallbacks: harvest from hero/products/articles
+    if (data.hero){
+      push(data.hero.ctaLink);
+      if (data.hero.links) push(data.hero.links);
+    }
+    (Array.isArray(data.products)?data.products:[]).forEach(p=> push(p.link));
+    (Array.isArray(data.articles)?data.articles:[]).forEach(a=> push(a.link));
+
+    // Dedup + keep http(s) only
+    const seen = new Set();
+    return candidates
+      .filter(u=>/^https?:\/\//i.test(u||""))
+      .filter(u=>{ if(seen.has(u)) return false; seen.add(u); return true; });
+  }
+
   function render(data){
     const hero = data.hero || {};
     const products = Array.isArray(data.products)? data.products : [];
     const articles = Array.isArray(data.articles)? data.articles : [];
+    const sources = getSourceLinks(data);
+
+    // Build brand header + nav (additions only)
+    const brandLogo = (data.brand && data.brand.logo) ? `<img src="${esc(data.brand.logo)}" alt="Brand">` : "";
+    const brandWord = esc((data.brand && data.brand.name) || "SporeZ");
+
+    const navHTML = sources.length
+      ? `<nav class="nav">
+          ${sources.map((u, i)=>`<a href="${esc(u)}" target="_blank" rel="noopener">Link ${i+1}</a>`).join("")}
+         </nav>`
+      : `<nav class="nav"></nav>`;
 
     root.innerHTML = `
+      <!-- BRAND HEADER (added) -->
+      <div class="brand-bar">
+        <div class="brand">
+          ${brandLogo}
+          <div class="wordmark">${brandWord}</div>
+        </div>
+        ${navHTML}
+      </div>
+
+      <!-- EXISTING CONTENT (unchanged structure) -->
       <div class="hero">
         ${hero.image ? `<div class="img-wrap"><img src="${esc(hero.image)}" alt=""></div>` : ""}
         <h1>${esc(hero.title || "SporeZ Drop")}</h1>
@@ -177,8 +249,8 @@
                 ${p.image?`<img src="${esc(p.image)}" alt="">`:``}
                 <div class="name">${esc(p.name||"")}</div>
                 <div class="price">${esc(p.price||"")}</div>
-                ${p.description?`<div class="muted" style="color:#b7cbe0">${esc(p.description)}</div>`:""}
-                ${p.link?`<div><a href="${esc(p.link)}" target="_blank" rel="noopener">View</a></div>`:""}
+                ${p.description?`<div class="muted" style="color:#3d4a55">${esc(p.description)}</div>`:""}
+                ${p.link?`<div><a href="${esc(p.link)}" target="_blank" rel="noopener" style="color:#0a6a83;text-decoration:none;font-weight:800">View</a></div>`:""}
               </div>
             `).join("")}
           </div>
@@ -197,7 +269,21 @@
           </div>
         </section>` : ""}
 
-      <footer>SporeZ • Jessica-SPZ ${data.slug? "• "+esc(data.slug): ""}</footer>
+      <!-- FOOTER SEO + MINI SITEMAP (added) -->
+      <div class="site-footer">
+        <div>Generated preview via Jessica-SPZ auto-fusion. Source count: ${sources.length}. Updated ${new Date().toLocaleDateString()}.</div>
+        <div class="sitemap">
+          <a href="#top">Home</a>
+          ${products.length ? `<a href="#products" onclick="event.preventDefault();document.querySelector('.products')?.scrollIntoView({behavior:'smooth'});">Products</a>` : ``}
+          ${articles.length ? `<a href="#info" onclick="event.preventDefault();document.querySelector('.articles')?.scrollIntoView({behavior:'smooth'});">Info</a>` : ``}
+          <a href="https://zetsumetsu.webnode.page" target="_blank" rel="noopener">Zetsumetsu</a>
+          <a href="https://sporez.netlify.app" target="_blank" rel="noopener">SporeZ</a>
+        </div>
+      </div>
+
+      <footer style="margin-top:8px;text-align:center;color:#6b7f94;font-size:12px">
+        SporeZ • Jessica-SPZ ${data.slug? "• "+esc(data.slug): ""}
+      </footer>
     `;
   }
 
