@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Sample Drop • Jessica-SPZ</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<style>
+  :root{
+    --bg:#0b1219; --panel:#0f1620; --muted:#9db3c9;
+    --glow1:#00f0ff; --glow2:#00ff88; --ok:#66ff99; --accent:#70ffe0; --white:#e8f1ff;
+  }
+  body{margin:0;background:var(--bg);color:var(--white);font:14px/1.6 system-ui,Segoe UI,Roboto,Inter,Arial}
+  .wrap{max-width:980px;margin:0 auto;padding:24px}
+  .hero{padding:16px;border-radius:16px;background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,0));border:1px solid #142131;text-align:center}
+  h1{
+    margin:10px 0 6px;font-size:28px;letter-spacing:.4px;text-transform:uppercase;
+    background:linear-gradient(90deg,var(--glow1),var(--glow2));
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+  }
+  .sub{color:var(--muted);margin:0}
+  .hero img{width:100%;height:260px;object-fit:cover;border-radius:12px;border:1px solid rgba(255,255,255,.08);margin-top:10px}
+  .cta a{display:inline-block;margin-top:10px;padding:10px 14px;border-radius:999px;text-decoration:none;font-weight:800;color:#001b1f;background:linear-gradient(90deg,var(--glow1),var(--glow2))}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:16px}
+  .box{background:var(--panel);border:1px solid #142131;border-radius:14px;padding:12px}
+  .hd{color:var(--muted);font-weight:800;text-align:center;margin-bottom:8px}
+  .products{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+  .prod{background:#0b131b;border:1px solid #162535;border-radius:12px;padding:10px;text-align:center;display:grid;gap:8px}
+  .prod img{width:100%;height:120px;object-fit:cover;border-radius:10px;background:#0d1924}
+  .prod .name{font-weight:800}
+  .prod .price{color:var(--ok);font-weight:800}
+  .prod a{color:var(--accent);text-decoration:none;font-weight:700}
+  .article{background:#0b131b;border:1px solid #162535;border-radius:12px;padding:10px;margin-bottom:10px}
+  .article h3{margin:0 0 6px}
+  footer{margin-top:14px;color:var(--muted);text-align:center;font-size:12px}
+  @media (max-width:900px){.grid{grid-template-columns:1fr}.products{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="hero">
+      <h1>Sample Drop</h1>
+      <p class="sub">This is a static example page under <code>/public/pages/</code> for routing checks.</p>
+      <img src="https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?w=1200&q=80&auto=format&fit=crop" alt="">
+      <div class="cta"><a href="#">Claim Your Drop</a></div>
+    </div>
+
+    <div class="grid">
+      <div class="box">
+        <div class="hd">Products</div>
+        <div class="products">
+          <div class="prod">
+            <img src="https://images.unsplash.com/photo-1512436991641-6745cdb1723f?w=800&q=80&auto=format&fit=crop" alt="">
+            <div class="name">Holo Tee</div>
+            <div class="price">$29</div>
+            <div style="color:#9db3c9;font-size:12px">Shimmer print • Limited</div>
+            <a href="#">View</a>
+          </div>
+          <div class="prod">
+            <img src="https://images.unsplash.com/photo-1518110833785-6e0fd518b4a6?w=800&q=80&auto=format&fit=crop" alt="">
+            <div class="name">Z-Cap</div>
+            <div class="price">$19</div>
+            <div style="color:#9db3c9;font-size:12px">Low-profile • Night mode</div>
+            <a href="#">View</a>
+          </div>
+        </div>
+      </div>
+      <div class="box">
+        <div class="hd">Info</div>
+        <div class="article">
+          <h3>What This Page Is</h3>
+          <div>This is a Jessica-SPZ output page: hero + product grid + info sections. Real pages will be auto-generated from your submitted links.</div>
+        </div>
+        <div class="article">
+          <h3>How It Gets Published</h3>
+          <div>When you click <b>Publish</b> in the UI, the server renders this structure with your fused data and exposes it at <code>/pages/{slug}.html</code>.</div>
+        </div>
+      </div>
+    </div>
+
+    <footer>SporeZ • Jessica-SPZ • Sample</footer>
+  </div>
+</body>
+</html>
