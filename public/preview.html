@@ -153,8 +153,8 @@
   }
   .prod img{width:100%;height:120px;object-fit:cover;border-radius:10px;background:#0d1924;display:block;border:1px solid rgba(255,255,255,.06)}
   .prod .name{font-weight:800;letter-spacing:.2px}
-  .prod .price{color:#66ff99;font-weight:800}
-  .prod a{color:#70ffe0;text-decoration:none;font-weight:800}
+  .prod .price{color:var(--ok);font-weight:800}
+  .prod a{color:var(--accent);text-decoration:none;font-weight:800}
 
   .articles{display:grid; gap:10px}
   .article{
@@ -163,42 +163,21 @@
   }
   .article h3{margin:0 0 6px}
 
-  /* ======= SOCIAL SIGNALS ======= */
-  .social-list{ display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:12px; }
-  .social-card{
-    position:relative; border-radius:12px; padding:10px; background:#0f1620; color:#eaf5ff;
-    border:2px solid transparent; background-clip:padding-box;
-    box-shadow: inset 0 0 0 1px rgba(0,0,0,.45), 0 10px 22px rgba(0,0,0,.2);
-    display:grid; gap:8px;
-  }
-  .social-card::before{
-    content:""; position:absolute; inset:-2px; border-radius:14px; padding:2px;
-    background: linear-gradient(135deg, var(--glow1), var(--iris), var(--glow2));
-    background-size:300% 300%; animation: iridescentMove 8s ease infinite;
-    -webkit-mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-    -webkit-mask-composite:xor; mask-composite:exclude; pointer-events:none;
-  }
-  .social-head{ display:flex; align-items:center; gap:10px; }
-  .avatar{ width:32px; height:32px; border-radius:999px; overflow:hidden; background:#0d1924; border:1px solid rgba(255,255,255,.08); flex:none; }
-  .avatar img{width:100%; height:100%; object-fit:cover; display:block}
-  .name-row{ display:flex; flex-wrap:wrap; gap:6px; align-items:baseline; }
-  .display-name{font-weight:800; letter-spacing:.2px}
-  .handle{color:#9bbad2; font-size:12px}
-  .dot{opacity:.5}
-  .social-media{width:100%; border-radius:10px; overflow:hidden; border:1px solid rgba(255,255,255,.06); background:#0d1924}
-  .social-media img, .social-media video{width:100%; height:150px; object-fit:cover; display:block}
-  .social-title{font-weight:800; letter-spacing:.2px}
-  .social-desc{color:#c6ecff; font-size:12px}
-  .social-meta{display:flex; gap:8px; flex-wrap:wrap; align-items:center; color:#8fb8cf; font-weight:700; font-size:12px}
-  .social-meta .pill{background:#0e1b26; border:1px solid #173346; color:#8fb8cf; border-radius:999px; padding:3px 8px}
-  .social-react{color:#9dd8ff; font-style:italic; font-size:12px}
-
   /* ======= FOOTER SEO + MINI SITEMAP ======= */
-  .site-footer{ margin-top:18px; padding-top:12px; border-top:1px solid #e9f0f8; color:#5a6b7a; font-size:12px; }
-  .sitemap{ margin-top:8px; display:flex; gap:10px; flex-wrap:wrap; }
-  .sitemap a{ color:#0a2430; text-decoration:none; border-bottom:1px dotted #a9c8de; }
+  .site-footer{
+    margin-top:18px; padding-top:12px; border-top:1px solid #e9f0f8; color:#5a6b7a; font-size:12px;
+  }
+  .sitemap{
+    margin-top:8px; display:flex; gap:10px; flex-wrap:wrap;
+  }
+  .sitemap a{
+    color:#0a2430; text-decoration:none; border-bottom:1px dotted #a9c8de;
+  }
   .sitemap a:hover{border-bottom-color:#6fb0d6}
-  .brandline{ margin-top:8px; text-align:center; color:#5a6b7a; font-size:12px; font-weight:700; letter-spacing:.2px; }
+  .brandline{
+    margin-top:8px; text-align:center; color:#5a6b7a; font-size:12px; font-weight:700;
+    letter-spacing:.2px;
+  }
 </style>
 </head>
 <body>
@@ -214,9 +193,7 @@
 (function(){
   const root = document.getElementById('root');
 
-  const escMap = { "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" };
-  function esc(s){ return String(s||"").replace(/[&<>"]/g, c => escMap[c]); }
-
+  function esc(s){ return String(s||"").replace(/[&<>"]/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c])); }
   function b64ToJSON(b64){
     const bin = atob((b64||"").replace(/[^A-Za-z0-9+/=]/g,""));
     const bytes = Uint8Array.from(bin, c => c.charCodeAt(0));
@@ -224,268 +201,90 @@
     return JSON.parse(text);
   }
 
-  /* ---------- Deep getter: supports a.b[0].c, keys with colons ---------- */
-  function deepGet(obj, path){
-    if (!obj || !path) return undefined;
-    const toks = Array.isArray(path) ? path
-      : String(path)
-        .replace(/\[(\d+)\]/g, '.$1')
-        .split('.')
-        .filter(Boolean);
-    let cur = obj;
-    for (const k of toks){
-      if (cur == null) return undefined;
-      cur = cur[k];
-    }
-    return cur;
-  }
-
-  function first(...vals){
-    for (const v of vals){
-      if (v==null) continue;
-      if (Array.isArray(v)) { if (v.length) return v[0]; }
-      else if (String(v).trim()!=='') return v;
-    }
-    return '';
-  }
-
-  function numish(v){
-    if (typeof v === 'number') return v;
-    if (typeof v === 'string'){
-      const m = v.trim().match(/^([\d.,]+)\s*([kKmM]?)$/);
-      if(!m) return parseFloat(v) || 0;
-      let n = parseFloat(m[1].replace(/,/g,''));
-      const suf = m[2].toLowerCase();
-      if (suf==='k') n*=1e3; else if (suf==='m') n*=1e6;
-      return n;
-    }
-    return 0;
-  }
-
-  function faviconFromUrl(u){
-    try{ const url = new URL(u); return `${url.protocol}//${url.hostname}/favicon.ico`; }
-    catch{ return ''; }
-  }
-
-  function titleCase(s){ return String(s||'').replace(/\b([a-z])/g, m=>m.toUpperCase()); }
-  function prettyFromHost(host){
-    const h=(host||"").toLowerCase().replace(/^www\./,'');
-    const map={instagram:'Instagram',ig:'Instagram',facebook:'Facebook',fb:'Facebook',x:'X',twitter:'Twitter',t:'Twitter',youtube:'YouTube',youtu:'YouTube',github:'GitHub',medium:'Medium',tiktok:'TikTok',shopify:'Shopify'};
-    const base=h.split('.')[0]; return map[base]||titleCase(base);
-  }
-
-  /* ---------- Meta lookup: handles objects OR arrays of {property/name,content} ---------- */
-  function metaVal(x, key){
-    if (!x) return '';
-    const lowerKey = String(key).toLowerCase();
-
-    // object-shaped
-    const mObj = x.meta && !Array.isArray(x.meta) && typeof x.meta==='object' ? x.meta : null;
-    if (mObj){
-      for (const k of Object.keys(mObj)){
-        if (k.toLowerCase() === lowerKey) return mObj[k];
-      }
-    }
-    // array-shaped
-    const mArr = Array.isArray(x.meta) ? x.meta : (Array.isArray(x.metas) ? x.metas : null);
-    if (mArr){
-      const hit = mArr.find(t=>{
-        const p = (t.property||t.name||'').toLowerCase();
-        return p === lowerKey;
-      });
-      if (hit && hit.content) return hit.content;
-    }
-    // nested openGraph/twitter objects used by many scrapers
-    const og = x.openGraph || x.og || {};
-    const tw = x.twitter || x.card || {};
-    if (lowerKey==='og:site_name') return first(og.site_name, og.siteName);
-    if (lowerKey==='og:title') return first(og.title);
-    if (lowerKey==='og:description') return first(og.description);
-    if (lowerKey==='og:image') return first(
-      og.image, deepGet(og,'images.0'), deepGet(og,'images.0.url')
-    );
-    if (lowerKey==='twitter:image') return first(tw.image, deepGet(tw,'images.0'), deepGet(tw,'images.0.url'), tw.cardImage);
-    if (lowerKey==='twitter:site') return first(tw.site, tw.handle);
-    return '';
-  }
-
   function getSourceLinks(data){
     const candidates = [];
-    const push = (v)=>{ if(!v) return;
-      if(Array.isArray(v)) v.forEach(push);
-      else if(typeof v==="string") candidates.push(v);
-      else if (v && v.url) candidates.push(v.url);
-    };
-    push(data.sourceLinks); push(data.sources); push(data.links);
-    if (data.meta && data.meta.sources) push(data.meta.sources);
-    if (data.hero){ push(data.hero.ctaLink); if (data.hero.links) push(data.hero.links); }
-    (Array.isArray(data.products)?data.products:[]).forEach(p=> push(p.link));
-    (Array.isArray(data.articles)?data.articles:[]).forEach(a=> push(a.link));
-    const seen=new Set();
-    return candidates.filter(u=>/^https?:\/\//i.test(u||"")).filter(u=>{if(seen.has(u))return false; seen.add(u); return true;});
-  }
-
-  /* ---------- Brand from products + sources + site_name ---------- */
-  function detectBrands(data, sources, socialItems){
-    const found=new Set();
-    const prods = Array.isArray(data.products)? data.products : [];
-    for(const p of prods){ if(p && typeof p.brand==='string' && p.brand.trim()) found.add(p.brand.trim()); }
-    const known=['Nike','Adidas','Supreme','Puma','Gucci','Louis Vuitton','Apple','Samsung','Sony'];
-    for(const p of prods){
-      const nm = (p && p.name) ? String(p.name) : '';
-      for(const kb of known){ if(nm.toLowerCase().includes(kb.toLowerCase())) found.add(kb); }
-    }
-    // site_name from social/meta blobs
-    for (const si of socialItems||[]){
-      if (si.siteName) found.add(si.siteName);
-      if (si.platform) found.add(si.platform);
-    }
-    // hostnames
-    for(const s of sources){ try{ const url=new URL(s); found.add(prettyFromHost(url.hostname)); }catch{} }
-
-    const list = Array.from(found).filter(Boolean);
-    return list.length ? list.join(' × ') : 'SporeZ Fusion Page';
-  }
-
-  /* ---------- Normalize profile/media from arbitrary meta ---------- */
-  function normalizeProfile(x){
-    const url = x.url || x.link || x.permalink || '';
-    const platform = x.platform || (()=>{ try{ return prettyFromHost(new URL(url).hostname); }catch{return ''; } })();
-
-    // Name: prefer profile, else site_name, else title
-    const profile = x.profile || x.authorProfile || x.user || x.owner || x.channel || {};
-    const name = first(
-      profile.displayName, profile.fullName, profile.name,
-      x.authorName, x.author, x.username, x.handle, x.channelTitle,
-      metaVal(x,'og:site_name'), metaVal(x,'twitter:title'), metaVal(x,'og:title')
-    );
-
-    // Handle: twitter:site or @username
-    const handleRaw = first(
-      profile.handle, profile.username, x.handle, x.username, x.userHandle,
-      metaVal(x,'twitter:site')
-    );
-    const handle = handleRaw ? (String(handleRaw).startsWith('@')? handleRaw : '@'+handleRaw) : '';
-
-    // Avatar: explicit → og:image/twitter:image → favicon
-    const avatar = first(
-      profile.avatar, profile.avatarUrl, profile.image, profile.photo,
-      x.authorAvatar, x.userProfileImageUrl,
-      metaVal(x,'og:image'), metaVal(x,'twitter:image'),
-      x.favicon, x.icon, deepGet(x,'icons.0.href'),
-      deepGet(x,'manifest.icons.0.src'),
-      faviconFromUrl(url)
-    );
-
-    const siteName = first(metaVal(x,'og:site_name'));
-    return { platform, name, handle, avatar, siteName };
-  }
-
-  function normalizeMedia(x){
-    const img = first(
-      x.image, x.thumbnail, x.previewImage, x.thumb,
-      deepGet(x,'media.image'),
-      deepGet(x,'images.0'), deepGet(x,'images.0.url'),
-      metaVal(x,'og:image'), metaVal(x,'twitter:image'),
-      deepGet(x,'openGraph.images.0'), deepGet(x,'openGraph.images.0.url')
-    );
-    const vid = first(
-      x.video, deepGet(x,'media.video'),
-      metaVal(x,'og:video'), deepGet(x,'openGraph.video'),
-      metaVal(x,'twitter:player'), x.videoUrl, deepGet(x,'players.0')
-    );
-    return { image: img || '', video: vid || '' };
-  }
-
-  function unifyItem(x){
-    if (!x) return null;
-    const url = x.url || x.link || x.permalink || '';
-    let platform = '';
-    try{ platform = url ? prettyFromHost(new URL(url).hostname) : (x.platform||''); }catch{ platform = x.platform||''; }
-
-    const title = first(
-      x.title, x.heading, x.name, deepGet(x,'snippet.title'),
-      metaVal(x,'og:title'), metaVal(x,'twitter:title'), x.pageTitle
-    );
-    const description = first(
-      x.description, x.desc, x.caption, x.summary, x.text,
-      deepGet(x,'snippet.description'), metaVal(x,'og:description'), metaVal(x,'description'), metaVal(x,'twitter:description')
-    );
-
-    const { image, video } = normalizeMedia(x);
-    const likes = numish(first(x.likes, x.likeCount, x.reactions, x.favoriteCount));
-    const comments = numish(first(x.comments, x.commentCount, x.repliesCount));
-    const shares = numish(first(x.shares, x.shareCount, x.retweets, x.repostCount));
-    const views  = numish(first(x.views, x.viewCount, deepGet(x,'statistics.viewCount')));
-
-    const prof = normalizeProfile({ ...x, url, platform });
-
-    return {
-      url, platform, siteName: prof.siteName||'',
-      title, description, image, video,
-      likes, comments, shares, views,
-      author: prof.name || x.author || '',
-      handle: prof.handle || '',
-      avatar: prof.avatar || ''
-    };
-  }
-
-  /* ---------- Collect from many shapes ---------- */
-  function collectMedia(data){
-    const out=[];
     const push = (v)=>{
       if(!v) return;
       if(Array.isArray(v)) v.forEach(push);
-      else if (typeof v==='string' && /^https?:\/\//i.test(v)) out.push(unifyItem({url:v}));
-      else if (v && typeof v==='object'){
-        const u = unifyItem(v);
-        if (u && (u.image||u.video||u.description||u.likes||u.comments||u.shares||u.views||u.title||u.author)) out.push(u);
-      }
+      else if(typeof v === "string") candidates.push(v);
     };
-    // array buckets
-    push(data.social); push(data.media); push(data.posts); push(data.signals); push(data.embeds);
-    // key/value maps keyed by URL
-    const objBuckets=[data.meta?.byUrl, data.linkMeta, data.sourcesDetailed, data.sourceMeta, data.extracted, data.byUrl];
-    objBuckets.forEach(obj=>{
-      if(obj && typeof obj==='object'){
-        Object.keys(obj).forEach(k=> push({ url:k, ...(obj[k]||{}) }));
-      }
-    });
-    // dedupe
-    const seen=new Set();
-    return out.filter(it=>{
-      const key=(it.url||'')+'|'+(it.title||'')+'|'+(it.image||it.video||'');
-      if(seen.has(key)) return false; seen.add(key); return true;
-    });
-  }
-
-  /* ---------- Sources list ---------- */
-  function getSourceLinks(data){
-    const candidates = [];
-    const push = (v)=>{ if(!v) return;
-      if(Array.isArray(v)) v.forEach(push);
-      else if(typeof v==="string") candidates.push(v);
-      else if (v && v.url) candidates.push(v.url);
-    };
-    push(data.sourceLinks); push(data.sources); push(data.links);
+    push(data.sourceLinks);
+    push(data.sources);
+    push(data.links);
     if (data.meta && data.meta.sources) push(data.meta.sources);
-    if (data.hero){ push(data.hero.ctaLink); if (data.hero.links) push(data.hero.links); }
+    if (data.hero){
+      push(data.hero.ctaLink);
+      if (data.hero.links) push(data.hero.links);
+    }
     (Array.isArray(data.products)?data.products:[]).forEach(p=> push(p.link));
     (Array.isArray(data.articles)?data.articles:[]).forEach(a=> push(a.link));
-    const seen=new Set();
-    return candidates.filter(u=>/^https?:\/\//i.test(u||"")).filter(u=>{if(seen.has(u))return false; seen.add(u); return true;});
+
+    // Dedup & only http(s)
+    const seen = new Set();
+    return candidates
+      .filter(u=>/^https?:\/\//i.test(u||""))
+      .filter(u=>{ if(seen.has(u)) return false; seen.add(u); return true; });
   }
 
-  /* ---------- Reaction one-liner ---------- */
-  function reactToStats({likes=0,comments=0,shares=0,views=0}={}){
-    const L=likes,C=comments,S=shares,V=views;
-    const a=[];
-    if(V>0) a.push(`👀 ${V.toLocaleString()} views.`);
-    if(L>1000&&C>100) a.push(`🔥 ${L.toLocaleString()} likes & ${C.toLocaleString()} comments!`);
-    if(L>0&&C>0) a.push(`💬 ${C.toLocaleString()} comments with ${L.toLocaleString()} likes.`);
-    if(S>0) a.push(`🔁 ${S.toLocaleString()} shares — signal’s spreading.`);
-    if(!a.length && (L||C||S||V)) a.push(`⭐ Solid engagement.`);
-    return a[Math.floor(Math.random()*a.length)]||'';
+  // ---- Multi-source brand detection ----
+  function titleCase(s){
+    return s.replace(/\b([a-z])/g, m=>m.toUpperCase());
+  }
+  function prettyFromHost(host){
+    const h = (host||"").toLowerCase().replace(/^www\./,'');
+    // common mappings to nicer brand strings
+    const map = {
+      'instagram':'Instagram',
+      'ig':'Instagram',
+      'facebook':'Facebook',
+      'fb':'Facebook',
+      'x':'X',
+      'twitter':'Twitter',
+      't':'Twitter',
+      'youtube':'YouTube',
+      'youtu':'YouTube',
+      'github':'GitHub',
+      'medium':'Medium',
+      'tiktok':'TikTok',
+      'shopify':'Shopify',
+      'nike':'Nike',
+      'adidas':'Adidas'
+    };
+    const base = h.split('.')[0];
+    if(map[base]) return map[base];
+    return titleCase(base);
+  }
+  function detectBrands(data, sources){
+    const found = new Set();
+    const prods = Array.isArray(data.products) ? data.products : [];
+
+    // 1) explicit product brand fields
+    for(const p of prods){
+      if (p && typeof p.brand === 'string' && p.brand.trim()){
+        found.add(p.brand.trim());
+      }
+    }
+
+    // 2) known brands from product names (expand as needed)
+    const knownBrands = ['Nike','Adidas','Supreme','Puma','Gucci','Louis Vuitton','Apple','Samsung','Sony'];
+    for(const p of prods){
+      const nm = (p && p.name) ? String(p.name) : '';
+      for(const kb of knownBrands){
+        if (nm.toLowerCase().includes(kb.toLowerCase())) found.add(kb);
+      }
+    }
+
+    // 3) hostnames from sources
+    for(const s of sources){
+      try{
+        const url = new URL(s);
+        found.add(prettyFromHost(url.hostname));
+      }catch{}
+    }
+
+    // 4) output
+    const list = Array.from(found).filter(Boolean);
+    return list.length ? list.join(' × ') : 'SporeZ Fusion Page';
   }
 
   function render(data){
@@ -493,64 +292,24 @@
     const products = Array.isArray(data.products)? data.products : [];
     const articles = Array.isArray(data.articles)? data.articles : [];
     const sources = getSourceLinks(data);
-    const socials = collectMedia(data);
 
-    const brandLogo = (data.brand && data.brand.logo) ? `<img src="${esc(data.brand.logo)}" alt="Brand">` : "";
-    const brandWord = esc(detectBrands(data, sources, socials));
+    const brandLogo = (data.brand && data.brand.logo) ? <img src="${esc(data.brand.logo)}" alt="Brand"> : "";
+    const brandWord = esc(detectBrands(data, sources)); // << multi-source brands with fallback
 
     const sourcesHTML = sources.length
-      ? sources.map((u,i)=>`<a href="${esc(u)}" target="_blank" rel="noopener">Source${i+1}</a>`).join("")
+      ? sources.map((u,i)=><a href="${esc(u)}" target="_blank" rel="noopener">Source${i+1}</a>).join("")
       : "";
 
-    const topSitemap = `
+    const topSitemap = 
       <div class="top-sitemap">
         <a href="https://sporez.netlify.app/" target="_blank" rel="noopener">Home</a>
-        ${products.length ? `<a href="#products" onclick="event.preventDefault();document.getElementById('products')?.scrollIntoView({behavior:'smooth'});">Products</a>` : ``}
-        ${articles.length ? `<a href="#info" onclick="event.preventDefault();document.getElementById('info')?.scrollIntoView({behavior:'smooth'});">Info</a>` : ``}
+        ${products.length ? <a href="#products" onclick="event.preventDefault();document.getElementById('products')?.scrollIntoView({behavior:'smooth'});">Products</a> : `}
+        ${articles.length ? <a href="#info" onclick="event.preventDefault();document.getElementById('info')?.scrollIntoView({behavior:'smooth'});">Info</a> : `}
         <a href="https://zetsumetsu.webnode.page" target="_blank" rel="noopener">Zetsumetsu Eoe™</a>
         <a href="https://sporez.netlify.app/" target="_blank" rel="noopener">SporeZ</a>
-      </div>`;
+      </div>;
 
-    const socialHTML = socials.length ? `
-      <section class="section" id="social">
-        <div class="title">Social Signals</div>
-        <div class="social-list">
-          ${socials.slice(0,8).map(m=>{
-            const rx = reactToStats(m);
-            const media = m.video
-              ? `<div class="social-media"><video src="${esc(m.video)}" controls></video></div>`
-              : (m.image ? `<div class="social-media"><img src="${esc(m.image)}" alt=""></div>` : ``);
-            const avatar = m.avatar ? `<div class="avatar"><img src="${esc(m.avatar)}" alt=""></div>` : `<div class="avatar"></div>`;
-            const handle = m.handle ? ` <span class="dot">•</span> <span class="handle">${esc(m.handle)}</span>` : '';
-            const platform = m.platform ? ` <span class="dot">•</span> <span class="handle">${esc(m.platform)}</span>` : '';
-            const title = m.title ? `<div class="social-title">${esc(m.title)}</div>` : '';
-            const desc  = m.description ? `<div class="social-desc">${esc(m.description)}</div>` : '';
-            return `
-              <div class="social-card">
-                <div class="social-head">
-                  ${avatar}
-                  <div class="name-row">
-                    <span class="display-name">${esc(m.author||m.siteName||m.platform||'Post')}</span>${handle}${platform}
-                  </div>
-                </div>
-                ${media}
-                ${title}
-                ${desc}
-                <div class="social-meta">
-                  ${m.likes?`<span class="pill">❤️ ${esc(m.likes.toLocaleString ? m.likes.toLocaleString() : String(m.likes))}</span>`:""}
-                  ${m.comments?`<span class="pill">💬 ${esc(m.comments.toLocaleString ? m.comments.toLocaleString() : String(m.comments))}</span>`:""}
-                  ${m.shares?`<span class="pill">🔁 ${esc(m.shares.toLocaleString ? m.shares.toLocaleString() : String(m.shares))}</span>`:""}
-                  ${m.views?`<span class="pill">👀 ${esc(m.views.toLocaleString ? m.views.toLocaleString() : String(m.views))}</span>`:""}
-                  ${m.url?`<a class="pill" href="${esc(m.url)}" target="_blank" rel="noopener" style="text-decoration:none">Open</a>`:""}
-                </div>
-                ${rx?`<div class="social-react">${esc(rx)}</div>`:""}
-              </div>`;
-          }).join("")}
-        </div>
-      </section>
-    ` : ``;
-
-    root.innerHTML = `
+    root.innerHTML = 
       <!-- BRAND HEADER -->
       <div class="brand-header">
         <div class="brand-line">
@@ -568,53 +327,50 @@
         ${topSitemap}
       </div>
 
-      <!-- HERO -->
+      <!-- EXISTING CONTENT -->
       <div class="hero">
-        ${hero.image ? `<div class="img-wrap"><img src="${esc(h
-ero.image)}" alt=""></div>` : ""}
+        ${hero.image ? <div class="img-wrap"><img src="${esc(hero.image)}" alt=""></div> : ""}
         <h1>${esc(hero.title || "SporeZ Drop")}</h1>
-        ${hero.subtitle ? `<p class="muted">${esc(hero.subtitle)}</p>` : ""}
-        ${hero.ctaText ? `<p class="cta"><a href="${esc(hero.ctaLink||"#")}" target="_blank" rel="noopener"> ${esc(hero.ctaText)} </a></p>` : ""}
+        ${hero.subtitle ? <p class="muted">${esc(hero.subtitle)}</p> : ""}
+        ${hero.ctaText ? <p class="cta"><a href="${esc(hero.ctaLink||"#")}" target="_blank" rel="noopener"> ${esc(hero.ctaText)} </a></p> : ""}
       </div>
 
-      ${products.length ? `
+      ${products.length ? 
         <section class="section">
           <div class="title">Products</div>
           <div id="products" class="products">
-            ${products.map(p=>`
+            ${products.map(p=>
               <div class="prod">
-                ${p.image?`<img src="${esc(p.image)}" alt="">`:``}
+                ${p.image?<img src="${esc(p.image)}" alt="">:`}
                 <div class="name">${esc(p.name||"")}</div>
                 <div class="price">${esc(p.price||"")}</div>
-                ${p.description?`<div class="muted" style="color:#3d4a55">${esc(p.description)}</div>`:""}
-                ${p.link?`<div><a href="${esc(p.link)}" target="_blank" rel="noopener" style="color:#0a6a83;text-decoration:none;font-weight:800">View</a></div>`:""}
+                ${p.description?<div class="muted" style="color:#3d4a55">${esc(p.description)}</div>:""}
+                ${p.link?<div><a href="${esc(p.link)}" target="_blank" rel="noopener" style="color:#0a6a83;text-decoration:none;font-weight:800">View</a></div>:""}
               </div>
-            `).join("")}
+            ).join("")}
           </div>
-        </section>` : ""}
+        </section> : ""}
 
-      ${articles.length ? `
+      ${articles.length ? 
         <section class="section" style="margin-top:18px">
           <div class="title">Info</div>
           <div id="info" class="articles">
-            ${articles.map(a=>`
+            ${articles.map(a=>
               <article class="article">
                 <h3>${esc(a.heading||"")}</h3>
                 <div>${esc(a.content||"")}</div>
               </article>
-            `).join("")}
+            ).join("")}
           </div>
-        </section>` : ""}
-
-      ${socialHTML}
+        </section> : ""}
 
       <!-- FOOTER SEO + MINI SITEMAP -->
       <div class="site-footer">
         <div>Generated preview via Jessica-SPZ auto-fusion. Source count: ${sources.length}. Updated ${new Date().toLocaleDateString()}.</div>
         <div class="sitemap">
           <a href="https://sporez.netlify.app/" target="_blank" rel="noopener">Home</a>
-          ${products.length ? `<a href="#products" onclick="event.preventDefault();document.getElementById('products')?.scrollIntoView({behavior:'smooth'});">Products</a>` : ``}
-          ${articles.length ? `<a href="#info" onclick="event.preventDefault();document.getElementById('info')?.scrollIntoView({behavior:'smooth'});">Info</a>` : ``}
+          ${products.length ? <a href="#products" onclick="event.preventDefault();document.getElementById('products')?.scrollIntoView({behavior:'smooth'});">Products</a> : `}
+          ${articles.length ? <a href="#info" onclick="event.preventDefault();document.getElementById('info')?.scrollIntoView({behavior:'smooth'});">Info</a> : `}
           <a href="https://zetsumetsu.webnode.page" target="_blank" rel="noopener">Zetsumetsu Eoe™</a>
           <a href="https://sporez.netlify.app/" target="_blank" rel="noopener">SporeZ</a>
         </div>
@@ -624,7 +380,7 @@ ero.image)}" alt=""></div>` : ""}
       <footer style="margin-top:8px;text-align:center;color:#6b7f94;font-size:12px">
         SporeZ • Jessica-SPZ ${data.slug? "• "+esc(data.slug): ""}
       </footer>
-    `;
+    ;
   }
 
   try {
