@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -181,30 +182,6 @@
     .prod .price{color:var(--ok); font-weight:800}
     .prod a{color:var(--accent); text-decoration:none; font-weight:800}
 
-    /* --- NEW: Social Signals --- */
-    .social-list{
-      display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:12px;
-    }
-    .social-card{
-      position:relative; border-radius:12px; padding:10px; background:#0b131b; display:grid; gap:8px;
-      border:2px solid transparent; background-clip:padding-box;
-      box-shadow: inset 0 0 0 1px rgba(0,0,0,.45), 0 10px 26px rgba(0,0,0,.28);
-    }
-    .social-card::before{
-      content:""; position:absolute; inset:-2px; border-radius:14px; padding:2px;
-      background: linear-gradient(135deg, var(--glow1), var(--iris), var(--glow2));
-      background-size:300% 300%; animation: iridescentMove 8s ease infinite;
-      -webkit-mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-      -webkit-mask-composite:xor; mask-composite:exclude; pointer-events:none;
-    }
-    .social-media{width:100%; border-radius:10px; overflow:hidden; border:1px solid rgba(255,255,255,.06); background:#0d1924}
-    .social-media img{width:100%; height:150px; object-fit:cover; display:block}
-    .social-media video{width:100%; height:150px; object-fit:cover; display:block}
-    .social-desc{color:#c6ecff; font-size:12px}
-    .social-meta{display:flex; gap:8px; flex-wrap:wrap; align-items:center; color:#8fb8cf; font-weight:700; font-size:12px}
-    .social-meta .pill{background:#0e1b26; border-color:#173346; color:#8fb8cf}
-    .social-react{color:#9dd8ff; font-style:italic; font-size:12px}
-
     footer{margin-top:10px; text-align:center; color:var(--muted); font-size:12px}
     .center{text-align:center}
     .bad{color:var(--danger)}
@@ -287,12 +264,6 @@
             </div>
           </div>
 
-          <!-- NEW: Social Signals panel -->
-          <div class="box holo" style="margin-top:12px;">
-            <div class="center" style="margin-bottom:8px; color:var(--muted); font-weight:800; letter-spacing:.2px;">Social Signals</div>
-            <div class="social-list" id="social"></div>
-          </div>
-
           <footer id="footer">SporeZ • Jessica-SPZ • Auto-Fusion</footer>
         </div>
       </section>
@@ -316,13 +287,13 @@
     const elLinks = document.getElementById("links");
     const elLog   = document.getElementById("log");
     const elJSON  = document.getElementById("json");
+    const elSlug  = document.getElementById("slug");
     const elHeroImg = document.getElementById("heroImg");
     const elHeroTitle = document.getElementById("heroTitle");
     const elHeroSub = document.getElementById("heroSub");
     const elHeroCta = document.getElementById("heroCta");
     const elProducts = document.getElementById("products");
     const elInfo = document.getElementById("info");
-    const elSocial = document.getElementById("social");
     const elFooter = document.getElementById("footer");
 
     const $ = (s) => document.querySelector(s);
@@ -336,13 +307,12 @@
 
     async function postJSON(path, body){
       const res = await fetch(path, { method:"POST", headers:{ "Content-Type":"application/json" }, body: JSON.stringify(body || {}) });
-      if(!res.ok){ const t = await res.text().catch(()=> ""); throw new Error(`HTTP ${res.status} ${t}`); }
+      if(!res.ok){ const t = await res.text().catch(()=> ""); throw new Error(HTTP ${res.status} ${t}); }
       return res.json();
     }
 
     // State
     let fused = null;
-    let social = [];
 
     // Fallback sample
     const sampleFused = {
@@ -361,24 +331,6 @@
       media:[]
     };
 
-    // NEW: Sample social (only used if backend not available)
-    const sampleSocial = [
-      {
-        url:"https://instagram.com/p/xyz",
-        title:"Sample IG Post",
-        description:"Behind the scenes of the drop.",
-        image:"https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=800&auto=format&fit=crop",
-        likes:2555, comments:616, shares:120, author:"artworqq", platform:"Instagram"
-      },
-      {
-        url:"https://twitter.com/x/status/123",
-        title:"Teaser",
-        description:"Sneak peek — holo print in motion.",
-        video:"", // leave empty to show just text
-        likes:984, comments:112, shares:89, author:"sporez", platform:"X"
-      }
-    ];
-
     async function runCrawlAndFuse(){
       try{
         elLog.textContent = "running…";
@@ -389,95 +341,16 @@
         const crawl = await postJSON("/api/crawl", { links, session: SID });
 
         log("Fusing content…");
-        fused = await postJSON("/api/fuse", { results: (crawl.results || []), mode: getMode(), defaults: getDefaults(), session: SID });
+        fused = await postJSON("/api/fuse", { results: crawl.results || [], mode: getMode(), defaults: getDefaults(), session: SID });
         elJSON.textContent = JSON.stringify(fused, null, 2);
         log("Fusion complete.");
-
-        // --- NEW: Social meta enrichment ---
-        log("Fetching social metadata…");
-        social = await fetchSocialMeta(links);
-        log(`Social metadata ready (${social.length} items).`);
-
-        renderPreview(fused, social);
-      }catch(e){
-        log("Error: " + e.message, true);
-        // still render at least fallback
-        renderPreview(fused || sampleFused, social || []);
-      }
+        renderPreview(fused);
+      }catch(e){ log("Error: " + e.message, true); }
     }
 
     function ensure(v, fb){ return (v===undefined || v===null || v==="") ? fb : v; }
 
-    // --- NEW: backend-assisted social meta fetcher (graceful fallback) ---
-    async function fetchSocialMeta(links){
-      try{
-        const out = await postJSON("/api/social_meta", { links, session: SID });
-        // Expecting [{url, title, description, image, video, likes, comments, shares, author, platform}]
-        if (Array.isArray(out?.items)) return out.items.filter(Boolean);
-      }catch(e){
-        log("Social meta API not available, using sample.", true);
-      }
-      return sampleSocial;
-    }
-
-    // --- NEW: stat reaction generator ---
-    function reactToStats({likes=0, comments=0, shares=0}={}){
-      const opts = [
-        (l,c)=> l>0 && c>0 ? `💬 ${c} comments and ${l} likes — people are talking.` : null,
-        (l)=> l>1000 ? `🔥 This post is blowing up with ${l.toLocaleString()} likes!` : null,
-        (l)=> l>0 ? `💖 Loved by ${l.toLocaleString()} people.` : null,
-        (l,c,s)=> (s||0)>0 ? `📢 ${s.toLocaleString()} shares spreading the signal.` : null,
-        (l,c)=> c>0 ? `👏 ${c.toLocaleString()} comments — strong engagement.` : null
-      ];
-      for (let i=0;i<3;i++){ // try a few random picks
-        const t = opts[Math.floor(Math.random()*opts.length)];
-        const r = t(likes,comments,shares);
-        if (r) return r;
-      }
-      return (likes||comments||shares) ? `⭐ Nice engagement on this one.` : ``;
-    }
-
-    // --- NEW: social card renderer ---
-    function socialCardNode(m){
-      const div = document.createElement("div"); div.className = "social-card";
-      const mediaWrap = document.createElement("div"); mediaWrap.className = "social-media";
-      if (m.video){
-        const v = document.createElement("video"); v.src = m.video; v.controls = true; mediaWrap.appendChild(v);
-      } else if (m.image){
-        const i = document.createElement("img"); i.src = m.image; i.alt = m.title || "post"; mediaWrap.appendChild(i);
-      }
-      const title = document.createElement("div");
-      title.style.fontWeight = "800"; title.style.letterSpacing = ".2px";
-      title.textContent = m.title || (m.platform ? (m.platform + " post") : "Post");
-
-      const desc = document.createElement("div"); desc.className = "social-desc";
-      desc.textContent = m.description || "";
-
-      const meta = document.createElement("div"); meta.className = "social-meta";
-      if (m.platform){ const p = document.createElement("span"); p.className="pill"; p.textContent = m.platform; meta.appendChild(p); }
-      if (m.author){ const a = document.createElement("span"); a.className="pill"; a.textContent = "@" + m.author; meta.appendChild(a); }
-      if (typeof m.likes === "number"){ const l = document.createElement("span"); l.className="pill"; l.textContent = `❤️ ${m.likes.toLocaleString()}`; meta.appendChild(l); }
-      if (typeof m.comments === "number"){ const c = document.createElement("span"); c.className="pill"; c.textContent = `💬 ${m.comments.toLocaleString()}`; meta.appendChild(c); }
-      if (typeof m.shares === "number"){ const s = document.createElement("span"); s.className="pill"; s.textContent = `🔁 ${m.shares.toLocaleString()}`; meta.appendChild(s); }
-
-      const react = document.createElement("div"); react.className = "social-react";
-      const rx = reactToStats({likes:m.likes, comments:m.comments, shares:m.shares});
-      react.textContent = rx;
-
-      const link = document.createElement("a");
-      link.href = m.url || "#"; link.target = "_blank"; link.rel="noopener";
-      link.textContent = "Open"; link.style.color = "var(--accent)"; link.style.fontWeight = "800"; link.style.textDecoration = "none";
-
-      if (mediaWrap.childNodes.length) div.append(mediaWrap);
-      div.append(title);
-      if (desc.textContent) div.append(desc);
-      if (meta.childNodes.length) div.append(meta);
-      if (rx) div.append(react);
-      if (m.url) div.append(link);
-      return div;
-    }
-
-    function renderPreview(data, socialItems=[]){
+    function renderPreview(data){
       const d = data || sampleFused;
       const hero = d.hero || {};
       const prods = Array.isArray(d.products) ? d.products : [];
@@ -508,12 +381,6 @@
         {heading:"About", content:"This section will summarize your fused links: brand purpose, key features, and how to act."}
       ] : [])).forEach(a=> elInfo.appendChild(infoNode(a)));
 
-      // NEW: Social Signals
-      elSocial.innerHTML = "";
-      (Array.isArray(socialItems) ? socialItems : []).slice(0,6).forEach(s => {
-        try{ elSocial.appendChild(socialCardNode(s)); }catch{}
-      });
-
       elFooter.textContent = (d.mode ? d.mode.toUpperCase()+" • " : "") + "SporeZ • Jessica-SPZ";
     }
 
@@ -539,7 +406,7 @@
       const json = JSON.stringify(d);
       const bytes = new TextEncoder().encode(json);
       const b64 = btoa(Array.from(bytes, b => String.fromCharCode(b)).join(""));
-      const url = `/preview.html#j=${b64}`;
+      const url = /preview.html#j=${b64};
       window.open(url, "_blank");
     }
 
@@ -548,7 +415,7 @@
     document.getElementById("btn-preview").addEventListener("click", ()=> openLivePreview(fused || sampleFused));
 
     // First paint
-    renderPreview(sampleFused, sampleSocial);
+    renderPreview(sampleFused);
   </script>
 </body>
 </html>
