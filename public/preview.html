@@ -59,31 +59,40 @@
 
   .wrap{max-width:900px;margin:auto;padding:22px}
 
-  /* ======= NEW: Brand header + nav ======= */
-  .brand-bar{
+  /* ======= BRAND HEADER ======= */
+  .brand-header{padding:6px 0 0}
+  .brand-line{
     display:flex; align-items:center; justify-content:space-between; gap:12px;
-    padding:6px 0 14px; border-bottom:1px solid #eef3fa;
+    padding:8px 0 12px; border-bottom:1px solid #eef3fa;
   }
   .brand{
     display:flex; align-items:center; gap:10px; font-weight:900; letter-spacing:.3px;
   }
   .brand img{height:28px;width:auto;display:block}
-  .brand .wordmark{
+  .wordmark{
     font-size:18px; text-transform:uppercase;
     background:linear-gradient(90deg,var(--glow1),var(--iris),var(--glow2));
     -webkit-background-clip:text; background-clip:text; color:transparent;
   }
-  .nav{
-    display:flex; flex-wrap:wrap; gap:8px; justify-content:flex-end;
-  }
-  .nav a{
-    display:inline-block; padding:6px 10px; border-radius:999px; font-weight:700; text-decoration:none;
-    color:#0a2430; background:#f2f9ff; border:1px solid #d9e9f7;
-    box-shadow: inset 0 1px 0 rgba(255,255,255,.9);
-  }
-  .nav a:hover{background:#e7f3ff}
 
-  /* ======= Existing hero/sections (kept) ======= */
+  /* ======= FACEBOOK-LIKE BAR with sources ======= */
+  .fb-bar{
+    background:#f3f7fc; border:1px solid #e3edf7; border-radius:12px; margin:10px 0 16px;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.9), 0 1px 2px rgba(10,22,40,.04);
+  }
+  .sources-nav{
+    display:flex; align-items:center; gap:8px; padding:8px; overflow:auto; justify-content:center;
+    scrollbar-width:thin;
+  }
+  .sources-nav a{
+    background:#fff; border:1px solid #d9e9f7; border-radius:999px; padding:8px 12px; white-space:nowrap;
+    color:#0a2430; text-decoration:none; font-weight:800; letter-spacing:.2px;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.95), 0 1px 2px rgba(14,30,65,.06);
+    transition: background .15s ease, border-color .15s ease, transform .15s ease;
+  }
+  .sources-nav a:hover{background:#e7f3ff; border-color:#cbe3f6; transform:translateY(-1px)}
+
+  /* ======= EXISTING hero/sections (untouched structure) ======= */
   .hero{text-align:center; display:grid; gap:10px}
   .img-wrap{border-radius:16px; position:relative; border:2px solid transparent; background-clip:padding-box;}
   .img-wrap::before{
@@ -142,7 +151,7 @@
   }
   .article h3{margin:0 0 6px}
 
-  /* ======= NEW: Footer SEO block + mini sitemap ======= */
+  /* ======= FOOTER SEO + MINI SITEMAP ======= */
   .site-footer{
     margin-top:18px; padding-top:12px; border-top:1px solid #e9f0f8; color:#5a6b7a; font-size:12px;
   }
@@ -153,6 +162,10 @@
     color:#0a2430; text-decoration:none; border-bottom:1px dotted #a9c8de;
   }
   .sitemap a:hover{border-bottom-color:#6fb0d6}
+  .brandline{
+    margin-top:8px; text-align:center; color:#5a6b7a; font-size:12px; font-weight:700;
+    letter-spacing:.2px;
+  }
 </style>
 </head>
 <body>
@@ -176,7 +189,7 @@
     return JSON.parse(text);
   }
 
-  // NEW: collect source links if present in fused payload; fall back to links found in content
+  // Gather source links if present in fused payload
   function getSourceLinks(data){
     const candidates = [];
     const push = (v)=>{
@@ -185,13 +198,11 @@
       else if(typeof v === "string") candidates.push(v);
     };
 
-    // Preferred explicit fields (any one may exist depending on fuse)
     push(data.sourceLinks);
     push(data.sources);
     push(data.links);
     if (data.meta && data.meta.sources) push(data.meta.sources);
 
-    // Fallbacks: harvest from hero/products/articles
     if (data.hero){
       push(data.hero.ctaLink);
       if (data.hero.links) push(data.hero.links);
@@ -199,7 +210,6 @@
     (Array.isArray(data.products)?data.products:[]).forEach(p=> push(p.link));
     (Array.isArray(data.articles)?data.articles:[]).forEach(a=> push(a.link));
 
-    // Dedup + keep http(s) only
     const seen = new Set();
     return candidates
       .filter(u=>/^https?:\/\//i.test(u||""))
@@ -212,24 +222,29 @@
     const articles = Array.isArray(data.articles)? data.articles : [];
     const sources = getSourceLinks(data);
 
-    // Build brand header + nav (additions only)
     const brandLogo = (data.brand && data.brand.logo) ? `<img src="${esc(data.brand.logo)}" alt="Brand">` : "";
     const brandWord = esc((data.brand && data.brand.name) || "SporeZ");
 
-    const navHTML = sources.length
-      ? `<nav class="nav">
-          ${sources.map((u, i)=>`<a href="${esc(u)}" target="_blank" rel="noopener">Link ${i+1}</a>`).join("")}
-         </nav>`
-      : `<nav class="nav"></nav>`;
+    // build sources as "Source1", "Source2", …
+    const sourcesHTML = sources.length
+      ? sources.map((u,i)=>`<a href="${esc(u)}" target="_blank" rel="noopener">Source${i+1}</a>`).join("")
+      : "";
 
     root.innerHTML = `
       <!-- BRAND HEADER (added) -->
-      <div class="brand-bar">
-        <div class="brand">
-          ${brandLogo}
-          <div class="wordmark">${brandWord}</div>
+      <div class="brand-header">
+        <div class="brand-line">
+          <div class="brand">
+            ${brandLogo}
+            <div class="wordmark">${brandWord}</div>
+          </div>
+          <!-- right side intentionally empty (no search/profile requested) -->
+          <div></div>
         </div>
-        ${navHTML}
+        <!-- Facebook-like bar with source links -->
+        <div class="fb-bar">
+          <nav class="sources-nav">${sourcesHTML}</nav>
+        </div>
       </div>
 
       <!-- EXISTING CONTENT (unchanged structure) -->
@@ -243,7 +258,7 @@
       ${products.length ? `
         <section class="section">
           <div class="title">Products</div>
-          <div class="products">
+          <div id="products" class="products">
             ${products.map(p=>`
               <div class="prod">
                 ${p.image?`<img src="${esc(p.image)}" alt="">`:``}
@@ -259,7 +274,7 @@
       ${articles.length ? `
         <section class="section" style="margin-top:18px">
           <div class="title">Info</div>
-          <div class="articles">
+          <div id="info" class="articles">
             ${articles.map(a=>`
               <article class="article">
                 <h3>${esc(a.heading||"")}</h3>
@@ -269,16 +284,17 @@
           </div>
         </section>` : ""}
 
-      <!-- FOOTER SEO + MINI SITEMAP (added) -->
+      <!-- FOOTER SEO + MINI SITEMAP (kept, with text updates) -->
       <div class="site-footer">
         <div>Generated preview via Jessica-SPZ auto-fusion. Source count: ${sources.length}. Updated ${new Date().toLocaleDateString()}.</div>
         <div class="sitemap">
           <a href="#top">Home</a>
-          ${products.length ? `<a href="#products" onclick="event.preventDefault();document.querySelector('.products')?.scrollIntoView({behavior:'smooth'});">Products</a>` : ``}
-          ${articles.length ? `<a href="#info" onclick="event.preventDefault();document.querySelector('.articles')?.scrollIntoView({behavior:'smooth'});">Info</a>` : ``}
-          <a href="https://zetsumetsu.webnode.page" target="_blank" rel="noopener">Zetsumetsu</a>
+          ${products.length ? `<a href="#products" onclick="event.preventDefault();document.getElementById('products')?.scrollIntoView({behavior:'smooth'});">Products</a>` : ``}
+          ${articles.length ? `<a href="#info" onclick="event.preventDefault();document.getElementById('info')?.scrollIntoView({behavior:'smooth'});">Info</a>` : ``}
+          <a href="https://zetsumetsu.webnode.page" target="_blank" rel="noopener">Zetsumetsu Eoe™</a>
           <a href="https://sporez.netlify.app" target="_blank" rel="noopener">SporeZ</a>
         </div>
+        <div class="brandline">Zetsumetsu Eoe™ | ZETSUMETSU CORPORATION | Artworqq Kevin Suber</div>
       </div>
 
       <footer style="margin-top:8px;text-align:center;color:#6b7f94;font-size:12px">
