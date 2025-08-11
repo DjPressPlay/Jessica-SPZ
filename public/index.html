@@ -27,7 +27,6 @@
       text-align:center;
     }
     .sub{color:var(--muted); text-align:center}
-    /* Two-pane layout: narrow sticky left, big right */
     .grid{
       display:grid;
       grid-template-columns: minmax(280px, 380px) 1fr;
@@ -43,7 +42,7 @@
       margin:0 0 10px; font-size:12px; font-weight:800; letter-spacing:.2px; text-transform:uppercase;
       color:var(--muted); text-align:center;
     }
-    /* Left controls: sticky + scrollable */
+    /* Left controls */
     .controls{display:grid; gap:10px; position:sticky; top:12px; max-height:calc(100vh - 24px); overflow:auto}
     textarea, input[type="text"]{
       width:100%; background:#0b121a; color:var(--white); border:1px solid #142131; border-radius:10px;
@@ -69,47 +68,33 @@
       border:1px solid #0f2536; border-radius:10px; padding:10px; font-size:12px;
     }
 
-    /* Right: live preview page */
+    /* Right: device preview */
     .preview{display:grid; gap:12px}
-    .card{
-      position:relative; border-radius:18px; padding:16px; overflow:hidden;
-      border:2px solid rgba(255,255,255,.08);
-      background:
-        linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,0)) ,
-        radial-gradient(100% 70% at 0% 0%, rgba(0,240,255,.08), transparent 60%),
-        radial-gradient(100% 70% at 100% 0%, rgba(0,255,136,.08), transparent 60%),
-        #0b1219;
-      box-shadow: 0 0 0 1px rgba(0,0,0,.5) inset, 0 30px 50px rgba(0,0,0,.35), 0 0 60px rgba(0,240,255,.05);
+    .preview-toolbar{
+      display:flex; gap:8px; align-items:center; justify-content:space-between;
+      border:1px solid var(--line); border-radius:12px; padding:8px 10px; background:#0c141caa;
     }
-    .card .frame{ position:absolute; inset:0; pointer-events:none; background:conic-gradient(from 0deg, rgba(0,240,255,.25), rgba(0,255,136,.25), rgba(0,240,255,.25)); mask:linear-gradient(#000,transparent 30%); opacity:.15; }
-    .hero{display:grid; gap:8px; place-items:center; text-align:center}
-    .hero img{
-      width:100%; height:44vh; max-height:320px; object-fit:cover; border-radius:14px; border:1px solid rgba(255,255,255,.08);
-      background:linear-gradient(135deg,#0d1720,#0a1219)
+    .preview-toolbar .group{display:flex; gap:6px; align-items:center; flex-wrap:wrap}
+    .chip{
+      border:1px solid #143244; background:#0e1b26; color:var(--white);
+      padding:6px 10px; border-radius:999px; font-size:12px; cursor:pointer;
     }
-    .hero h3{margin:6px 0 0; font-size:20px}
-    .hero p{margin:0; color:var(--muted); font-size:13px}
-    .cta{margin-top:8px}
-    .cta a{
-      display:inline-block; padding:10px 14px; border-radius:999px; text-decoration:none; font-weight:800;
-      color:#001b1f; background:linear-gradient(90deg,var(--glow1),var(--glow2));
-      border:0; box-shadow:0 8px 24px rgba(0,255,200,.18);
+    .chip.is-active{background:linear-gradient(90deg,var(--glow1),var(--glow2)); color:#001b1f; border-color:transparent; font-weight:800}
+    .iframe-wrap{
+      display:flex; align-items:center; justify-content:center;
+      background:linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,0));
+      border:1px dashed #163044; border-radius:14px; padding:10px; min-height:480px;
     }
-    .columns{display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:12px}
-    .box{ border:1px solid #142131; border-radius:14px; padding:12px; background:#0c141caa; }
-    .products{display:grid; grid-template-columns:repeat(auto-fill,minmax(160px,1fr)); gap:10px}
-    .prod{
-      border:1px solid #162535; border-radius:12px; padding:10px; background:#0b131b;
-      display:grid; gap:8px; text-align:center;
+    .device{
+      background:#0a0f14; border:1px solid #182738; border-radius:16px; box-shadow:0 18px 42px rgba(0,0,0,.45);
+      overflow:hidden; width:100%; max-width:100%;
     }
-    .prod img{width:100%; height:120px; object-fit:cover; border-radius:10px; background:#0d1924}
-    .prod .name{font-weight:700}
-    .prod .price{color:var(--ok); font-weight:700}
-    .prod a{color:var(--accent); text-decoration:none; font-weight:700}
-    footer{margin-top:8px; text-align:center; color:var(--muted); font-size:12px}
-    .center{text-align:center}
-    .bad{color:var(--danger)}
-    @media (max-width:980px){ .grid{grid-template-columns:1fr} .columns{grid-template-columns:1fr} .hero img{height:36vh; max-height:260px} }
+    /* device sizes */
+    .device.desktop{ width:100%; height:70vh; }
+    .device.tablet { width:820px; max-width:100%; height:70vh; }
+    .device.mobile { width:390px; max-width:100%; height:700px; }
+    .device iframe{ border:0; width:100%; height:100%; background:#fff }
+    @media (max-width:980px){ .grid{grid-template-columns:1fr} .device.desktop{ height:60vh } }
   </style>
 </head>
 <body>
@@ -122,7 +107,7 @@
     </header>
 
     <div class="grid">
-      <!-- LEFT: Controls (sticky) -->
+      <!-- LEFT: Controls -->
       <section class="panel controls">
         <h2>Input Links</h2>
         <textarea id="links" placeholder="Paste 1 link per line"></textarea>
@@ -157,37 +142,33 @@
         </div>
       </section>
 
-      <!-- RIGHT: Live Preview -->
+      <!-- RIGHT: Device Preview (iframe) -->
       <section class="panel preview">
         <h2>Live Preview</h2>
-        <div class="card" id="card">
-          <div class="frame"></div>
-          <div class="hero" id="hero">
-            <img id="heroImg" alt="Hero" />
-            <h3 id="heroTitle" class="center">Your Fused Page Will Appear Here</h3>
-            <p id="heroSub" class="center">Paste links on the left and run <b>Crawl + Fuse</b>.</p>
-            <div class="cta" id="heroCta"></div>
-          </div>
 
-          <div class="columns">
-            <div class="box">
-              <div class="center" style="margin-bottom:8px; color:var(--muted); font-weight:700;">Products</div>
-              <div class="products" id="products"></div>
-            </div>
-            <div class="box">
-              <div class="center" style="margin-bottom:8px; color:var(--muted); font-weight:700;">Info</div>
-              <div id="info"></div>
-            </div>
+        <div class="preview-toolbar">
+          <div class="group">
+            <button class="chip is-active" data-size="desktop">Desktop</button>
+            <button class="chip" data-size="tablet">Tablet</button>
+            <button class="chip" data-size="mobile">Mobile</button>
           </div>
+          <div class="group">
+            <button class="chip" id="btn-refresh">Refresh</button>
+            <button class="chip" id="btn-open">Open Fullscreen</button>
+          </div>
+        </div>
 
-          <footer id="footer">SporeZ • Jessica-SPZ • Auto-Fusion</footer>
+        <div class="iframe-wrap">
+          <div id="device" class="device desktop">
+            <iframe id="previewFrame" src="about:blank" title="Jessica-SPZ Preview"></iframe>
+          </div>
         </div>
       </section>
     </div>
   </div>
 
   <script>
-    // --- Session ID (SporeZ-style) ---
+    // --- Session ID ---
     function getOrCreateSessionId() {
       try {
         const k = "spz_session_id";
@@ -204,13 +185,8 @@
     const elLog   = document.getElementById("log");
     const elJSON  = document.getElementById("json");
     const elSlug  = document.getElementById("slug");
-    const elHeroImg = document.getElementById("heroImg");
-    const elHeroTitle = document.getElementById("heroTitle");
-    const elHeroSub = document.getElementById("heroSub");
-    const elHeroCta = document.getElementById("heroCta");
-    const elProducts = document.getElementById("products");
-    const elInfo = document.getElementById("info");
-    const elFooter = document.getElementById("footer");
+    const elDevice = document.getElementById("device");
+    const elFrame  = document.getElementById("previewFrame");
 
     const $ = (s) => document.querySelector(s);
     const getMode = () => (document.querySelector('input[name="mode"]:checked')?.value || "auto");
@@ -228,24 +204,30 @@
     }
 
     // State
-    let fused = null;
-
-    // Fallback sample
-    const sampleFused = {
+    let fused = {
       mode:"hybrid",
       slug:"sample-" + Date.now().toString(36),
       hero:{ title:"Zetsu-Grade Fusion Page", subtitle:"Auto-built from your links", image:"", ctaText:"Claim Your Drop", ctaLink:"#"},
       products:[
         {name:"Holo Tee", price:"$29", link:"#", description:"Shimmer print • Limited"},
-        {name:"Z-Cap", price:"$19", link:"#", description:"Low-profile • Night mode"},
-        {name:"Signal Tag", price:"$9", link:"#", description:"Metal core • NFC"}
+        {name:"Z-Cap", price:"$19", link:"#", description:"Low-profile • Night mode"}
       ],
       articles:[
-        {heading:"What This Page Does", content:"Jessica-SPZ crawls your links, extracts key info and products, and fuses it into a single, market-ready SporeZ page."},
-        {heading:"How It Chooses Layout", content:"Mode: Auto (or Sell/Info/Hybrid). Defaults guarantee a complete page even if a site blocks scraping."}
+        {heading:"What This Page Does", content:"Jessica-SPZ crawls your links, extracts key info and products, and fuses it into a single, market-ready SporeZ page."}
       ],
       media:[]
     };
+
+    function b64FromJSON(obj){
+      const json = JSON.stringify(obj);
+      const bytes = new TextEncoder().encode(json);
+      return btoa(Array.from(bytes, b => String.fromCharCode(b)).join(""));
+    }
+
+    function loadIframe(data){
+      const b64 = b64FromJSON(data);
+      elFrame.src = `/preview.html#j=${b64}`;
+    }
 
     async function runCrawlAndFuse(){
       try{
@@ -260,75 +242,14 @@
         fused = await postJSON("/api/fuse", { results: crawl.results || [], mode: getMode(), defaults: getDefaults(), session: SID });
         elJSON.textContent = JSON.stringify(fused, null, 2);
         log("Fusion complete.");
-        renderPreview(fused);
+
+        loadIframe(fused);
       }catch(e){ log("Error: " + e.message, true); }
-    }
-
-    function ensure(v, fb){ return (v===undefined || v===null || v==="") ? fb : v; }
-
-    function renderPreview(data){
-      const d = data || sampleFused;
-      const hero = d.hero || {};
-      const prods = Array.isArray(d.products) ? d.products : [];
-      const arts = Array.isArray(d.articles) ? d.articles : [];
-
-      elHeroTitle.textContent = ensure(hero.title, "Your Fused Page");
-      elHeroSub.textContent   = ensure(hero.subtitle, "Merged info + offers in one layout.");
-      elHeroImg.src = hero.image || "";
-      elHeroImg.style.display = hero.image ? "block" : "none";
-
-      elHeroCta.innerHTML = "";
-      if(hero.ctaText){
-        const a = document.createElement("a");
-        a.href = hero.ctaLink || "#"; a.textContent = hero.ctaText; a.target = "_blank";
-        elHeroCta.appendChild(a);
-      }
-
-      // Products
-      elProducts.innerHTML = "";
-      (prods.length ? prods.slice(0,8) : (getDefaults().sell ? [
-        {name:"Starter Pack", price:"$29", link:"#"},
-        {name:"Mystery Drop", price:"$19", link:"#"}
-      ] : [])).forEach(p=> elProducts.appendChild(prodNode(p)));
-
-      // Info
-      elInfo.innerHTML = "";
-      (arts.length ? arts.slice(0,6) : (getDefaults().info ? [
-        {heading:"About", content:"This section will summarize your fused links: brand purpose, key features, and how to act."}
-      ] : [])).forEach(a=> elInfo.appendChild(infoNode(a)));
-
-      elFooter.textContent = (d.mode ? d.mode.toUpperCase()+" • " : "") + "SporeZ • Jessica-SPZ";
-    }
-
-    function prodNode(p){
-      const div = document.createElement("div"); div.className = "prod";
-      const img = document.createElement("img"); img.src = p.image || ""; img.style.display = p.image ? "block" : "none";
-      const name = document.createElement("div"); name.className = "name"; name.textContent = p.name || "Unnamed";
-      const price = document.createElement("div"); price.className = "price"; price.textContent = p.price || "";
-      const link = document.createElement("a"); link.href = p.link || "#"; link.target = "_blank"; link.textContent = "View";
-      const desc = document.createElement("div"); desc.style.color = "var(--muted)"; desc.style.fontSize = "12px"; desc.textContent = p.description || "";
-      div.append(img, name, price, desc, link); return div;
-    }
-
-    function infoNode(a){
-      const box = document.createElement("div"); box.style.display = "grid"; box.style.gap = "6px";
-      const h = document.createElement("div"); h.style.fontWeight = "800"; h.textContent = a.heading || "Info";
-      const c = document.createElement("div"); c.style.whiteSpace = "pre-wrap"; c.style.color = "var(--white)"; c.textContent = a.content || "";
-      box.append(h,c); return box;
-    }
-
-    function openLivePreview(data){
-      const d = data || sampleFused;
-      const json = JSON.stringify(d);
-      const bytes = new TextEncoder().encode(json);
-      const b64 = btoa(Array.from(bytes, b => String.fromCharCode(b)).join(""));
-      const url = `/preview.html#j=${b64}`;
-      window.open(url, "_blank");
     }
 
     async function publish(){
       try{
-        if(!fused){ log("Nothing fused yet. Using sample.", true); fused = structuredClone(sampleFused); }
+        if(!fused){ log("Nothing fused yet.", true); return; }
         let slug = elSlug.value.trim();
         if(!slug){
           const base = (fused.hero?.title || "drop").toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"");
@@ -337,8 +258,7 @@
         fused.slug = slug;
 
         log(`Publishing "${slug}"…`);
-        const out = await postJSON("/api/publish_via_deploy", { fused, session: SID }); // << Deploy API mode
-        elJSON.textContent = JSON.stringify(fused, null, 2);
+        const out = await postJSON("/api/publish_via_deploy", { fused, session: SID });
         if(out && out.url){
           log("Published: " + out.url);
           try{ navigator.clipboard?.writeText(out.url); }catch{}
@@ -349,13 +269,28 @@
       }catch(e){ log("Publish error: " + e.message, true); }
     }
 
+    // Toolbar
+    document.querySelectorAll('.chip[data-size]').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        document.querySelectorAll('.chip[data-size]').forEach(b=>b.classList.remove('is-active'));
+        btn.classList.add('is-active');
+        const size = btn.getAttribute('data-size');
+        elDevice.className = `device ${size}`;
+      });
+    });
+    document.getElementById('btn-refresh').addEventListener('click', ()=> loadIframe(fused));
+    document.getElementById('btn-open').addEventListener('click', ()=>{
+      const b64 = b64FromJSON(fused);
+      window.open(`/preview.html#j=${b64}`, "_blank");
+    });
+
     // Buttons
     document.getElementById("btn-run").addEventListener("click", runCrawlAndFuse);
-    document.getElementById("btn-preview").addEventListener("click", ()=> openLivePreview(fused || sampleFused));
+    document.getElementById("btn-preview").addEventListener("click", ()=> loadIframe(fused));
     document.getElementById("btn-publish").addEventListener("click", publish);
 
     // First paint
-    renderPreview(sampleFused);
+    loadIframe(fused);
   </script>
 </body>
 </html>
