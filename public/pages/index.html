@@ -1,0 +1,87 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Jessica-SPZ • SporeZ Link Fusion</title>
+<link rel="stylesheet" href="/assets/spz-style.css">
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Jessica-SPZ — SporeZ Link Fusion</h1>
+    <div class="sub">
+      <span class="pill" id="sid-pill">Session: <b id="sid">…</b></span>
+    </div>
+  </header>
+
+  <div class="grid">
+    <!-- LEFT: Controls -->
+    <section class="panel controls">
+      <h2>Input Links</h2>
+      <textarea id="links" placeholder="Paste 1 link per line"></textarea>
+
+      <div class="row">
+        <label class="pill"><input type="radio" name="mode" value="auto" checked />&nbsp;Auto</label>
+        <label class="pill"><input type="radio" name="mode" value="sell" />&nbsp;Sell</label>
+        <label class="pill"><input type="radio" name="mode" value="info" />&nbsp;Info</label>
+        <label class="pill"><input type="radio" name="mode" value="hybrid" />&nbsp;Hybrid</label>
+      </div>
+
+      <div class="row">
+        <label class="pill"><input type="checkbox" id="defSell" checked />&nbsp;Default: Sell product</label>
+        <label class="pill"><input type="checkbox" id="defInfo" />&nbsp;Default: Show info</label>
+      </div>
+
+      <div class="row">
+        <input id="slug" type="text" placeholder="slug (optional, e.g. my-drop)" />
+      </div>
+
+      <div class="row">
+        <button class="btn primary" id="btn-run">Crawl + Fuse</button>
+        <button class="btn" id="btn-preview">Preview</button>
+        <button class="btn" id="btn-publish">Publish</button>
+      </div>
+
+      <div class="stack">
+        <h2>Log</h2>
+        <pre id="log">ready.</pre>
+        <h2>Fused JSON</h2>
+        <pre id="json">{}</pre>
+      </div>
+    </section>
+
+    <!-- RIGHT: Preview -->
+    <section class="panel preview">
+      <h2>Live Preview</h2>
+      <div class="card" id="card">
+        <div class="frame"></div>
+        <div class="hero" id="hero">
+          <img id="heroImg" alt="Hero" />
+          <h3 id="heroTitle" class="center">Your Fused Page Will Appear Here</h3>
+          <p id="heroSub" class="center">Paste links on the left and run <b>Crawl + Fuse</b>.</p>
+          <div class="cta" id="heroCta"></div>
+        </div>
+
+        <div class="columns">
+          <div class="box">
+            <div class="center" style="margin-bottom:8px; color:var(--muted); font-weight:700;">Products</div>
+            <div class="products" id="products"></div>
+          </div>
+          <div class="box">
+            <div class="center" style="margin-bottom:8px; color:var(--muted); font-weight:700;">Info</div>
+            <div id="info"></div>
+          </div>
+        </div>
+
+        <footer id="footer">SporeZ • Jessica-SPZ • Auto-Fusion</footer>
+      </div>
+    </section>
+  </div>
+</div>
+
+<script src="/assets/spz-ui.js"></script>
+</body>
+</html>
