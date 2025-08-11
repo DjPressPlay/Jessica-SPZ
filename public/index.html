@@ -6,110 +6,190 @@
   <title>Jessica-SPZ • SporeZ Link Fusion</title>
   <style>
     :root{
-      --bg:#0a0f14; --panel:#0f1620; --muted:#7e95ad;
-      --line:#102534; --glow1:#00f0ff; --glow2:#00ff88; --white:#e8f1ff;
+      --bg:#070b10; --panel:#0c121a; --muted:#8aa2bc;
+      --line:#102534; --glow1:#00f0ff; --glow2:#00ff88; --iris:#7b2ff7; --white:#e8f1ff;
       --accent:#70ffe0; --danger:#ff4d6d; --ok:#66ff99;
     }
     *{box-sizing:border-box}
     html,body{height:100%}
     body{
-      margin:0; background:radial-gradient(1200px 800px at 50% -10%, #0e1824 0%, var(--bg) 60%);
+      margin:0;
+      background:
+        radial-gradient(1400px 900px at 50% -10%, #0e1824 0%, var(--bg) 60%),
+        linear-gradient(180deg, rgba(0,0,0,.4), transparent 40%);
       color:var(--white); font:14px/1.5 system-ui,Segoe UI,Roboto,Inter,Arial;
       display:flex; align-items:flex-start; justify-content:center;
     }
-    .wrap{width:min(1200px,96vw); padding:24px 16px 32px}
-    header{display:grid; gap:8px; place-items:center; text-align:center; margin-bottom:16px}
+
+    /* Global holo gradient animation */
+    @keyframes iridescentMove {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    /* Generic holo-border helper */
+    .holo {
+      position:relative; border-radius:16px; border:2px solid transparent; background-clip:padding-box;
+    }
+    .holo::before{
+      content:""; position:absolute; inset:-2px; border-radius:inherit; padding:2px;
+      background: linear-gradient(135deg, var(--glow1), var(--iris), var(--glow2));
+      background-size:300% 300%; animation: iridescentMove 8s ease infinite;
+      -webkit-mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+      -webkit-mask-composite:xor; mask-composite:exclude; pointer-events:none;
+    }
+
+    .wrap{width:min(1240px,96vw); padding:24px 16px 32px}
+    header{display:grid; gap:8px; place-items:center; text-align:center; margin-bottom:18px}
     h1{
       margin:0;
-      font-size:26px; letter-spacing:.5px; text-transform:uppercase;
-      background:linear-gradient(90deg,var(--glow1),var(--glow2));
+      font-size:26px; letter-spacing:.6px; text-transform:uppercase;
+      background:linear-gradient(90deg,var(--glow1),var(--iris),var(--glow2));
       -webkit-background-clip:text; background-clip:text; color:transparent;
       text-align:center;
+      filter: drop-shadow(0 2px 10px rgba(0,255,200,.12));
     }
     .sub{color:var(--muted); text-align:center}
+
     /* Two-pane layout: narrow sticky left, big right */
     .grid{
       display:grid;
-      grid-template-columns: minmax(280px, 380px) 1fr;
-      gap:16px;
+      grid-template-columns: minmax(300px, 380px) 1fr;
+      gap:18px;
       align-items:start;
     }
+
+    /* Panels */
     .panel{
       background:linear-gradient(180deg,rgba(255,255,255,.02),rgba(255,255,255,.00));
       border:1px solid var(--line); border-radius:16px; padding:14px;
-      box-shadow:0 0 0 1px rgba(0,0,0,.3), 0 10px 30px rgba(0,0,0,.35);
+      box-shadow:
+        0 0 0 1px rgba(0,0,0,.35),
+        0 12px 32px rgba(0,0,0,.45);
     }
     .panel h2{
-      margin:0 0 10px; font-size:12px; font-weight:800; letter-spacing:.2px; text-transform:uppercase;
+      margin:0 0 12px; font-size:12px; font-weight:800; letter-spacing:.26px; text-transform:uppercase;
       color:var(--muted); text-align:center;
     }
+
     /* Left controls: sticky + scrollable */
-    .controls{display:grid; gap:10px; position:sticky; top:12px; max-height:calc(100vh - 24px); overflow:auto}
+    .controls{display:grid; gap:12px; position:sticky; top:12px; max-height:calc(100vh - 24px); overflow:auto}
     textarea, input[type="text"]{
-      width:100%; background:#0b121a; color:var(--white); border:1px solid #142131; border-radius:10px;
-      padding:10px 12px; outline:none; font:13px/1.4 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      width:100%; background:#0a1118; color:var(--white); border:1px solid #142131; border-radius:12px;
+      padding:12px 12px; outline:none; font:13px/1.4 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      box-shadow: inset 0 0 0 1px rgba(0,0,0,.35);
     }
     textarea{min-height:120px; resize:vertical}
     .row{display:flex; gap:10px; align-items:center; flex-wrap:wrap; justify-content:center}
     .row > * { flex:1 1 auto }
-    .btn{
-      appearance:none; border:1px solid #143244; background:#0e1b26; color:var(--white);
-      padding:10px 14px; border-radius:12px; font-weight:700; letter-spacing:.2px; cursor:pointer;
-      transition:.18s transform ease,.18s box-shadow ease,.18s border-color ease; text-align:center;
-    }
-    .btn:hover{transform:translateY(-1px); box-shadow:0 8px 22px rgba(0,0,0,.35); border-color:#18465f}
-    .btn.primary{background:linear-gradient(90deg,var(--glow1),var(--glow2)); color:#001b1f; border-color:transparent}
+
     .pill{
       display:inline-flex; align-items:center; gap:8px; padding:6px 10px; border-radius:999px; font-size:12px;
       border:1px solid #173346; background:#0c1720; color:var(--muted); justify-content:center
     }
-    .stack{display:grid; gap:10px}
-    pre{
-      margin:0; max-height:140px; overflow:auto; background:#071018; color:#bfe7ff;
-      border:1px solid #0f2536; border-radius:10px; padding:10px; font-size:12px;
+
+    .btn{
+      appearance:none; border:1px solid #143244; background:#0e1b26; color:var(--white);
+      padding:10px 14px; border-radius:12px; font-weight:800; letter-spacing:.25px; cursor:pointer;
+      transition:.18s transform ease,.18s box-shadow ease,.18s border-color ease; text-align:center;
+    }
+    .btn:hover{transform:translateY(-1px); box-shadow:0 10px 24px rgba(0,0,0,.35); border-color:#18465f}
+    .btn.primary{
+      background:linear-gradient(90deg,var(--glow1),var(--iris),var(--glow2)); color:#001b1f; border-color:transparent;
+      box-shadow: 0 0 14px rgba(0,240,255,.28), 0 0 28px rgba(0,255,136,.18);
     }
 
-    /* Right: live preview page */
-    .preview{display:grid; gap:12px}
+    .stack{display:grid; gap:10px}
+    pre{
+      margin:0; max-height:160px; overflow:auto; background:#071018; color:#c6ecff;
+      border:1px solid #0f2536; border-radius:12px; padding:10px; font-size:12px;
+    }
+
+    /* Right: live preview area */
+    .preview{
+      display:grid; gap:14px; padding:10px; border-radius:18px;
+      background: rgba(7, 12, 18, .65);
+      box-shadow: 0 0 40px rgba(0, 240, 255, 0.07);
+      border:1px solid rgba(16,37,52,.8);
+    }
+
+    /* Card with holo border */
     .card{
       position:relative; border-radius:18px; padding:16px; overflow:hidden;
-      border:2px solid rgba(255,255,255,.08);
+      border:2px solid rgba(255,255,255,.06);
       background:
-        linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,0)) ,
+        linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,0)),
         radial-gradient(100% 70% at 0% 0%, rgba(0,240,255,.08), transparent 60%),
         radial-gradient(100% 70% at 100% 0%, rgba(0,255,136,.08), transparent 60%),
         #0b1219;
-      box-shadow: 0 0 0 1px rgba(0,0,0,.5) inset, 0 30px 50px rgba(0,0,0,.35), 0 0 60px rgba(0,240,255,.05);
+      box-shadow:
+        0 0 0 1px rgba(0,0,0,.55) inset,
+        0 30px 50px rgba(0,0,0,.35),
+        0 0 60px rgba(0,240,255,.05);
     }
-    .card .frame{ position:absolute; inset:0; pointer-events:none; background:conic-gradient(from 0deg, rgba(0,240,255,.25), rgba(0,255,136,.25), rgba(0,240,255,.25)); mask:linear-gradient(#000,transparent 30%); opacity:.15; }
-    .hero{display:grid; gap:8px; place-items:center; text-align:center}
+    .card.holo::before{ /* holo gradient frame for card */
+      content:""; position:absolute; inset:-2px; border-radius:20px; padding:2px;
+      background: linear-gradient(135deg, var(--glow1), var(--iris), var(--glow2));
+      background-size:300% 300%; animation: iridescentMove 10s ease infinite;
+      -webkit-mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+      -webkit-mask-composite:xor; mask-composite:exclude; pointer-events:none; opacity:.85;
+    }
+
+    .card .frame{ position:absolute; inset:0; pointer-events:none; background:conic-gradient(from 0deg, rgba(0,240,255,.2), rgba(0,255,136,.2), rgba(0,240,255,.2)); mask:linear-gradient(#000,transparent 30%); opacity:.12; }
+
+    .hero{display:grid; gap:10px; place-items:center; text-align:center}
+    .hero .img-wrap{ width:100%; border-radius:16px; }
+    .hero .img-wrap.holo::before{ opacity:.9; }
     .hero img{
-      width:100%; height:44vh; max-height:320px; object-fit:cover; border-radius:14px; border:1px solid rgba(255,255,255,.08);
-      background:linear-gradient(135deg,#0d1720,#0a1219)
+      width:100%; height:44vh; max-height:320px; object-fit:cover; border-radius:14px; display:block;
+      background:linear-gradient(135deg,#0d1720,#0a1219);
+      border:1px solid rgba(255,255,255,.06);
+      box-shadow: 0 8px 30px rgba(0,0,0,.35);
     }
-    .hero h3{margin:6px 0 0; font-size:20px}
+    .hero h3{margin:6px 0 0; font-size:20px; letter-spacing:.2px}
     .hero p{margin:0; color:var(--muted); font-size:13px}
     .cta{margin-top:8px}
     .cta a{
       display:inline-block; padding:10px 14px; border-radius:999px; text-decoration:none; font-weight:800;
-      color:#001b1f; background:linear-gradient(90deg,var(--glow1),var(--glow2));
+      color:#001b1f; background:linear-gradient(90deg,var(--glow1),var(--iris),var(--glow2));
       border:0; box-shadow:0 8px 24px rgba(0,255,200,.18);
     }
+
     .columns{display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:12px}
     .box{ border:1px solid #142131; border-radius:14px; padding:12px; background:#0c141caa; }
-    .products{display:grid; grid-template-columns:repeat(auto-fill,minmax(160px,1fr)); gap:10px}
+    .box.holo::before{opacity:.5}
+
+    .products{display:grid; grid-template-columns:repeat(auto-fill,minmax(170px,1fr)); gap:12px}
+
+    /* Product card with iridescent outline */
     .prod{
-      border:1px solid #162535; border-radius:12px; padding:10px; background:#0b131b;
-      display:grid; gap:8px; text-align:center;
+      position:relative; border-radius:12px; padding:10px; background:#0b131b;
+      display:grid; gap:8px; text-align:center; border:2px solid transparent; background-clip:padding-box;
+      box-shadow: inset 0 0 0 1px rgba(0,0,0,.45), 0 10px 26px rgba(0,0,0,.28);
     }
-    .prod img{width:100%; height:120px; object-fit:cover; border-radius:10px; background:#0d1924}
-    .prod .name{font-weight:700}
-    .prod .price{color:var(--ok); font-weight:700}
-    .prod a{color:var(--accent); text-decoration:none; font-weight:700}
-    footer{margin-top:8px; text-align:center; color:var(--muted); font-size:12px}
+    .prod::before{
+      content:""; position:absolute; inset:-2px; border-radius:14px; padding:2px;
+      background: linear-gradient(135deg, var(--glow1), var(--iris), var(--glow2));
+      background-size:300% 300%; animation: iridescentMove 7s ease infinite;
+      -webkit-mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+      -webkit-mask-composite:xor; mask-composite:exclude; pointer-events:none;
+    }
+
+    .prod img{width:100%; height:120px; object-fit:cover; border-radius:10px; background:#0d1924; display:block; border:1px solid rgba(255,255,255,.06)}
+    .prod .name{font-weight:800; letter-spacing:.2px}
+    .prod .price{color:var(--ok); font-weight:800}
+    .prod a{color:var(--accent); text-decoration:none; font-weight:800}
+
+    footer{margin-top:10px; text-align:center; color:var(--muted); font-size:12px}
     .center{text-align:center}
     .bad{color:var(--danger)}
-    @media (max-width:980px){ .grid{grid-template-columns:1fr} .columns{grid-template-columns:1fr} .hero img{height:36vh; max-height:260px} }
+
+    @media (max-width:980px){
+      .grid{grid-template-columns:1fr}
+      .columns{grid-template-columns:1fr}
+      .hero img{height:36vh; max-height:260px}
+    }
   </style>
 </head>
 <body>
@@ -160,22 +240,25 @@
       <!-- RIGHT: Live Preview -->
       <section class="panel preview">
         <h2>Live Preview</h2>
-        <div class="card" id="card">
+        <div class="card holo" id="card">
           <div class="frame"></div>
+
           <div class="hero" id="hero">
-            <img id="heroImg" alt="Hero" />
+            <div class="img-wrap holo">
+              <img id="heroImg" alt="Hero" />
+            </div>
             <h3 id="heroTitle" class="center">Your Fused Page Will Appear Here</h3>
             <p id="heroSub" class="center">Paste links on the left and run <b>Crawl + Fuse</b>.</p>
             <div class="cta" id="heroCta"></div>
           </div>
 
           <div class="columns">
-            <div class="box">
-              <div class="center" style="margin-bottom:8px; color:var(--muted); font-weight:700;">Products</div>
+            <div class="box holo">
+              <div class="center" style="margin-bottom:8px; color:var(--muted); font-weight:800; letter-spacing:.2px;">Products</div>
               <div class="products" id="products"></div>
             </div>
-            <div class="box">
-              <div class="center" style="margin-bottom:8px; color:var(--muted); font-weight:700;">Info</div>
+            <div class="box holo">
+              <div class="center" style="margin-bottom:8px; color:var(--muted); font-weight:800; letter-spacing:.2px;">Info</div>
               <div id="info"></div>
             </div>
           </div>
