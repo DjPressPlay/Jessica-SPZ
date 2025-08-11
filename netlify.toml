@@ -1,0 +1,19 @@
+[build]
+  # No build step. We serve static files from /public.
+  publish = "public"
+
+[functions]
+  directory = "netlify/functions"
+  node_bundler = "esbuild" # default on Netlify; fine even with no deps
+
+# Route nice API paths to Netlify Functions
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/:splat"
+  status = 200
+
+# Let the SPA (our index.html) handle client-side routing if needed
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
