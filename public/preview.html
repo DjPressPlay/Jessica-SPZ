@@ -77,7 +77,7 @@
 
   /* ======= FACEBOOK-LIKE BAR with sources ======= */
   .fb-bar{
-    background:#f3f7fc; border:1px solid #e3edf7; border-radius:12px; margin:10px 0 16px;
+    background:#f3f7fc; border:1px solid #e3edf7; border-radius:12px; margin:10px 0 12px;
     box-shadow: inset 0 1px 0 rgba(255,255,255,.9), 0 1px 2px rgba(10,22,40,.04);
   }
   .sources-nav{
@@ -92,7 +92,19 @@
   }
   .sources-nav a:hover{background:#e7f3ff; border-color:#cbe3f6; transform:translateY(-1px)}
 
-  /* ======= EXISTING hero/sections (untouched structure) ======= */
+  /* ======= NEW: TOP SITEMAP (slightly larger) ======= */
+  .top-sitemap{
+    display:flex; flex-wrap:wrap; gap:10px; justify-content:center; margin:6px 0 16px;
+  }
+  .top-sitemap a{
+    font-size:16px; font-weight:900; letter-spacing:.2px;
+    color:#0a2430; text-decoration:none;
+    background:#ffffff; border:1px solid #d9e9f7; border-radius:999px; padding:8px 14px;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.95), 0 1px 3px rgba(14,30,65,.06);
+  }
+  .top-sitemap a:hover{background:#eaf4ff}
+
+  /* ======= EXISTING hero/sections ======= */
   .hero{text-align:center; display:grid; gap:10px}
   .img-wrap{border-radius:16px; position:relative; border:2px solid transparent; background-clip:padding-box;}
   .img-wrap::before{
@@ -189,7 +201,6 @@
     return JSON.parse(text);
   }
 
-  // Gather source links if present in fused payload
   function getSourceLinks(data){
     const candidates = [];
     const push = (v)=>{
@@ -197,19 +208,16 @@
       if(Array.isArray(v)) v.forEach(push);
       else if(typeof v === "string") candidates.push(v);
     };
-
     push(data.sourceLinks);
     push(data.sources);
     push(data.links);
     if (data.meta && data.meta.sources) push(data.meta.sources);
-
     if (data.hero){
       push(data.hero.ctaLink);
       if (data.hero.links) push(data.hero.links);
     }
     (Array.isArray(data.products)?data.products:[]).forEach(p=> push(p.link));
     (Array.isArray(data.articles)?data.articles:[]).forEach(a=> push(a.link));
-
     const seen = new Set();
     return candidates
       .filter(u=>/^https?:\/\//i.test(u||""))
@@ -225,29 +233,39 @@
     const brandLogo = (data.brand && data.brand.logo) ? `<img src="${esc(data.brand.logo)}" alt="Brand">` : "";
     const brandWord = esc((data.brand && data.brand.name) || "SporeZ");
 
-    // build sources as "Source1", "Source2", …
     const sourcesHTML = sources.length
       ? sources.map((u,i)=>`<a href="${esc(u)}" target="_blank" rel="noopener">Source${i+1}</a>`).join("")
       : "";
 
+    // NEW: top sitemap bar (larger pills)
+    const topSitemap = `
+      <div class="top-sitemap">
+        <a href="https://sporez.netlify.app/" target="_blank" rel="noopener">Home</a>
+        ${products.length ? `<a href="#products" onclick="event.preventDefault();document.getElementById('products')?.scrollIntoView({behavior:'smooth'});">Products</a>` : ``}
+        ${articles.length ? `<a href="#info" onclick="event.preventDefault();document.getElementById('info')?.scrollIntoView({behavior:'smooth'});">Info</a>` : ``}
+        <a href="https://zetsumetsu.webnode.page" target="_blank" rel="noopener">Zetsumetsu Eoe™</a>
+        <a href="https://sporez.netlify.app/" target="_blank" rel="noopener">SporeZ</a>
+      </div>`;
+
     root.innerHTML = `
-      <!-- BRAND HEADER (added) -->
+      <!-- BRAND HEADER -->
       <div class="brand-header">
         <div class="brand-line">
           <div class="brand">
             ${brandLogo}
             <div class="wordmark">${brandWord}</div>
           </div>
-          <!-- right side intentionally empty (no search/profile requested) -->
           <div></div>
         </div>
         <!-- Facebook-like bar with source links -->
         <div class="fb-bar">
           <nav class="sources-nav">${sourcesHTML}</nav>
         </div>
+        <!-- NEW: Top sitemap -->
+        ${topSitemap}
       </div>
 
-      <!-- EXISTING CONTENT (unchanged structure) -->
+      <!-- EXISTING CONTENT -->
       <div class="hero">
         ${hero.image ? `<div class="img-wrap"><img src="${esc(hero.image)}" alt=""></div>` : ""}
         <h1>${esc(hero.title || "SporeZ Drop")}</h1>
@@ -284,15 +302,15 @@
           </div>
         </section>` : ""}
 
-      <!-- FOOTER SEO + MINI SITEMAP (kept, with text updates) -->
+      <!-- FOOTER SEO + MINI SITEMAP -->
       <div class="site-footer">
         <div>Generated preview via Jessica-SPZ auto-fusion. Source count: ${sources.length}. Updated ${new Date().toLocaleDateString()}.</div>
         <div class="sitemap">
-          <a href="#top">Home</a>
+          <a href="https://sporez.netlify.app/" target="_blank" rel="noopener">Home</a>
           ${products.length ? `<a href="#products" onclick="event.preventDefault();document.getElementById('products')?.scrollIntoView({behavior:'smooth'});">Products</a>` : ``}
           ${articles.length ? `<a href="#info" onclick="event.preventDefault();document.getElementById('info')?.scrollIntoView({behavior:'smooth'});">Info</a>` : ``}
           <a href="https://zetsumetsu.webnode.page" target="_blank" rel="noopener">Zetsumetsu Eoe™</a>
-          <a href="https://sporez.netlify.app" target="_blank" rel="noopener">SporeZ</a>
+          <a href="https://sporez.netlify.app/" target="_blank" rel="noopener">SporeZ</a>
         </div>
         <div class="brandline">Zetsumetsu Eoe™ | ZETSUMETSU CORPORATION | Artworqq Kevin Suber</div>
       </div>
