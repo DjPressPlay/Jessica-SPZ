@@ -92,7 +92,7 @@
   }
   .sources-nav a:hover{background:#e7f3ff; border-color:#cbe3f6; transform:translateY(-1px)}
 
-  /* ======= TOP SITEMAP ======= */
+  /* ======= TOP SITEMAP (slightly larger) ======= */
   .top-sitemap{
     display:flex; flex-wrap:wrap; gap:10px; justify-content:center; margin:6px 0 16px;
   }
@@ -104,7 +104,7 @@
   }
   .top-sitemap a:hover{background:#eaf4ff}
 
-  /* ======= HERO / SECTIONS ======= */
+  /* ======= EXISTING hero/sections ======= */
   .hero{text-align:center; display:grid; gap:10px}
   .img-wrap{border-radius:16px; position:relative; border:2px solid transparent; background-clip:padding-box;}
   .img-wrap::before{
@@ -153,8 +153,8 @@
   }
   .prod img{width:100%;height:120px;object-fit:cover;border-radius:10px;background:#0d1924;display:block;border:1px solid rgba(255,255,255,.06)}
   .prod .name{font-weight:800;letter-spacing:.2px}
-  .prod .price{color:#66ff99;font-weight:800}
-  .prod a{color:#70ffe0;text-decoration:none;font-weight:800}
+  .prod .price{color:var(--ok);font-weight:800}
+  .prod a{color:var(--accent);text-decoration:none;font-weight:800}
 
   .articles{display:grid; gap:10px}
   .article{
@@ -163,52 +163,21 @@
   }
   .article h3{margin:0 0 6px}
 
-  /* ======= SOCIAL SIGNALS (REACTIONS + BLURBS) ======= */
-  .social-list{ display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:12px; }
-  .social-card{
-    position:relative; border-radius:12px; padding:10px; background:#0f1620; color:#eaf5ff;
-    border:2px solid transparent; background-clip:padding-box;
-    box-shadow: inset 0 0 0 1px rgba(0,0,0,.45), 0 10px 22px rgba(0,0,0,.2);
-    display:grid; gap:8px;
+  /* ======= FOOTER SEO + MINI SITEMAP ======= */
+  .site-footer{
+    margin-top:18px; padding-top:12px; border-top:1px solid #e9f0f8; color:#5a6b7a; font-size:12px;
   }
-  .social-card::before{
-    content:""; position:absolute; inset:-2px; border-radius:14px; padding:2px;
-    background: linear-gradient(135deg, var(--glow1), var(--iris), var(--glow2));
-    background-size:300% 300%; animation: iridescentMove 8s ease infinite;
-    -webkit-mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-    -webkit-mask-composite:xor; mask-composite:exclude; pointer-events:none;
+  .sitemap{
+    margin-top:8px; display:flex; gap:10px; flex-wrap:wrap;
   }
-  .social-head{ display:flex; align-items:center; gap:10px; }
-  .avatar{ width:32px; height:32px; border-radius:999px; overflow:hidden; background:#0d1924; border:1px solid rgba(255,255,255,.08); flex:none; }
-  .avatar img{width:100%; height:100%; object-fit:cover; display:block}
-  .name-row{ display:flex; flex-wrap:wrap; gap:6px; align-items:baseline; }
-  .display-name{font-weight:800; letter-spacing:.2px}
-  .handle{color:#9bbad2; font-size:12px}
-  .dot{opacity:.5}
-  .social-media{width:100%; border-radius:10px; overflow:hidden; border:1px solid rgba(255,255,255,.06); background:#0d1924}
-  .social-media img, .social-media video{width:100%; height:150px; object-fit:cover; display:block}
-  .social-title{font-weight:800; letter-spacing:.2px}
-  .social-desc{color:#c6ecff; font-size:12px}
-  .social-meta{display:flex; gap:8px; flex-wrap:wrap; align-items:center; color:#8fb8cf; font-weight:700; font-size:12px}
-  .social-meta .pill{background:#0e1b26; border:1px solid #173346; color:#8fb8cf; border-radius:999px; padding:3px 8px}
-  .social-react{color:#9dd8ff; font-style:italic; font-size:12px}
-
-  .jess-blurb{
-    margin-top:4px; padding:8px; border-radius:10px; background:#0e1b26; border:1px solid #173346;
-    font-size:12px; line-height:1.45;
+  .sitemap a{
+    color:#0a2430; text-decoration:none; border-bottom:1px dotted #a9c8de;
   }
-  .jess-blurb strong{
-    background:linear-gradient(90deg,var(--glow1),var(--iris),var(--glow2));
-    -webkit-background-clip:text; background-clip:text; color:transparent;
-    font-weight:900; letter-spacing:.2px;
-  }
-
-  /* ======= FOOTER ======= */
-  .site-footer{ margin-top:18px; padding-top:12px; border-top:1px solid #e9f0f8; color:#5a6b7a; font-size:12px; }
-  .sitemap{ margin-top:8px; display:flex; gap:10px; flex-wrap:wrap; }
-  .sitemap a{ color:#0a2430; text-decoration:none; border-bottom:1px dotted #a9c8de; }
   .sitemap a:hover{border-bottom-color:#6fb0d6}
-  .brandline{ margin-top:8px; text-align:center; color:#5a6b7a; font-size:12px; font-weight:700; letter-spacing:.2px; }
+  .brandline{
+    margin-top:8px; text-align:center; color:#5a6b7a; font-size:12px; font-weight:700;
+    letter-spacing:.2px;
+  }
 </style>
 </head>
 <body>
@@ -223,9 +192,8 @@
 <script>
 (function(){
   const root = document.getElementById('root');
-  const escMap = { "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" };
-  const esc = s => String(s||"").replace(/[&<>"]/g, c => escMap[c]);
 
+  function esc(s){ return String(s||"").replace(/[&<>"]/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c])); }
   function b64ToJSON(b64){
     const bin = atob((b64||"").replace(/[^A-Za-z0-9+/=]/g,""));
     const bytes = Uint8Array.from(bin, c => c.charCodeAt(0));
@@ -233,95 +201,90 @@
     return JSON.parse(text);
   }
 
-  /* --------- helpers (minimal) --------- */
-  const prettyHost = (u)=>{
-    try{ const h=new URL(u).hostname.replace(/^www\./,''); return h.split('.')[0].toUpperCase(); }catch{ return ""; }
-  };
-  const nfmt = v => (v&&v.toLocaleString) ? v.toLocaleString() : String(v||"0");
-  const toNum = v => typeof v==='number' ? v : (parseFloat(String(v).replace(/,/g,''))||0);
-
   function getSourceLinks(data){
-    const cand=[]; const push=v=>{ if(!v) return;
+    const candidates = [];
+    const push = (v)=>{
+      if(!v) return;
       if(Array.isArray(v)) v.forEach(push);
-      else if(typeof v==='string') cand.push(v);
-      else if(v && v.url) cand.push(v.url);
+      else if(typeof v === "string") candidates.push(v);
     };
-    push(data.sourceLinks); push(data.sources); push(data.links);
-    if (data.hero){ push(data.hero.ctaLink); if (data.hero.links) push(data.hero.links); }
+    push(data.sourceLinks);
+    push(data.sources);
+    push(data.links);
+    if (data.meta && data.meta.sources) push(data.meta.sources);
+    if (data.hero){
+      push(data.hero.ctaLink);
+      if (data.hero.links) push(data.hero.links);
+    }
     (Array.isArray(data.products)?data.products:[]).forEach(p=> push(p.link));
     (Array.isArray(data.articles)?data.articles:[]).forEach(a=> push(a.link));
-    const seen=new Set();
-    return cand.filter(u=>/^https?:\/\//i.test(u||"")).filter(u=>{if(seen.has(u))return false; seen.add(u); return true;});
+
+    // Dedup & only http(s)
+    const seen = new Set();
+    return candidates
+      .filter(u=>/^https?:\/\//i.test(u||""))
+      .filter(u=>{ if(seen.has(u)) return false; seen.add(u); return true; });
   }
 
-  /* --------- collect posts without heavy parsing --------- */
-  function collectPosts(data){
-    const out=[];
-    const buckets=[data.social, data.media, data.posts, data.embeds, data.signals];
-    const push=(x)=>{
-      if(!x) return;
-      if(Array.isArray(x)) { x.forEach(push); return; }
-      if(typeof x==='string'){ out.push({ url:x }); return; }
-      if(typeof x==='object'){
-        out.push({
-          url: x.url || x.link || x.permalink || "",
-          title: x.title || x.name || "",
-          description: x.description || x.caption || x.summary || "",
-          image: x.image || x.thumbnail || "",
-          video: x.video || "",
-          likes: toNum(x.likes || x.likeCount),
-          comments: toNum(x.comments || x.commentCount),
-          shares: toNum(x.shares || x.shareCount || x.retweets || x.reposts),
-          views: toNum(x.views || x.viewCount),
-          author: x.author || x.username || x.user || "",
-          handle: x.handle || (x.username ? ("@"+x.username.replace(/^@/,"")) : ""),
-          platform: x.platform || (x.url ? prettyHost(x.url) : ""),
-          avatar: x.avatar || x.authorAvatar || ""
-        });
-      }
+  // ---- Multi-source brand detection ----
+  function titleCase(s){
+    return s.replace(/\b([a-z])/g, m=>m.toUpperCase());
+  }
+  function prettyFromHost(host){
+    const h = (host||"").toLowerCase().replace(/^www\./,'');
+    // common mappings to nicer brand strings
+    const map = {
+      'instagram':'Instagram',
+      'ig':'Instagram',
+      'facebook':'Facebook',
+      'fb':'Facebook',
+      'x':'X',
+      'twitter':'Twitter',
+      't':'Twitter',
+      'youtube':'YouTube',
+      'youtu':'YouTube',
+      'github':'GitHub',
+      'medium':'Medium',
+      'tiktok':'TikTok',
+      'shopify':'Shopify',
+      'nike':'Nike',
+      'adidas':'Adidas'
     };
-    buckets.forEach(push);
-    // dedupe by (url|title|image|video)
-    const seen=new Set();
-    return out.filter(it=>{
-      const key=(it.url||"")+"|"+(it.title||"")+"|"+(it.image||it.video||"");
-      if(seen.has(key)) return false; seen.add(key); return true;
-    });
+    const base = h.split('.')[0];
+    if(map[base]) return map[base];
+    return titleCase(base);
   }
+  function detectBrands(data, sources){
+    const found = new Set();
+    const prods = Array.isArray(data.products) ? data.products : [];
 
-  /* --------- numeric reaction line (keep) --------- */
-  function reactToStats({likes=0,comments=0,shares=0,views=0}={}){
-    const L=likes,C=comments,S=shares,V=views;
-    const a=[];
-    if(V>0) a.push(`👀 ${nfmt(V)} views.`);
-    if(L>1000&&C>100) a.push(`🔥 ${nfmt(L)} likes & ${nfmt(C)} comments!`);
-    if(L>0&&C>0) a.push(`💬 ${nfmt(C)} comments with ${nfmt(L)} likes.`);
-    if(S>0) a.push(`🔁 ${nfmt(S)} shares — signal’s spreading.`);
-    if(!a.length && (L||C||S||V)) a.push(`⭐ Solid engagement.`);
-    return a[Math.floor(Math.random()*a.length)]||'';
-  }
+    // 1) explicit product brand fields
+    for(const p of prods){
+      if (p && typeof p.brand === 'string' && p.brand.trim()){
+        found.add(p.brand.trim());
+      }
+    }
 
-  /* --------- Jessica’s blurb generator --------- */
-  function jessBlurb(it){
-    const L=it.likes||0, C=it.comments||0, S=it.shares||0, V=it.views||0;
-    const who = it.author || it.handle || it.platform || 'this';
-    const where = it.platform ? ` on ${it.platform}` : '';
-    const exclaim = L>5000||V>100000 ? '🚀' : (L>500||C>200 ? '🔥' : '✨');
+    // 2) known brands from product names (expand as needed)
+    const knownBrands = ['Nike','Adidas','Supreme','Puma','Gucci','Louis Vuitton','Apple','Samsung','Sony'];
+    for(const p of prods){
+      const nm = (p && p.name) ? String(p.name) : '';
+      for(const kb of knownBrands){
+        if (nm.toLowerCase().includes(kb.toLowerCase())) found.add(kb);
+      }
+    }
 
-    const pool = [];
+    // 3) hostnames from sources
+    for(const s of sources){
+      try{
+        const url = new URL(s);
+        found.add(prettyFromHost(url.hostname));
+      }catch{}
+    }
 
-    if (V>1000000) pool.push(`${exclaim} That’s orbital — ${nfmt(V)} views${where}.`);
-    if (V>=10000 && L>=500) pool.push(`${exclaim} Momentum unlocked: ${nfmt(V)} views, ${nfmt(L)} hearts.`);
-    if (S>=100) pool.push(`🔁 People keep passing this around — ${nfmt(S)} shares.`);
-    if (L>=1000 && C>=100) pool.push(`💬 ${nfmt(C)} comments? Yeah, ${who} stirred the hive.`);
-    if (L>0 && !pool.length) pool.push(`👍 Getting love: ${nfmt(L)} likes${where}.`);
-    if (C>0 && !pool.length) pool.push(`💬 Conversation brewing with ${nfmt(C)} comments.`);
-    if (!pool.length) pool.push(`👀 Clean signal. I’m into the vibe${where}.`);
-
-    // bonus flavor if we have a title
-    if (it.title) pool.push(`“${it.title.slice(0,80)}${it.title.length>80?'…':''}” — noted.`);
-
-    return pool[Math.floor(Math.random()*pool.length)];
+    // 4) output
+    const list = Array.from(found).filter(Boolean);
+    return list.length ? list.join(' × ') : 'SporeZ Fusion Page';
   }
 
   function render(data){
@@ -329,67 +292,24 @@
     const products = Array.isArray(data.products)? data.products : [];
     const articles = Array.isArray(data.articles)? data.articles : [];
     const sources = getSourceLinks(data);
-    const posts = collectPosts(data);
 
-    const brandLogo = (data.brand && data.brand.logo) ? `<img src="${esc(data.brand.logo)}" alt="Brand">` : "";
-    const brandWord = esc((data.brand && data.brand.name) || "SporeZ Fusion Page");
+    const brandLogo = (data.brand && data.brand.logo) ? <img src="${esc(data.brand.logo)}" alt="Brand"> : "";
+    const brandWord = esc(detectBrands(data, sources)); // << multi-source brands with fallback
 
     const sourcesHTML = sources.length
-      ? sources.map((u,i)=>`<a href="${esc(u)}" target="_blank" rel="noopener">Source${i+1}</a>`).join("")
+      ? sources.map((u,i)=><a href="${esc(u)}" target="_blank" rel="noopener">Source${i+1}</a>).join("")
       : "";
 
-    const topSitemap = `
+    const topSitemap = 
       <div class="top-sitemap">
         <a href="https://sporez.netlify.app/" target="_blank" rel="noopener">Home</a>
-        ${products.length ? `<a href="#products" onclick="event.preventDefault();document.getElementById('products')?.scrollIntoView({behavior:'smooth'});">Products</a>` : ``}
-        ${articles.length ? `<a href="#info" onclick="event.preventDefault();document.getElementById('info')?.scrollIntoView({behavior:'smooth'});">Info</a>` : ``}
+        ${products.length ? <a href="#products" onclick="event.preventDefault();document.getElementById('products')?.scrollIntoView({behavior:'smooth'});">Products</a> : `}
+        ${articles.length ? <a href="#info" onclick="event.preventDefault();document.getElementById('info')?.scrollIntoView({behavior:'smooth'});">Info</a> : `}
         <a href="https://zetsumetsu.webnode.page" target="_blank" rel="noopener">Zetsumetsu Eoe™</a>
         <a href="https://sporez.netlify.app/" target="_blank" rel="noopener">SporeZ</a>
-      </div>`;
+      </div>;
 
-    const socialHTML = posts.length ? `
-      <section class="section" id="social">
-        <div class="title">Community Buzz</div>
-        <div class="social-list">
-          ${posts.slice(0,8).map(m=>{
-            const rx = reactToStats(m);
-            const media = m.video
-              ? `<div class="social-media"><video src="${esc(m.video)}" controls></video></div>`
-              : (m.image ? `<div class="social-media"><img src="${esc(m.image)}" alt=""></div>` : ``);
-            const avatar = m.avatar ? `<div class="avatar"><img src="${esc(m.avatar)}" alt=""></div>` : `<div class="avatar"></div>`;
-            const handle = m.handle ? ` <span class="dot">•</span> <span class="handle">${esc(m.handle)}</span>` : '';
-            const platform = m.platform ? ` <span class="dot">•</span> <span class="handle">${esc(m.platform)}</span>` : '';
-            const title = m.title ? `<div class="social-title">${esc(m.title)}</div>` : '';
-            const desc  = m.description ? `<div class="social-desc">${esc(m.description)}</div>` : '';
-            const blurb = jessBlurb(m);
-
-            return `
-              <div class="social-card">
-                <div class="social-head">
-                  ${avatar}
-                  <div class="name-row">
-                    <span class="display-name">${esc(m.author||'Post')}</span>${handle}${platform}
-                  </div>
-                </div>
-                ${media}
-                ${title}
-                ${desc}
-                <div class="social-meta">
-                  ${m.likes?`<span class="pill">❤️ ${esc(nfmt(m.likes))}</span>`:""}
-                  ${m.comments?`<span class="pill">💬 ${esc(nfmt(m.comments))}</span>`:""}
-                  ${m.shares?`<span class="pill">🔁 ${esc(nfmt(m.shares))}</span>`:""}
-                  ${m.views?`<span class="pill">👀 ${esc(nfmt(m.views))}</span>`:""}
-                  ${m.url?`<a class="pill" href="${esc(m.url)}" target="_blank" rel="noopener" style="text-decoration:none">Open</a>`:""}
-                </div>
-                ${rx?`<div class="social-react">${esc(rx)}</div>`:""}
-                <div class="jess-blurb"><strong>Jessica:</strong> ${esc(blurb)}</div>
-              </div>`;
-          }).join("")}
-        </div>
-      </section>
-    ` : ``;
-
-    root.innerHTML = `
+    root.innerHTML = 
       <!-- BRAND HEADER -->
       <div class="brand-header">
         <div class="brand-line">
@@ -399,58 +319,58 @@
           </div>
           <div></div>
         </div>
+        <!-- Facebook-like bar with source links -->
         <div class="fb-bar">
           <nav class="sources-nav">${sourcesHTML}</nav>
         </div>
+        <!-- Top sitemap -->
         ${topSitemap}
       </div>
 
-      <!-- HERO -->
+      <!-- EXISTING CONTENT -->
       <div class="hero">
-        ${hero.image ? `<div class="img-wrap"><img src="${esc(hero.image)}" alt=""></div>` : ""}
+        ${hero.image ? <div class="img-wrap"><img src="${esc(hero.image)}" alt=""></div> : ""}
         <h1>${esc(hero.title || "SporeZ Drop")}</h1>
-        ${hero.subtitle ? `<p class="muted">${esc(hero.subtitle)}</p>` : ""}
-        ${hero.ctaText ? `<p class="cta"><a href="${esc(hero.ctaLink||"#")}" target="_blank" rel="noopener"> ${esc(hero.ctaText)} </a></p>` : ""}
+        ${hero.subtitle ? <p class="muted">${esc(hero.subtitle)}</p> : ""}
+        ${hero.ctaText ? <p class="cta"><a href="${esc(hero.ctaLink||"#")}" target="_blank" rel="noopener"> ${esc(hero.ctaText)} </a></p> : ""}
       </div>
 
-      ${products.length ? `
+      ${products.length ? 
         <section class="section">
           <div class="title">Products</div>
           <div id="products" class="products">
-            ${products.map(p=>`
+            ${products.map(p=>
               <div class="prod">
-                ${p.image?`<img src="${esc(p.image)}" alt="">`:``}
+                ${p.image?<img src="${esc(p.image)}" alt="">:`}
                 <div class="name">${esc(p.name||"")}</div>
                 <div class="price">${esc(p.price||"")}</div>
-                ${p.description?`<div class="muted" style="color:#3d4a55">${esc(p.description)}</div>`:""}
-                ${p.link?`<div><a href="${esc(p.link)}" target="_blank" rel="noopener" style="color:#0a6a83;text-decoration:none;font-weight:800">View</a></div>`:""}
+                ${p.description?<div class="muted" style="color:#3d4a55">${esc(p.description)}</div>:""}
+                ${p.link?<div><a href="${esc(p.link)}" target="_blank" rel="noopener" style="color:#0a6a83;text-decoration:none;font-weight:800">View</a></div>:""}
               </div>
-            `).join("")}
+            ).join("")}
           </div>
-        </section>` : ""}
+        </section> : ""}
 
-      ${articles.length ? `
+      ${articles.length ? 
         <section class="section" style="margin-top:18px">
           <div class="title">Info</div>
           <div id="info" class="articles">
-            ${articles.map(a=>`
+            ${articles.map(a=>
               <article class="article">
                 <h3>${esc(a.heading||"")}</h3>
                 <div>${esc(a.content||"")}</div>
               </article>
-            `).join("")}
+            ).join("")}
           </div>
-        </section>` : ""}
+        </section> : ""}
 
-      ${socialHTML}
-
-      <!-- FOOTER -->
+      <!-- FOOTER SEO + MINI SITEMAP -->
       <div class="site-footer">
         <div>Generated preview via Jessica-SPZ auto-fusion. Source count: ${sources.length}. Updated ${new Date().toLocaleDateString()}.</div>
         <div class="sitemap">
           <a href="https://sporez.netlify.app/" target="_blank" rel="noopener">Home</a>
-          ${products.length ? `<a href="#products" onclick="event.preventDefault();document.getElementById('products')?.scrollIntoView({behavior:'smooth'});">Products</a>` : ``}
-          ${articles.length ? `<a href="#info" onclick="event.preventDefault();document.getElementById('info')?.scrollIntoView({behavior:'smooth'});">Info</a>` : ``}
+          ${products.length ? <a href="#products" onclick="event.preventDefault();document.getElementById('products')?.scrollIntoView({behavior:'smooth'});">Products</a> : `}
+          ${articles.length ? <a href="#info" onclick="event.preventDefault();document.getElementById('info')?.scrollIntoView({behavior:'smooth'});">Info</a> : `}
           <a href="https://zetsumetsu.webnode.page" target="_blank" rel="noopener">Zetsumetsu Eoe™</a>
           <a href="https://sporez.netlify.app/" target="_blank" rel="noopener">SporeZ</a>
         </div>
@@ -460,7 +380,7 @@
       <footer style="margin-top:8px;text-align:center;color:#6b7f94;font-size:12px">
         SporeZ • Jessica-SPZ ${data.slug? "• "+esc(data.slug): ""}
       </footer>
-    `;
+    ;
   }
 
   try {
