@@ -293,23 +293,23 @@
     const articles = Array.isArray(data.articles)? data.articles : [];
     const sources = getSourceLinks(data);
 
-    const brandLogo = (data.brand && data.brand.logo) ? <img src="${esc(data.brand.logo)}" alt="Brand"> : "";
+    const brandLogo = (data.brand && data.brand.logo) ? `<img src="${esc(data.brand.logo)}" alt="Brand">` : "";
     const brandWord = esc(detectBrands(data, sources)); // << multi-source brands with fallback
 
     const sourcesHTML = sources.length
-      ? sources.map((u,i)=><a href="${esc(u)}" target="_blank" rel="noopener">Source${i+1}</a>).join("")
+      ? sources.map((u,i)=>`<a href="${esc(u)}" target="_blank" rel="noopener">Source${i+1}</a>`).join("")
       : "";
 
-    const topSitemap = 
+    const topSitemap = `
       <div class="top-sitemap">
         <a href="https://sporez.netlify.app/" target="_blank" rel="noopener">Home</a>
-        ${products.length ? <a href="#products" onclick="event.preventDefault();document.getElementById('products')?.scrollIntoView({behavior:'smooth'});">Products</a> : `}
-        ${articles.length ? <a href="#info" onclick="event.preventDefault();document.getElementById('info')?.scrollIntoView({behavior:'smooth'});">Info</a> : `}
+        ${products.length ? `<a href="#products" onclick="event.preventDefault();document.getElementById('products')?.scrollIntoView({behavior:'smooth'});">Products</a>` : ``}
+        ${articles.length ? `<a href="#info" onclick="event.preventDefault();document.getElementById('info')?.scrollIntoView({behavior:'smooth'});">Info</a>` : ``}
         <a href="https://zetsumetsu.webnode.page" target="_blank" rel="noopener">Zetsumetsu Eoe™</a>
         <a href="https://sporez.netlify.app/" target="_blank" rel="noopener">SporeZ</a>
-      </div>;
+      </div>`;
 
-    root.innerHTML = 
+    root.innerHTML = `
       <!-- BRAND HEADER -->
       <div class="brand-header">
         <div class="brand-line">
@@ -329,48 +329,48 @@
 
       <!-- EXISTING CONTENT -->
       <div class="hero">
-        ${hero.image ? <div class="img-wrap"><img src="${esc(hero.image)}" alt=""></div> : ""}
+        ${hero.image ? `<div class="img-wrap"><img src="${esc(hero.image)}" alt=""></div>` : ""}
         <h1>${esc(hero.title || "SporeZ Drop")}</h1>
-        ${hero.subtitle ? <p class="muted">${esc(hero.subtitle)}</p> : ""}
-        ${hero.ctaText ? <p class="cta"><a href="${esc(hero.ctaLink||"#")}" target="_blank" rel="noopener"> ${esc(hero.ctaText)} </a></p> : ""}
+        ${hero.subtitle ? `<p class="muted">${esc(hero.subtitle)}</p>` : ""}
+        ${hero.ctaText ? `<p class="cta"><a href="${esc(hero.ctaLink||"#")}" target="_blank" rel="noopener"> ${esc(hero.ctaText)} </a></p>` : ""}
       </div>
 
-      ${products.length ? 
+      ${products.length ? `
         <section class="section">
           <div class="title">Products</div>
           <div id="products" class="products">
-            ${products.map(p=>
+            ${products.map(p=>`
               <div class="prod">
-                ${p.image?<img src="${esc(p.image)}" alt="">:`}
+                ${p.image?`<img src="${esc(p.image)}" alt="">`:``}
                 <div class="name">${esc(p.name||"")}</div>
                 <div class="price">${esc(p.price||"")}</div>
-                ${p.description?<div class="muted" style="color:#3d4a55">${esc(p.description)}</div>:""}
-                ${p.link?<div><a href="${esc(p.link)}" target="_blank" rel="noopener" style="color:#0a6a83;text-decoration:none;font-weight:800">View</a></div>:""}
+                ${p.description?`<div class="muted" style="color:#3d4a55">${esc(p.description)}</div>`:""}
+                ${p.link?`<div><a href="${esc(p.link)}" target="_blank" rel="noopener" style="color:#0a6a83;text-decoration:none;font-weight:800">View</a></div>`:""}
               </div>
-            ).join("")}
+            `).join("")}
           </div>
-        </section> : ""}
+        </section>` : ""}
 
-      ${articles.length ? 
+      ${articles.length ? `
         <section class="section" style="margin-top:18px">
           <div class="title">Info</div>
           <div id="info" class="articles">
-            ${articles.map(a=>
+            ${articles.map(a=>`
               <article class="article">
                 <h3>${esc(a.heading||"")}</h3>
                 <div>${esc(a.content||"")}</div>
               </article>
-            ).join("")}
+            `).join("")}
           </div>
-        </section> : ""}
+        </section>` : ""}
 
       <!-- FOOTER SEO + MINI SITEMAP -->
       <div class="site-footer">
         <div>Generated preview via Jessica-SPZ auto-fusion. Source count: ${sources.length}. Updated ${new Date().toLocaleDateString()}.</div>
         <div class="sitemap">
           <a href="https://sporez.netlify.app/" target="_blank" rel="noopener">Home</a>
-          ${products.length ? <a href="#products" onclick="event.preventDefault();document.getElementById('products')?.scrollIntoView({behavior:'smooth'});">Products</a> : `}
-          ${articles.length ? <a href="#info" onclick="event.preventDefault();document.getElementById('info')?.scrollIntoView({behavior:'smooth'});">Info</a> : `}
+          ${products.length ? `<a href="#products" onclick="event.preventDefault();document.getElementById('products')?.scrollIntoView({behavior:'smooth'});">Products</a>` : ``}
+          ${articles.length ? `<a href="#info" onclick="event.preventDefault();document.getElementById('info')?.scrollIntoView({behavior:'smooth'});">Info</a>` : ``}
           <a href="https://zetsumetsu.webnode.page" target="_blank" rel="noopener">Zetsumetsu Eoe™</a>
           <a href="https://sporez.netlify.app/" target="_blank" rel="noopener">SporeZ</a>
         </div>
@@ -380,7 +380,7 @@
       <footer style="margin-top:8px;text-align:center;color:#6b7f94;font-size:12px">
         SporeZ • Jessica-SPZ ${data.slug? "• "+esc(data.slug): ""}
       </footer>
-    ;
+    `;
   }
 
   try {
