@@ -1,9 +1,55 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <!-- Charset & Viewport -->
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Jessica-SPZ • SporeZ Link Fusion</title>
+
+  <!-- Primary Meta (brand-aligned) -->
+  <title>Jessica-SPZ • SporeZ Link Fusion — Part of Zetsumetsu Eoe™</title>
+  <meta name="description" content="Jessica-SPZ (an extension of SporeZ) fuses your links into a single branded SporeZ drop page. SporeZ is a URL shortener + mini brand-page builder. Part of Zetsumetsu Eoe™ — Zetsumetsu Corporation.">
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://jessicaspz.netlify.app/" />
+
+  <!-- Optional keywords per your preference -->
+  <meta name="keywords" content="Jessica-SPZ, SporeZ, Zetsumetsu Eoe, Zetsumetsu Corporation, URL shortener, mini brand page, link fusion, Artworqq, Kevin Suber" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Zetsumetsu Corporation" />
+  <meta property="og:url" content="https://jessicaspz.netlify.app/" />
+  <meta property="og:title" content="Jessica-SPZ • SporeZ Link Fusion — Part of Zetsumetsu Eoe™" />
+  <meta property="og:description" content="Jessica-SPZ (an extension of SporeZ) fuses your links into a single branded SporeZ drop page. SporeZ is a URL shortener + mini brand-page builder." />
+  <meta property="og:image" content="https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExanhzZzZnM2VrdnY2b3Z4Zmt2ZWNxOGEzZWIxdTV3Zmp1YXc1dDFzOCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/DCqjTqTnUBOSAK1WfH/giphy.gif" />
+  <meta property="og:image:alt" content="SporeZ holographic motion mark" />
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:url" content="https://jessicaspz.netlify.app/" />
+  <meta name="twitter:title" content="Jessica-SPZ • SporeZ Link Fusion — Part of Zetsumetsu Eoe™" />
+  <meta name="twitter:description" content="Jessica-SPZ (an extension of SporeZ) fuses your links into a single branded SporeZ drop page. SporeZ is a URL shortener + mini brand-page builder." />
+  <meta name="twitter:image" content="https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExanhzZzZnM2VrdnY2b3Z4Zmt2ZWNxOGEzZWIxdTV3Zmp1YXc1dDFzOCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/DCqjTqTnUBOSAK1WfH/giphy.gif" />
+  <meta name="theme-color" content="#0b1219" />
+
+  <!-- Base JSON-LD (will be updated dynamically after fusion) -->
+  <script id="ld-json" type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      { "@type": "Organization", "@id": "#org", "name": "Zetsumetsu Corporation", "brand": "Zetsumetsu Eoe™" },
+      { "@type": "WebSite", "@id": "#website", "name": "SporeZ", "url": "https://sporez.netlify.app/", "isPartOf": { "@id": "#org" } },
+      {
+        "@type": "WebApplication",
+        "name": "Jessica-SPZ",
+        "url": "https://jessicaspz.netlify.app/",
+        "applicationCategory": "BusinessApplication",
+        "isPartOf": { "@id": "#website" },
+        "creator": { "@type": "Person", "name": "Kevin J. Suber Jr. (Artworqq)" }
+      }
+    ]
+  }
+  </script>
+
   <style>
     :root{
       --bg:#070b10; --panel:#0c121a; --muted:#8aa2bc;
@@ -90,7 +136,7 @@
     }
 
     .btn{
-      appearance:none; border:1px solid #143244; background:#0e1b26; color:var(--white);
+      appearance:none; border:1px solid #143244; background:#0e1b26; color:#fff;
       padding:10px 14px; border-radius:12px; font-weight:800; letter-spacing:.25px; cursor:pointer;
       transition:.18s transform ease,.18s box-shadow ease,.18s border-color ease; text-align:center;
     }
@@ -128,7 +174,7 @@
         0 30px 50px rgba(0,0,0,.35),
         0 0 60px rgba(0,240,255,.05);
     }
-    .card.holo::before{ /* holo gradient frame for card */
+    .card.holo::before{
       content:""; position:absolute; inset:-2px; border-radius:20px; padding:2px;
       background: linear-gradient(135deg, var(--glow1), var(--iris), var(--glow2));
       background-size:300% 300%; animation: iridescentMove 10s ease infinite;
@@ -245,7 +291,7 @@
 
           <div class="hero" id="hero">
             <div class="img-wrap holo">
-              <img id="heroImg" alt="Hero" />
+              <img id="heroImg" alt="Fusion hero image" />
             </div>
             <h3 id="heroTitle" class="center">Your Fused Page Will Appear Here</h3>
             <p id="heroSub" class="center">Paste links on the left and run <b>Crawl + Fuse</b>.</p>
@@ -275,9 +321,14 @@
       try {
         const k = "spz_session_id";
         let v = sessionStorage.getItem(k);
-        if (!v) { v = "spz_" + Date.now().toString(36) + "_" + Math.random().toString(36).slice(2,8); sessionStorage.setItem(k, v); }
+        if (!v) {
+          v = "spz_" + Date.now().toString(36) + "_" + Math.random().toString(36).slice(2,8);
+          sessionStorage.setItem(k, v);
+        }
         return v;
-      } catch { return "spz_local_"+Date.now(); }
+      } catch {
+        return "spz_local_"+Date.now();
+      }
     }
     const SID = getOrCreateSessionId();
     document.getElementById("sid").textContent = SID;
@@ -305,12 +356,100 @@
     }
 
     async function postJSON(path, body){
-      const res = await fetch(path, { method:"POST", headers:{ "Content-Type":"application/json" }, body: JSON.stringify(body || {}) });
-      if(!res.ok){ const t = await res.text().catch(()=> ""); throw new Error(`HTTP ${res.status} ${t}`); }
+      const res = await fetch(path, {
+        method:"POST",
+        headers:{ "Content-Type":"application/json" },
+        body: JSON.stringify(body || {})
+      });
+      if(!res.ok){
+        const t = await res.text().catch(()=> "");
+        throw new Error(`HTTP ${res.status} ${t}`);
+      }
       return res.json();
     }
 
-    // State
+    // --- BRAND / SEO CONSTANTS ---
+    const SITES = {
+      jessica: "https://jessicaspz.netlify.app",
+      sporez:  "https://sporez.netlify.app"
+    };
+    const DEFAULT_OG =
+      "https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExanhzZzZnM2VrdnY2b3Z4Zmt2ZWNxOGEzZWIxdTV3Zmp1YXc1dDFzOCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/DCqjTqTnUBOSAK1WfH/giphy.gif";
+
+    // --- SEO helpers ---
+    function setAttr(el, attr, val){ if(el) el.setAttribute(attr, val); }
+    function priceToNumberUSD(str){
+      const n = parseFloat(String(str||"").replace(/[^0-9.]/g, ""));
+      return Number.isFinite(n) ? n.toFixed(2) : undefined;
+    }
+    function canonicalFor(slug){
+      return slug ? `${SITES.sporez}/drop/${encodeURIComponent(slug)}` : `${SITES.jessica}/`;
+    }
+
+    function updateSEO(d){
+      const hero = d?.hero || {};
+      const slug = d?.slug || elSlug.value.trim();
+      const url  = canonicalFor(slug);
+      const title = hero.title ? `${hero.title} • SporeZ` : "Jessica-SPZ • SporeZ Link Fusion — Part of Zetsumetsu Eoe™";
+      const desc  = hero.subtitle || "Jessica-SPZ (an extension of SporeZ) fuses your links into a single branded SporeZ drop page. SporeZ is a URL shortener + mini brand-page builder. Part of Zetsumetsu Eoe™ — Zetsumetsu Corporation.";
+      const image = hero.image || DEFAULT_OG;
+
+      // Document & Meta
+      document.title = title;
+      setAttr(document.querySelector('link[rel="canonical"]'), "href", url);
+      setAttr(document.querySelector('meta[name="description"]'), "content", desc);
+
+      setAttr(document.querySelector('meta[property="og:site_name"]'), "content", "Zetsumetsu Corporation");
+      setAttr(document.querySelector('meta[property="og:url"]'), "content", url);
+      setAttr(document.querySelector('meta[property="og:title"]'), "content", title);
+      setAttr(document.querySelector('meta[property="og:description"]'), "content", desc);
+      setAttr(document.querySelector('meta[property="og:image"]'), "content", image);
+
+      setAttr(document.querySelector('meta[name="twitter:url"]'), "content", url);
+      setAttr(document.querySelector('meta[name="twitter:title"]'), "content", title);
+      setAttr(document.querySelector('meta[name="twitter:description"]'), "content", desc);
+      setAttr(document.querySelector('meta[name="twitter:image"]'), "content", image);
+
+      // JSON-LD graph
+      const products = Array.isArray(d?.products) ? d.products : [];
+      const graph = [
+        { "@type":"Organization", "@id":"#org", "name":"Zetsumetsu Corporation", "brand":"Zetsumetsu Eoe™" },
+        { "@type":"WebSite", "@id":"#website", "name":"SporeZ", "url": SITES.sporez, "isPartOf": { "@id":"#org" } },
+        {
+          "@type":"WebApplication",
+          "name":"Jessica-SPZ",
+          "url": SITES.jessica,
+          "applicationCategory":"BusinessApplication",
+          "isPartOf": { "@id":"#website" },
+          "creator": { "@type":"Person", "name":"Kevin J. Suber Jr. (Artworqq)" }
+        },
+        { "@type":"WebPage", "name": title, "url": url, "description": desc, "image": image }
+      ];
+      if(products.length){
+        graph.push({
+          "@type":"ItemList",
+          "itemListElement": products.slice(0,8).map((p,i)=>{
+            const price = priceToNumberUSD(p.price);
+            const item = {
+              "@type":"Product",
+              "position": i+1,
+              "name": p.name || "Unnamed",
+              "description": p.description || "",
+              "image": p.image || undefined,
+              "url": p.link || url
+            };
+            if(price){
+              item.offers = { "@type":"Offer", "price": price, "priceCurrency":"USD", "url": p.link || url };
+            }
+            return item;
+          })
+        });
+      }
+      const tag = document.getElementById("ld-json");
+      if(tag) tag.textContent = JSON.stringify({ "@context":"https://schema.org", "@graph": graph });
+    }
+
+    // --- State
     let fused = null;
 
     // Fallback sample
@@ -340,7 +479,14 @@
         const crawl = await postJSON("/api/crawl", { links, session: SID });
 
         log("Fusing content…");
-        fused = await postJSON("/api/fuse", { results: crawl.results || [], mode: getMode(), defaults: getDefaults(), session: SID });
+        fused = await postJSON("/api/fuse", {
+          results: crawl.results || [],
+          mode: getMode(),
+          defaults: getDefaults(),
+          session: SID,
+          slug: elSlug.value.trim() || undefined
+        });
+
         elJSON.textContent = JSON.stringify(fused, null, 2);
         log("Fusion complete.");
         renderPreview(fused);
@@ -358,12 +504,13 @@
       elHeroTitle.textContent = ensure(hero.title, "Your Fused Page");
       elHeroSub.textContent   = ensure(hero.subtitle, "Merged info + offers in one layout.");
       elHeroImg.src = hero.image || "";
+      elHeroImg.alt = hero.title ? `${hero.title} — hero image` : "Fusion hero image";
       elHeroImg.style.display = hero.image ? "block" : "none";
 
       elHeroCta.innerHTML = "";
       if(hero.ctaText){
         const a = document.createElement("a");
-        a.href = hero.ctaLink || "#"; a.textContent = hero.ctaText; a.target = "_blank";
+        a.href = hero.ctaLink || "#"; a.textContent = hero.ctaText; a.target = "_blank"; a.rel = "noopener";
         elHeroCta.appendChild(a);
       }
 
@@ -381,14 +528,17 @@
       ] : [])).forEach(a=> elInfo.appendChild(infoNode(a)));
 
       elFooter.textContent = (d.mode ? d.mode.toUpperCase()+" • " : "") + "SporeZ • Jessica-SPZ";
+
+      // SEO update
+      updateSEO(d);
     }
 
     function prodNode(p){
       const div = document.createElement("div"); div.className = "prod";
-      const img = document.createElement("img"); img.src = p.image || ""; img.style.display = p.image ? "block" : "none";
+      const img = document.createElement("img"); img.src = p.image || ""; img.alt = p.name || "Product image"; img.style.display = p.image ? "block" : "none";
       const name = document.createElement("div"); name.className = "name"; name.textContent = p.name || "Unnamed";
       const price = document.createElement("div"); price.className = "price"; price.textContent = p.price || "";
-      const link = document.createElement("a"); link.href = p.link || "#"; link.target = "_blank"; link.textContent = "View";
+      const link = document.createElement("a"); link.href = p.link || "#"; link.target = "_blank"; link.rel = "noopener"; link.textContent = "View";
       const desc = document.createElement("div"); desc.style.color = "var(--muted)"; desc.style.fontSize = "12px"; desc.textContent = p.description || "";
       div.append(img, name, price, desc, link); return div;
     }
