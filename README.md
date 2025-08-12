@@ -47,6 +47,8 @@ That’s it. No logins, no downloads, no tech setup.
 ---
 SPOREZ™
 ---
+JESSICA AI™
+---
 Zetsumetsu Eoe™ | ZETSUMETSU CORPORATION | Artworqq Kevin Suber
 
 
