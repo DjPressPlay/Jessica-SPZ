@@ -44,3 +44,7 @@ That’s it. No logins, no downloads, no tech setup.
 ---
 
 **Jessica-SPZ** — Paste. Build. Preview.
+
+Zetsumetsu Eoe™ | ZETSUMETSU CORPORATION | Artworqq Kevin Suber
+
+
