@@ -169,25 +169,21 @@
     }
 
 
- /* WIDGET BUTTONS */
-    .z-widget-bar {
-      margin-top: 26px;
-      display: flex;
-      justify-content: center;
-      gap: 18px;
-    }
-
- /* WIDGET PANEL CONTAINER */
+/* WIDGET PANEL CONTAINER */
 .widget-panel-1 {
-  display: inline-block;          /* shrink to fit the widget bar */
-  padding: 12px 20px;             /* space around icons */
-  margin-top: 26px;               /* same spacing as bar */
-  border: 1px solid #333;         /* subtle border */
-  border-radius: 12px;            /* rounded rectangle */
-  background: #1a1a1a;            /* dark plate background */
-  box-shadow: 0 2px 8px rgba(0,0,0,0.4); /* subtle shadow */
+  display: inline-block;
+  margin-top: 18px;             /* closer to search bar */
+  padding: 6px 12px;            /* less padding = less height */
+  border: 1px solid #333;       /* subtle border */
+  border-radius: 12px;          /* rounded rectangle */
+  background: #1a1a1a;          /* dark plate background */
+  box-shadow: 0 2px 8px rgba(0,0,0,0.4);
   text-align: center;
+
+  height: 45px;                 /* fixed height for rectangle */
+  line-height: 72px;            /* vertically centers content */
 }
+
 
 /* WIDGET BUTTONS */
 .z-widget-bar {
