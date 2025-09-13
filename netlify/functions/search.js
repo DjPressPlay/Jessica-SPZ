@@ -1,5 +1,4 @@
 // netlify/functions/search.js
-import fetch from "node-fetch";
 
 export async function handler(event) {
   const query = event.queryStringParameters.q;
@@ -24,7 +23,8 @@ export async function handler(event) {
     // DuckDuckGo (free)
     const ddgUrl = `https://api.duckduckgo.com/?q=${encodeURIComponent(query)}&format=json&no_html=1&no_redirect=1`;
     requests.push(fetch(ddgUrl).then(r => r.json()).then(data => {
-      return (data.RelatedTopics || []).map(i => ({
+      const topics = (data.RelatedTopics || []).flatMap(i => i.Topics || [i]);
+      return topics.map(i => ({
         title: i.Text || "",
         link: i.FirstURL || "",
         snippet: i.Text || "",
@@ -99,9 +99,28 @@ export async function handler(event) {
     });
 
     // =========================
-    // 4. Pick Warp Result
+    // 4. Pick Warp Result (keyword scoring)
     // =========================
-    const warp = items.length > 0 ? items[0] : null;
+    let warp = null;
+    if (items.length > 0) {
+      const keywords = query.toLowerCase().split(/\s+/);
+
+      function score(item) {
+        const title = (item.title || "").toLowerCase();
+        const snippet = (item.snippet || "").toLowerCase();
+        let s = 0;
+
+        keywords.forEach(k => {
+          if (title.includes(k)) s += 3;   // strong weight
+          if (snippet.includes(k)) s += 1; // medium weight
+        });
+
+        return s;
+      }
+
+      items.sort((a, b) => score(b) - score(a));
+      warp = items[0];
+    }
 
     // =========================
     // 5. Return JSON
