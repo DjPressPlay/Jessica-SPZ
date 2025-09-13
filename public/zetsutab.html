@@ -168,33 +168,58 @@
       background: #357ae8;
     }
 
-    /* WIDGET BUTTONS */
-    .z-widget-bar {
-      margin-top: 26px;
-      display: flex;
-      justify-content: center;
-      gap: 18px;
-    }
+   /* WIDGET PANEL CONTAINER */
+.widget-panel-1 {
+  margin: 30px auto;
+  padding: 20px 28px;
+  background: #1a1a1a;
+  border: 2px solid #333;
+  border-radius: 16px;             /* rounded nameplate */
+  box-shadow: 0 4px 16px rgba(0,0,0,0.6);
+  display: inline-block;           /* shrink-wraps to content */
+  text-align: center;
+  position: relative;
+}
 
-    .widget-btn {
-      width: 48px;
-      height: 48px;
-      border-radius: 50%;
-      background-size: cover;
-      background-position: center;
-      border: 2px solid #555;
-      cursor: pointer;
-      background-color: #eaeaea;
-      color: #222;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: bold;
-    }
+/* optional panel title */
+.widget-panel-1::before {
+  content: "Widget Panel 1";
+  position: absolute;
+  top: -14px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 12px;
+  padding: 2px 8px;
+  background: #121212;
+  color: #bbb;
+  border: 1px solid #333;
+  border-radius: 8px;
+}
 
-    .widget-btn:hover {
-      border-color: #4285f4;
-    }
+/* WIDGET BUTTONS */
+.z-widget-bar {
+  display: flex;
+  justify-content: center;
+  gap: 18px;
+}
+
+.widget-btn {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background-size: cover;
+  background-position: center;
+  border: 2px solid #555;
+  cursor: pointer;
+  background-color: #eaeaea;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.widget-btn:hover {
+  border-color: #4285f4;
+}
 
     /* FOOTER — 3-1-3 ABSOLUTE CENTERING */
     .z-footer {
@@ -371,28 +396,33 @@
       <input type="text" placeholder="Search Zetsu..." id="z-start-input">
       <button id="z-search-btn">Search</button>
     </div>
-<div class="z-widget-bar">
-  <!-- Google -->
-  <a href="https://www.google.com" target="_blank" class="widget-btn"
-     style="background-image:url('https://www.google.com/favicon.ico');"></a>
-
-  <!-- YouTube -->
-  <a href="https://www.youtube.com" target="_blank" class="widget-btn"
-     style="background-image:url('https://www.youtube.com/favicon.ico');"></a>
-
-  <!-- Twitter/X -->
-  <a href="https://x.com" target="_blank" class="widget-btn"
-     style="background-image:url('https://abs.twimg.com/favicons/twitter.ico');"></a>
-
-  <!-- GitHub -->
-  <a href="https://github.com" target="_blank" class="widget-btn"
-     style="background-image:url('https://github.githubassets.com/favicons/favicon.svg');"></a>
-
-  <!-- Netlify -->
-  <a href="https://www.netlify.com" target="_blank" class="widget-btn"
-     style="background-image:url('https://www.netlify.com/v3/static/favicon/favicon-32x32.png');"></a>
 </div>
+
+<!-- Widget Panel 1 -->
+<div class="widget-panel-1">
+  <div class="z-widget-bar">
+    <!-- Google -->
+    <a href="https://www.google.com" target="_blank" class="widget-btn"
+       style="background-image:url('https://www.google.com/favicon.ico');" title="Google"></a>
+
+    <!-- YouTube -->
+    <a href="https://www.youtube.com" target="_blank" class="widget-btn"
+       style="background-image:url('https://www.youtube.com/favicon.ico');" title="YouTube"></a>
+
+    <!-- Twitter/X -->
+    <a href="https://x.com" target="_blank" class="widget-btn"
+       style="background-image:url('https://abs.twimg.com/favicons/twitter.ico');" title="X (Twitter)"></a>
+
+    <!-- GitHub -->
+    <a href="https://github.com" target="_blank" class="widget-btn"
+       style="background-image:url('https://github.githubassets.com/favicons/favicon.svg');" title="GitHub"></a>
+
+    <!-- Netlify -->
+    <a href="https://www.netlify.com" target="_blank" class="widget-btn"
+       style="background-image:url('https://www.netlify.com/v3/static/favicon/favicon-32x32.png');" title="Netlify"></a>
+  </div>
 </div>
+
 
 
   <!-- FOOTER -->
