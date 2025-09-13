@@ -504,38 +504,6 @@
     const storeLink = document.getElementById('store-link');
     const storeDropdown = document.getElementById('store-dropdown');
 
-    button.addEventListener('click', () => {
-      const query = input.value.trim();
-      if (query) {
-        window.location.href = `https://duckduckgo.com/?q=${encodeURIComponent(query)}`;
-      }
-    });
-
-    input.addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') button.click();
-    });
-
-    appsIcon.addEventListener('click', (e) => {
-      e.stopPropagation();
-      appsDropdown.style.display = appsDropdown.style.display === 'block' ? 'none' : 'block';
-    });
-
-    document.addEventListener('click', (e) => {
-      if (!appsDropdown.contains(e.target) && e.target !== appsIcon) {
-        appsDropdown.style.display = 'none';
-      }
-      if (!storeDropdown.contains(e.target) && e.target !== storeLink) {
-        storeDropdown.style.display = 'none';
-      }
-    });
-
-    storeLink.addEventListener('click', (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      storeDropdown.style.display = storeDropdown.style.display === 'block' ? 'none' : 'block';
-    });
- </script>
- <script src="ztab-search.js" defer></script>
-
+    <script src="ztab-search.js" defer></script>
 </body>
 </html>
