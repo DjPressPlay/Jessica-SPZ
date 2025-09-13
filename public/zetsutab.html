@@ -15,20 +15,19 @@
     }
 
     /* TOP NAV */
-  .top-nav {
-  position: absolute;
-  top: 0;
-  width: 100%;
-  padding: 12px 20px;
-  box-sizing: border-box;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  z-index: 10;
-  background: #000;
-  border-bottom: 1px solid #222;
-}
-
+    .top-nav {
+      position: absolute;
+      top: 0;
+      width: 100%;
+      padding: 12px 20px;
+      box-sizing: border-box;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 10;
+      background: #000;
+      border-bottom: 1px solid #222;
+    }
 
     .top-left a {
       margin-right: 16px;
@@ -240,6 +239,65 @@
       color: #fff;
       text-decoration: underline;
     }
+    /* ABOUT TOOLTIP */
+.about-tooltip {
+  display: none;
+  position: absolute;
+  top: 36px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #1c1c1c;
+  color: #eaeaea;
+  font-size: 14px;
+  padding: 14px 20px;
+  border-radius: 12px;       /* rounded rectangle */
+  border: 1px solid #444;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.6);
+  text-align: left;
+  z-index: 1000;
+
+  max-width: 320px;          /* box fits on screen */
+  white-space: normal;       /* allows wrapping */
+  line-height: 1.6;
+}
+
+.about-link:hover .about-tooltip {
+  display: block;
+}
+
+
+/* STORE DROPDOWN */
+#store-link { color: #bbb; text-decoration: none; cursor: pointer; }
+#store-link:hover { color: #fff; }
+.store-dropdown {
+  display: none;
+  position: absolute;
+  top: 48px;
+  left: 100px; /* offset to align under "Store" */
+  width: 280px;
+  background: #202124;
+  border: 1px solid #3c4043;
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+  z-index: 9999;
+}
+.store-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+.store-item {
+  background: #2a2a2a;
+  padding: 12px;
+  border-radius: 8px;
+  text-align: center;
+  cursor: pointer;
+}
+.store-item:hover { background: #333; }
+.store-icon { font-size: 20px; margin-bottom: 6px; }
+.store-label { font-size: 13px; color: #eee; }
+
   </style>
 </head>
 <body>
@@ -247,9 +305,40 @@
   <!-- TOP NAV -->
   <div class="top-nav">
     <div class="top-left">
-      <a href="#">About</a>
-      <a href="#">Store</a>
+      <!-- ABOUT with hover tooltip -->
+      <a href="#" class="about-link">About
+        <span class="about-tooltip">
+          <b>Zetsu Start</b><br>
+          Version: 1.0.3<br>
+          Last Update: Sept 13, 2025<br>
+          Creator: Kevin J. Suber Jr (Artworqq)
+        </span>
+      </a>
+
+      <!-- STORE with dropdown -->
+      <a href="#" id="store-link">Store ▼</a>
+      <div class="store-dropdown" id="store-dropdown">
+        <div class="store-grid">
+          <div class="store-item">
+            <div class="store-icon">🖥️</div>
+            <div class="store-label">Z-Browser</div>
+          </div>
+          <div class="store-item">
+            <div class="store-icon">📱</div>
+            <div class="store-label">Elo Devices</div>
+          </div>
+          <div class="store-item">
+            <div class="store-icon">🎮</div>
+            <div class="store-label">Zetsu Games</div>
+          </div>
+          <div class="store-item">
+            <div class="store-icon">📚</div>
+            <div class="store-label">Zetsu Books</div>
+          </div>
+        </div>
+      </div>
     </div>
+
     <div class="top-right">
       <div class="icon-btn" title="Widgets">☰</div>
       <div class="icon-btn" id="apps-icon" title="Apps">⬛</div>
@@ -295,17 +384,17 @@
   <div class="z-footer">
     <div class="z-footer-inner">
       <div class="footer-left">
-        <a href="#">Advertising</a>
-        <a href="#">Business</a>
-        <a href="#">How Search works</a>
+        <a href="https://jessicaspz.netlify.app/ads">Advertising</a>
+        <a href="https://jessicaspz.netlify.app/biz">Business</a>
+        <a href="https://jessicaspz.netlify.app/how2">How Search works</a>
       </div>
       <div class="footer-center">
-        <a href="#">Applying AI towards science and the environment</a>
+        <a href="https://jessicaspz.netlify.app/air&d">Applying AI towards science and the environment</a>
       </div>
       <div class="footer-right">
-        <a href="#">Privacy</a>
-        <a href="#">Terms</a>
-        <a href="#">Settings</a>
+        <a href="https://jessicaspz.netlify.app/privacy">Privacy</a>
+        <a href="https://jessicaspz.netlify.app/terms">Terms</a>
+        <a href="https://jessicaspz.netlify.app/tabsettings">Settings</a>
       </div>
     </div>
   </div>
@@ -316,6 +405,8 @@
     const button = document.getElementById('z-search-btn');
     const appsIcon = document.getElementById('apps-icon');
     const appsDropdown = document.getElementById('apps-dropdown');
+    const storeLink = document.getElementById('store-link');
+    const storeDropdown = document.getElementById('store-dropdown');
 
     button.addEventListener('click', () => {
       const query = input.value.trim();
@@ -337,6 +428,15 @@
       if (!appsDropdown.contains(e.target) && e.target !== appsIcon) {
         appsDropdown.style.display = 'none';
       }
+      if (!storeDropdown.contains(e.target) && e.target !== storeLink) {
+        storeDropdown.style.display = 'none';
+      }
+    });
+
+    storeLink.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      storeDropdown.style.display = storeDropdown.style.display === 'block' ? 'none' : 'block';
     });
   </script>
 </body>
