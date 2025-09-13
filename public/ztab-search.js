@@ -21,34 +21,37 @@ document.addEventListener("DOMContentLoaded", () => {
       resultsContainer.innerHTML = "";
 
       // ======================
-      // 1. Warp Result
+      // Warp Result Highlight
       // ======================
       if (data.warp) {
         const warpDiv = document.createElement("div");
-        warpDiv.className = "warp-result";
+        warpDiv.className = "result-item";
+        warpDiv.style.border = "2px solid #4285f4"; // highlight border
+        warpDiv.style.padding = "12px";
+        warpDiv.style.borderRadius = "8px";
+        warpDiv.style.marginBottom = "20px";
         warpDiv.innerHTML = `
-          <h2>⚡ Warp Result</h2>
           <h3><a href="${data.warp.link}" target="_blank">${data.warp.title}</a></h3>
-          <p>${data.warp.snippet || ""}</p>
-          <hr>
+          <p class="result-snippet">${data.warp.snippet || ""}</p>
+          <small>[${data.warp.source || "warp"}]</small>
         `;
         resultsContainer.appendChild(warpDiv);
       }
 
       // ======================
-      // 2. All Other Results
+      // All Results List
       // ======================
       if (data.items && data.items.length > 0) {
-        data.items.forEach((item, idx) => {
-          // skip if it's the warp (avoid duplication)
+        data.items.forEach((item) => {
+          // Skip duplicate of warp
           if (data.warp && item.link === data.warp.link) return;
 
           const div = document.createElement("div");
-          div.className = "search-result";
+          div.className = "result-item";
           div.innerHTML = `
             <h3><a href="${item.link}" target="_blank">${item.title}</a></h3>
-            <p>${item.snippet || ""}</p>
-            <small>[${item.source}]</small>
+            <p class="result-snippet">${item.snippet || ""}</p>
+            <small>[${item.source || "unknown"}]</small>
           `;
           resultsContainer.appendChild(div);
         });
