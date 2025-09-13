@@ -504,6 +504,15 @@
     const storeLink = document.getElementById('store-link');
     const storeDropdown = document.getElementById('store-dropdown');
 
+    button.addEventListener("click", () => {
+  runSearch(input.value.trim());
+});
+
+input.addEventListener("keypress", (e) => {
+  if (e.key === "Enter") runSearch(input.value.trim());
+});
+
+
     <script src="ztab-search.js" defer></script>
 </body>
 </html>
