@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Zetsu Start</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      background: #121212;
+      font-family: Arial, sans-serif;
+      color: #eaeaea;
+      overflow: hidden;
+    }
+
+    /* TOP NAV */
+  .top-nav {
+  position: absolute;
+  top: 0;
+  width: 100%;
+  padding: 12px 20px;
+  box-sizing: border-box;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 10;
+  background: #000;
+  border-bottom: 1px solid #222;
+}
+
+
+    .top-left a {
+      margin-right: 16px;
+      color: #bbb;
+      text-decoration: none;
+    }
+
+    .top-left a:hover {
+      color: #fff;
+    }
+
+    .top-right {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      position: relative;
+    }
+
+    .icon-btn {
+      width: 32px;
+      height: 32px;
+      background: #1e1e1e;
+      border-radius: 50%;
+      border: 1px solid #444;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #ccc;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    .icon-btn:hover {
+      background: #2a2a2a;
+    }
+
+    .profile-pic {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: url("https://placehold.co/64x64") center/cover no-repeat;
+      border: 2px solid #4285f4;
+      cursor: pointer;
+    }
+
+    /* DROPDOWN */
+    .apps-dropdown {
+      display: none;
+      position: absolute;
+      top: 48px;
+      right: 0;
+      width: 320px;
+      background: #202124;
+      border: 1px solid #3c4043;
+      border-radius: 20px;
+      padding: 20px 16px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+      z-index: 9999;
+    }
+
+    .app-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px 12px;
+    }
+
+    .app-cell {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      color: #e8eaed;
+      font-size: 12px;
+      cursor: pointer;
+    }
+
+    .app-icon {
+      width: 40px;
+      height: 40px;
+      background-color: #5f6368;
+      border-radius: 12px;
+      margin-bottom: 6px;
+    }
+
+    .app-label {
+      line-height: 1.2;
+    }
+
+    /* CENTER AREA */
+    .center-content {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -55%);
+      text-align: center;
+    }
+
+    .z-logo {
+      font-size: 4em;
+      font-weight: bold;
+      color: #4285f4;
+      margin-bottom: 20px;
+    }
+
+    .z-search {
+      width: 95vw;
+      max-width: 720px;
+      display: flex;
+      border: 1px solid #444;
+      border-radius: 24px;
+      padding: 10px 18px;
+      background: #1f1f1f;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+      margin: 0 auto;
+    }
+
+    .z-search input {
+      flex: 1;
+      border: none;
+      outline: none;
+      font-size: 1.3em;
+      padding: 10px;
+      background: transparent;
+      color: #fff;
+    }
+
+    .z-search button {
+      margin-left: 10px;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 4px;
+      background: #4285f4;
+      color: white;
+      font-size: 1.1em;
+      cursor: pointer;
+    }
+
+    .z-search button:hover {
+      background: #357ae8;
+    }
+
+    /* WIDGET BUTTONS */
+    .z-widget-bar {
+      margin-top: 26px;
+      display: flex;
+      justify-content: center;
+      gap: 18px;
+    }
+
+    .widget-btn {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background-size: cover;
+      background-position: center;
+      border: 2px solid #555;
+      cursor: pointer;
+      background-color: #eaeaea;
+      color: #222;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+    }
+
+    .widget-btn:hover {
+      border-color: #4285f4;
+    }
+
+    /* FOOTER — 3-1-3 ABSOLUTE CENTERING */
+    .z-footer {
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+      background: #000;
+      padding: 14px 32px;
+      font-size: 0.9em;
+      box-sizing: border-box;
+    }
+
+    .z-footer-inner {
+      position: relative;
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .footer-left,
+    .footer-right {
+      display: flex;
+      gap: 24px;
+      z-index: 1;
+    }
+
+    .footer-center {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      white-space: nowrap;
+      z-index: 0;
+    }
+
+    .z-footer a {
+      color: #bbb;
+      text-decoration: none;
+    }
+
+    .z-footer a:hover {
+      color: #fff;
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- TOP NAV -->
+  <div class="top-nav">
+    <div class="top-left">
+      <a href="#">About</a>
+      <a href="#">Store</a>
+    </div>
+    <div class="top-right">
+      <div class="icon-btn" title="Widgets">☰</div>
+      <div class="icon-btn" id="apps-icon" title="Apps">⬛</div>
+
+      <div class="apps-dropdown" id="apps-dropdown">
+        <div class="app-grid">
+          <div class="app-cell"><div class="app-icon"></div><div class="app-label">Account</div></div>
+          <div class="app-cell"><div class="app-icon"></div><div class="app-label">Search</div></div>
+          <div class="app-cell"><div class="app-icon"></div><div class="app-label">Maps</div></div>
+          <div class="app-cell"><div class="app-icon"></div><div class="app-label">YouTube</div></div>
+          <div class="app-cell"><div class="app-icon"></div><div class="app-label">Play</div></div>
+          <div class="app-cell"><div class="app-icon"></div><div class="app-label">News</div></div>
+          <div class="app-cell"><div class="app-icon"></div><div class="app-label">Gmail</div></div>
+          <div class="app-cell"><div class="app-icon"></div><div class="app-label">Meet</div></div>
+          <div class="app-cell"><div class="app-icon"></div><div class="app-label">Chat</div></div>
+          <div class="app-cell"><div class="app-icon"></div><div class="app-label">Contacts</div></div>
+          <div class="app-cell"><div class="app-icon"></div><div class="app-label">Drive</div></div>
+          <div class="app-cell"><div class="app-icon"></div><div class="app-label">Business</div></div>
+        </div>
+      </div>
+
+      <div class="profile-pic" title="Profile"></div>
+    </div>
+  </div>
+
+  <!-- CENTER -->
+<div class="center-content">
+  <div class="z-logo">Terms of Service</div>
+  <div class="page-text">
+    <p>By using Zetsu Corp systems you agree: no exploitation, no abuse, no false claims.</p>
+    <p>All platforms are provided as-is, experimental, and evolving. Violations may result in access suspension.</p>
+  </div>
+</div>
+
+
+
+
+  <!-- FOOTER -->
+  <div class="z-footer">
+    <div class="z-footer-inner">
+      <div class="footer-left">
+        <a href="#">Advertising</a>
+        <a href="#">Business</a>
+        <a href="#">How Search works</a>
+      </div>
+      <div class="footer-center">
+        <a href="#">Applying AI towards science and the environment</a>
+      </div>
+      <div class="footer-right">
+        <a href="#">Privacy</a>
+        <a href="#">Terms</a>
+        <a href="#">Settings</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCRIPT -->
+  <script>
+    const input = document.getElementById('z-start-input');
+    const button = document.getElementById('z-search-btn');
+    const appsIcon = document.getElementById('apps-icon');
+    const appsDropdown = document.getElementById('apps-dropdown');
+
+    button.addEventListener('click', () => {
+      const query = input.value.trim();
+      if (query) {
+        window.location.href = `https://duckduckgo.com/?q=${encodeURIComponent(query)}`;
+      }
+    });
+
+    input.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') button.click();
+    });
+
+    appsIcon.addEventListener('click', (e) => {
+      e.stopPropagation();
+      appsDropdown.style.display = appsDropdown.style.display === 'block' ? 'none' : 'block';
+    });
+
+    document.addEventListener('click', (e) => {
+      if (!appsDropdown.contains(e.target) && e.target !== appsIcon) {
+        appsDropdown.style.display = 'none';
+      }
+    });
+  </script>
+</body>
+</html>
