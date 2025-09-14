@@ -1,4 +1,3 @@
-OK REWRITE THE ZTAB SEARCH JS WITH THE UPDATE 
 // public/ztab-search.js
 document.addEventListener("DOMContentLoaded", () => {
   const input = document.getElementById("z-start-input");
