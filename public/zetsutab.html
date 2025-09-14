@@ -1,3 +1,6 @@
+II WANT U TO LOOK AT THIS SHIT 
+NOW THAT THATS DONE LETS MAKE IT REPLACE THE STUFF ON THE PAGE WITH THE SEARCH RESULTS  AND MOVE THE SEARCH BAR TO A TOP NAV LIKE A NORMAL SEARCH SITE 
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -369,9 +372,6 @@
   flex-shrink: 0;              /* don’t shrink thumb */
   object-fit: cover;
 }
-#z-search-results {
-  display: none;
-}
 
     
   </style>
@@ -380,11 +380,6 @@
 
   <!-- TOP NAV -->
   <div class="top-nav">
-    <div class="nav-search" style="display:none;">
-  <input type="text" placeholder="Search Zetsu..." id="z-nav-input">
-  <button id="z-nav-btn">Search</button>
-</div>
-
     <div class="top-left">
       <!-- ABOUT with hover tooltip -->
       <a href="#" class="about-link">About
@@ -517,81 +512,30 @@
     </div>
   </div>
 
-  <!-- SCRIPT -->
-<script>
-  const input = document.getElementById("z-start-input");
-  const button = document.getElementById("z-search-btn");
-  const appsIcon = document.getElementById("apps-icon");
-  const appsDropdown = document.getElementById("apps-dropdown");
-  const storeLink = document.getElementById("store-link");
-  const storeDropdown = document.getElementById("store-dropdown");
-  const centerContent = document.querySelector(".center-content");
-  const resultsContainer = document.getElementById("z-search-results");
-  const topNav = document.querySelector(".top-nav");
+     <!-- SCRIPT -->
+  <script>
+    const input = document.getElementById('z-start-input');
+    const button = document.getElementById('z-search-btn');
+    const appsIcon = document.getElementById('apps-icon');
+    const appsDropdown = document.getElementById('apps-dropdown');
+    const storeLink = document.getElementById('store-link');
+    const storeDropdown = document.getElementById('store-dropdown');
 
-  // 🔹 create nav search bar placeholder
-  let navSearchBar = null;
+    // toggle Apps dropdown
+    appsIcon.addEventListener("click", () => {
+      appsDropdown.style.display =
+        appsDropdown.style.display === "block" ? "none" : "block";
+    });
 
-  function moveSearchToNav() {
-    if (!navSearchBar) {
-      navSearchBar = document.createElement("div");
-      navSearchBar.className = "z-search";
-      navSearchBar.innerHTML = `
-        <input type="text" id="z-nav-input" placeholder="Search Zetsu..." />
-        <button id="z-nav-btn">Search</button>
-      `;
-      topNav.appendChild(navSearchBar);
+    // toggle Store dropdown
+    storeLink.addEventListener("click", (e) => {
+      e.preventDefault();
+      storeDropdown.style.display =
+        storeDropdown.style.display === "block" ? "none" : "block";
+    });
+  </script>
 
-      // hook up nav input + button
-      const navInput = navSearchBar.querySelector("#z-nav-input");
-      const navButton = navSearchBar.querySelector("#z-nav-btn");
-      navButton.addEventListener("click", () => runSearch(navInput.value.trim()));
-      navInput.addEventListener("keypress", (e) => {
-        if (e.key === "Enter") runSearch(navInput.value.trim());
-      });
-    }
-  }
-
-  function runSearch(query) {
-    if (!query) return;
-
-    // hide landing section
-    centerContent.style.display = "none";
-
-    // show results container
-    resultsContainer.style.display = "block";
-
-    // move search bar into top nav
-    moveSearchToNav();
-
-    // call your search logic (in ztab-search.js)
-    if (typeof window.runSearch === "function") {
-      window.runSearch(query);
-    }
-  }
-
-  // initial bindings for center search
-  button.addEventListener("click", () => runSearch(input.value.trim()));
-  input.addEventListener("keypress", (e) => {
-    if (e.key === "Enter") runSearch(input.value.trim());
-  });
-
-  // toggle Apps dropdown
-  appsIcon.addEventListener("click", () => {
-    appsDropdown.style.display =
-      appsDropdown.style.display === "block" ? "none" : "block";
-  });
-
-  // toggle Store dropdown
-  storeLink.addEventListener("click", (e) => {
-    e.preventDefault();
-    storeDropdown.style.display =
-      storeDropdown.style.display === "block" ? "none" : "block";
-  });
-</script>
-
-<!-- Load search logic -->
-<script src="ztab-search.js" defer></script>
+  <!-- Load search logic -->
+  <script src="ztab-search.js" defer></script>
 </body>
 </html>
-
