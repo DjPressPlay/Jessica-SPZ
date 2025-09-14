@@ -319,8 +319,8 @@
 
 
 
-    .results-container {
-  margin: 30px auto;
+.results-container {
+  margin: 40px auto;
   max-width: 720px;
   padding: 20px;
   background: #1a1a1a;
@@ -328,7 +328,7 @@
   box-shadow: 0 2px 8px rgba(0,0,0,0.4);
   text-align: left;
   overflow-y: auto;
-  max-height: 55vh; /* so it doesn’t run into the footer */
+  max-height: 65vh;
 }
 
 .result-item {
@@ -354,6 +354,25 @@
 .result-snippet {
   font-size: 0.95em;
   color: #ccc;
+}
+
+
+    .result-item {
+  display: flex;               /* side by side layout */
+  align-items: flex-start;
+  gap: 12px;                   /* spacing between thumb + text */
+  margin-bottom: 18px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #333;
+}
+
+.result-thumb {
+  width: 64px;
+  height: 64px;
+  border-radius: 8px;
+  background: #222;
+  flex-shrink: 0;              /* don’t shrink thumb */
+  object-fit: cover;
 }
 
     
@@ -495,7 +514,7 @@
     </div>
   </div>
 
-  <!-- SCRIPT -->
+    <!-- SCRIPT -->
   <script>
     const input = document.getElementById('z-start-input');
     const button = document.getElementById('z-search-btn');
@@ -504,12 +523,13 @@
     const storeLink = document.getElementById('store-link');
     const storeDropdown = document.getElementById('store-dropdown');
 
-    // dropdown toggle logic
+    // toggle Apps dropdown
     appsIcon.addEventListener("click", () => {
       appsDropdown.style.display =
         appsDropdown.style.display === "block" ? "none" : "block";
     });
 
+    // toggle Store dropdown
     storeLink.addEventListener("click", (e) => {
       e.preventDefault();
       storeDropdown.style.display =
@@ -517,8 +537,8 @@
     });
   </script>
 
-  <!-- load search logic -->
-  <script src="/ztab-search.js" defer></script>
+  <!-- Load search logic -->
+  <script src="ztab-search.js" defer></script>
 </body>
 </html>
 
