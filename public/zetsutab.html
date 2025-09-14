@@ -504,15 +504,21 @@
     const storeLink = document.getElementById('store-link');
     const storeDropdown = document.getElementById('store-dropdown');
 
-    button.addEventListener("click", () => {
-  runSearch(input.value.trim());
-});
+    // dropdown toggle logic
+    appsIcon.addEventListener("click", () => {
+      appsDropdown.style.display =
+        appsDropdown.style.display === "block" ? "none" : "block";
+    });
 
-input.addEventListener("keypress", (e) => {
-  if (e.key === "Enter") runSearch(input.value.trim());
-});
+    storeLink.addEventListener("click", (e) => {
+      e.preventDefault();
+      storeDropdown.style.display =
+        storeDropdown.style.display === "block" ? "none" : "block";
+    });
+  </script>
 
-
-    <script src="ztab-search.js" defer></script>
+  <!-- load search logic -->
+  <script src="/ztab-search.js" defer></script>
 </body>
 </html>
+
