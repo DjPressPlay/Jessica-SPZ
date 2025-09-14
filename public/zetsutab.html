@@ -488,7 +488,7 @@
   </div>
 
 
-  <!-- SCRIPT -->
+    <!-- SCRIPT -->
   <script>
     const input = document.getElementById('z-start-input');
     const button = document.getElementById('z-search-btn');
@@ -498,14 +498,34 @@
     const storeDropdown = document.getElementById('store-dropdown');
 
     button.addEventListener("click", () => {
-  runSearch(input.value.trim());
-});
+      runSearch(input.value.trim());
+    });
 
-input.addEventListener("keypress", (e) => {
-  if (e.key === "Enter") runSearch(input.value.trim());
-});
+    input.addEventListener("keypress", (e) => {
+      if (e.key === "Enter") runSearch(input.value.trim());
+    });
 
+    // Dropdown toggles
+    appsIcon.addEventListener("click", () => {
+      appsDropdown.style.display = (appsDropdown.style.display === 'block') ? 'none' : 'block';
+    });
 
-    <script src="ztab-search.js" defer></script>
+    storeLink.addEventListener("click", () => {
+      storeDropdown.style.display = (storeDropdown.style.display === 'block') ? 'none' : 'block';
+    });
+
+    // Global click to close dropdowns
+    document.addEventListener("click", (e) => {
+      if (!appsIcon.contains(e.target) && !appsDropdown.contains(e.target)) {
+        appsDropdown.style.display = 'none';
+      }
+      if (!storeLink.contains(e.target) && !storeDropdown.contains(e.target)) {
+        storeDropdown.style.display = 'none';
+      }
+    });
+  </script>
+
+  <script src="ztab-search.js" defer></script>
 </body>
 </html>
+
