@@ -487,7 +487,10 @@
     </div>
   </div>
 
- <!-- SCRIPT -->
+<!-- Load search logic first -->
+<script src="ztab-search.js"></script>
+
+<!-- Then attach your button handlers -->
 <script>
   const input = document.getElementById('z-start-input');
   const button = document.getElementById('z-search-btn');
@@ -519,6 +522,3 @@
       storeDropdown.style.display === "block" ? "none" : "block";
   });
 </script>
-
-<!-- Load search logic -->
-<script src="ztab-search.js" defer></script>
