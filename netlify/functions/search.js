@@ -30,7 +30,7 @@ export async function handler(event) {
         snippet: i.Text || "",
         source: "duckduckgo"
       }));
-    }));
+    }).catch(() => []));
 
     // Wikipedia (free)
     const wikiUrl = `https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(query)}&format=json`;
@@ -41,48 +41,42 @@ export async function handler(event) {
         snippet: i.snippet,
         source: "wikipedia"
       }));
-    }));
+    }).catch(() => []));
 
-    // Google CSE
-    if (googleKey && googleCx) {
-      const googleUrl = `https://www.googleapis.com/customsearch/v1?key=${googleKey}&cx=${googleCx}&q=${encodeURIComponent(query)}`;
-      requests.push(fetch(googleUrl).then(r => r.json()).then(data => {
-        return (data.items || []).map(i => ({
-          title: i.title,
-          link: i.link,
-          snippet: i.snippet,
-          source: "google"
-        }));
+    // Google CSE (run even if keys missing → just return empty)
+    const googleUrl = `https://www.googleapis.com/customsearch/v1?key=${googleKey || "MISSING"}&cx=${googleCx || "MISSING"}&q=${encodeURIComponent(query)}`;
+    requests.push(fetch(googleUrl).then(r => r.json()).then(data => {
+      return (data.items || []).map(i => ({
+        title: i.title,
+        link: i.link,
+        snippet: i.snippet,
+        source: "google"
       }));
-    }
+    }).catch(() => []));
 
     // News API
-    if (newsKey) {
-      const newsUrl = `https://newsapi.org/v2/everything?q=${encodeURIComponent(query)}&apiKey=${newsKey}`;
-      requests.push(fetch(newsUrl).then(r => r.json()).then(data => {
-        return (data.articles || []).map(i => ({
+    const newsUrl = `https://newsapi.org/v2/everything?q=${encodeURIComponent(query)}&apiKey=${newsKey || "MISSING"}`;
+    requests.push(fetch(newsUrl).then(r => r.json()).then(data => {
+      return (data.articles || []).map(i => ({
+        title: i.title,
+        link: i.url,
+        snippet: i.description || "",
+        source: "news"
+      }));
+    }).catch(() => []));
+
+    // Brave Search
+    const braveUrl = `https://api.search.brave.com/res/v1/web/search?q=${encodeURIComponent(query)}`;
+    requests.push(fetch(braveUrl, { headers: { "X-Subscription-Token": braveKey || "MISSING" } })
+      .then(r => r.json()).then(data => {
+        return (data.web?.results || []).map(i => ({
           title: i.title,
           link: i.url,
           snippet: i.description || "",
-          source: "news"
+          source: "brave"
         }));
-      }));
-    }
-
-    // Brave Search
-    if (braveKey) {
-      const braveUrl = `https://api.search.brave.com/res/v1/web/search?q=${encodeURIComponent(query)}`;
-      requests.push(fetch(braveUrl, { headers: { "X-Subscription-Token": braveKey } })
-        .then(r => r.json()).then(data => {
-          return (data.web?.results || []).map(i => ({
-            title: i.title,
-            link: i.url,
-            snippet: i.description || "",
-            source: "brave"
-          }));
-        })
-      );
-    }
+      }).catch(() => [])
+    );
 
     // =========================
     // 3. Collect all results
@@ -104,20 +98,16 @@ export async function handler(event) {
     let warp = null;
     if (items.length > 0) {
       const keywords = query.toLowerCase().split(/\s+/);
-
       function score(item) {
         const title = (item.title || "").toLowerCase();
         const snippet = (item.snippet || "").toLowerCase();
         let s = 0;
-
         keywords.forEach(k => {
-          if (title.includes(k)) s += 3;   // strong weight
-          if (snippet.includes(k)) s += 1; // medium weight
+          if (title.includes(k)) s += 3;
+          if (snippet.includes(k)) s += 1;
         });
-
         return s;
       }
-
       items.sort((a, b) => score(b) - score(a));
       warp = items[0];
     }
@@ -134,3 +124,4 @@ export async function handler(event) {
     return { statusCode: 500, body: JSON.stringify({ error: err.message }) };
   }
 }
+
