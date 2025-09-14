@@ -433,7 +433,7 @@
   </div>
 
   <!-- CENTER ----------------------------------------------->
-<div class="center-content">
+<div class="center-content" id="center-content">
   <div class="z-logo">🅩 Zetsu</div>
 
   <!-- SEARCH BAR -->
@@ -442,6 +442,10 @@
     <button id="z-search-btn">Search</button>
   </div>
 
+  <!-- Widget Panel -->
+  <div class="widget-panel-1">
+    <div class="z-widget-bar">
+    
 
 
 
@@ -469,12 +473,13 @@
       <!-- Netlify -->
       <a href="https://www.netlify.com" target="_blank" class="widget-btn"
          style="background-image:url('https://www.netlify.com/v3/static/favicon/favicon-32x32.png');" title="Netlify"></a>
+      <!-- your widget buttons here -->
     </div>
   </div>
 </div>
 
-
-
+<!-- Results container (initially hidden) -->
+<div id="z-search-results" class="results-container" style="display:none;"></div>
 
 
   
@@ -499,8 +504,7 @@
   </div>
 
 
-  <!-- Add this container where you want results to display -->
-<div id="z-search-results" class="results-container"></div>
+
 
 <!-- SCRIPT ----------------------------------------------------->
 <script>
