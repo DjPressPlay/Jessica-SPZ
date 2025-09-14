@@ -487,38 +487,25 @@
     </div>
   </div>
 
-<!-- Load search logic first -->
-<script src="ztab-search.js"></script>
 
-<!-- Then attach your button handlers -->
-<script>
-  const input = document.getElementById('z-start-input');
-  const button = document.getElementById('z-search-btn');
-  const appsIcon = document.getElementById('apps-icon');
-  const appsDropdown = document.getElementById('apps-dropdown');
-  const storeLink = document.getElementById('store-link');
-  const storeDropdown = document.getElementById('store-dropdown');
+  <!-- SCRIPT -->
+  <script>
+    const input = document.getElementById('z-start-input');
+    const button = document.getElementById('z-search-btn');
+    const appsIcon = document.getElementById('apps-icon');
+    const appsDropdown = document.getElementById('apps-dropdown');
+    const storeLink = document.getElementById('store-link');
+    const storeDropdown = document.getElementById('store-dropdown');
 
-  // --- Search events ---
-  button.addEventListener("click", () => {
-    runSearch(input.value.trim());
-  });
+    button.addEventListener("click", () => {
+  runSearch(input.value.trim());
+});
 
-  input.addEventListener("keypress", (e) => {
-    if (e.key === "Enter") {
-      runSearch(input.value.trim());
-    }
-  });
+input.addEventListener("keypress", (e) => {
+  if (e.key === "Enter") runSearch(input.value.trim());
+});
 
-  // --- Dropdown toggles ---
-  appsIcon.addEventListener("click", () => {
-    appsDropdown.style.display =
-      appsDropdown.style.display === "block" ? "none" : "block";
-  });
 
-  storeLink.addEventListener("click", (e) => {
-    e.preventDefault();
-    storeDropdown.style.display =
-      storeDropdown.style.display === "block" ? "none" : "block";
-  });
-</script>
+    <script src="ztab-search.js" defer></script>
+</body>
+</html>
