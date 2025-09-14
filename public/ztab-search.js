@@ -1,16 +1,12 @@
+OK REWRITE THE ZTAB SEARCH JS WITH THE UPDATE 
 // public/ztab-search.js
 document.addEventListener("DOMContentLoaded", () => {
   const input = document.getElementById("z-start-input");
   const button = document.getElementById("z-search-btn");
   const resultsContainer = document.getElementById("z-search-results");
-  const centerContent = document.getElementById("center-content");
 
   async function runSearch(query) {
     if (!query) return;
-
-    // Hide center content, show results
-    if (centerContent) centerContent.style.display = "none";
-    if (resultsContainer) resultsContainer.style.display = "block";
 
     resultsContainer.innerHTML = `<p>🔎 Searching for <b>${query}</b>...</p>`;
 
