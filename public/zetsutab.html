@@ -319,17 +319,12 @@
 
 
 
-.results-container {
-  margin: 40px auto;
-  max-width: 720px;
-  padding: 20px;
-  background: #1a1a1a;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.4);
-  text-align: left;
-  overflow-y: auto;
-  max-height: 65vh;
+.center-content {
+  position: relative;  /* instead of absolute */
+  text-align: center;
+  margin-top: 120px;   /* push below nav */
 }
+
 
 .result-item {
   margin-bottom: 18px;
@@ -445,12 +440,13 @@
   <!-- CENTER -->
 <div class="center-content">
   <div class="z-logo">🅩 Zetsu</div>
+  <div class="z-search">...</div>
+  <div class="widget-panel-1">...</div>
+</div>
 
-  <!-- SEARCH BAR -->
-  <div class="z-search">
-    <input type="text" placeholder="Search Zetsu..." id="z-start-input">
-    <button id="z-search-btn">Search</button>
-  </div>
+<!-- RESULTS SECTION (moved OUTSIDE center-content) -->
+<div id="z-search-results" class="results-container"></div>
+
 
   <!-- Widget Panel 1 -->
   <div class="widget-panel-1">
@@ -476,8 +472,6 @@
          style="background-image:url('https://www.netlify.com/v3/static/favicon/favicon-32x32.png');" title="Netlify"></a>
     </div>
   </div>
-   <!-- RESULTS SECTION -->
-  <div id="z-search-results" class="results-container"></div>
 </div>
 
 
