@@ -1,5 +1,3 @@
-read this 
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -500,43 +498,34 @@ read this
   </div>
 
 
-    <!-- SCRIPT ----------------------------------------------------->
-  <script>
-    const input = document.getElementById('z-start-input');
-    const button = document.getElementById('z-search-btn');
-    const appsIcon = document.getElementById('apps-icon');
-    const appsDropdown = document.getElementById('apps-dropdown');
-    const storeLink = document.getElementById('store-link');
-    const storeDropdown = document.getElementById('store-dropdown');
+    <!-- Add this container where you want results to display -->
+<div id="z-search-results" class="results-container"></div>
 
-    button.addEventListener("click", () => {
-      runSearch(input.value.trim());
-    });
+<!-- SCRIPT ----------------------------------------------------->
+<script>
+  const appsIcon = document.getElementById('apps-icon');
+  const appsDropdown = document.getElementById('apps-dropdown');
+  const storeLink = document.getElementById('store-link');
+  const storeDropdown = document.getElementById('store-dropdown');
 
-    input.addEventListener("keypress", (e) => {
-      if (e.key === "Enter") runSearch(input.value.trim());
-    });
+  // Dropdown toggles
+  appsIcon.addEventListener("click", () => {
+    appsDropdown.style.display = (appsDropdown.style.display === 'block') ? 'none' : 'block';
+  });
 
-    // Dropdown toggles
-    appsIcon.addEventListener("click", () => {
-      appsDropdown.style.display = (appsDropdown.style.display === 'block') ? 'none' : 'block';
-    });
+  storeLink.addEventListener("click", () => {
+    storeDropdown.style.display = (storeDropdown.style.display === 'block') ? 'none' : 'block';
+  });
 
-    storeLink.addEventListener("click", () => {
-      storeDropdown.style.display = (storeDropdown.style.display === 'block') ? 'none' : 'block';
-    });
+  // Global click to close dropdowns
+  document.addEventListener("click", (e) => {
+    if (!appsIcon.contains(e.target) && !appsDropdown.contains(e.target)) {
+      appsDropdown.style.display = 'none';
+    }
+    if (!storeLink.contains(e.target) && !storeDropdown.contains(e.target)) {
+      storeDropdown.style.display = 'none';
+    }
+  });
+</script>
 
-    // Global click to close dropdowns
-    document.addEventListener("click", (e) => {
-      if (!appsIcon.contains(e.target) && !appsDropdown.contains(e.target)) {
-        appsDropdown.style.display = 'none';
-      }
-      if (!storeLink.contains(e.target) && !storeDropdown.contains(e.target)) {
-        storeDropdown.style.display = 'none';
-      }
-    });
-  </script>
-
-  <script src="ztab-search.js" defer></script>
-</body>
-</html>
+<script src="ztab-search.js" defer></script>
