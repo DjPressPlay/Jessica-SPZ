@@ -582,38 +582,43 @@
 
 
   document.addEventListener("DOMContentLoaded", () => {
-  const mainSearch = document.querySelector(".main-search"); // wrapper of your big bar
+  const mainSearch = document.querySelector(".main-search");
   const toolbarSearch = document.getElementById("toolbar-search");
-
-  const observer = new IntersectionObserver(
-    (entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          // main search visible → hide toolbar
-          toolbarSearch.style.display = "none";
-        } else {
-          // main search out of view → show toolbar
-          toolbarSearch.style.display = "flex";
-        }
-      });
-    },
-    { threshold: 0 } // triggers as soon as it's not in viewport
-  );
-
-  if (mainSearch) observer.observe(mainSearch);
-
-  // Hook toolbar search to same function
   const toolbarInput = document.getElementById("toolbar-input");
   const toolbarBtn = document.getElementById("toolbar-btn");
 
-  toolbarBtn.addEventListener("click", () => {
-    runSearch(toolbarInput.value.trim());
-  });
+  if (!toolbarSearch) return;
 
-  toolbarInput.addEventListener("keypress", (e) => {
-    if (e.key === "Enter") runSearch(toolbarInput.value.trim());
-  });
+  // always start hidden
+  toolbarSearch.style.display = "none";
+
+  if (mainSearch) {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          toolbarSearch.style.display = entry.isIntersecting
+            ? "none"
+            : "inline-flex"; // compact inline when visible
+        });
+      },
+      { threshold: 0 }
+    );
+    observer.observe(mainSearch);
+  }
+
+  function triggerSearch() {
+    const query = toolbarInput.value.trim();
+    if (query) runSearch(query);
+  }
+
+  if (toolbarBtn && toolbarInput) {
+    toolbarBtn.addEventListener("click", triggerSearch);
+    toolbarInput.addEventListener("keypress", (e) => {
+      if (e.key === "Enter") triggerSearch();
+    });
+  }
 });
+
 
 </script>
 
