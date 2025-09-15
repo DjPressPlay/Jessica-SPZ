@@ -620,7 +620,147 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
- 
+
+  
+<!-- SCRIPT ----------------------------------------------------->
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  // Dropdown menus (apps / store)
+  const appsIcon = document.getElementById("apps-icon");
+  const appsDropdown = document.getElementById("apps-dropdown");
+  const storeLink = document.getElementById("store-link");
+  const storeDropdown = document.getElementById("store-dropdown");
+
+  if (appsIcon && appsDropdown) {
+    appsIcon.addEventListener("click", () => {
+      appsDropdown.style.display =
+        appsDropdown.style.display === "block" ? "none" : "block";
+    });
+  }
+
+  if (storeLink && storeDropdown) {
+    storeLink.addEventListener("click", () => {
+      storeDropdown.style.display =
+        storeDropdown.style.display === "block" ? "none" : "block";
+    });
+  }
+
+  document.addEventListener("click", (e) => {
+    if (
+      appsDropdown &&
+      appsIcon &&
+      !appsIcon.contains(e.target) &&
+      !appsDropdown.contains(e.target)
+    ) {
+      appsDropdown.style.display = "none";
+    }
+    if (
+      storeDropdown &&
+      storeLink &&
+      !storeLink.contains(e.target) &&
+      !storeDropdown.contains(e.target)
+    ) {
+      storeDropdown.style.display = "none";
+    }
+  });
+
+  // -------------------------------
+  // Simple top-center dropdown search
+  // -------------------------------
+
+  // Create toggle button and dropdown
+  const navLeft = document.querySelector(".top-left") || document.querySelector(".top-nav");
+  const nav = document.querySelector(".top-nav");
+
+  // Container for toggle + dropdown
+  const topCenter = document.createElement("div");
+  topCenter.id = "top-center-search";
+  topCenter.style.position = "absolute";
+  topCenter.style.top = "12px";
+  topCenter.style.left = "50%";
+  topCenter.style.transform = "translateX(-50%)";
+  topCenter.style.zIndex = "1000";
+
+  // Button to open search dropdown
+  const openBtn = document.createElement("button");
+  openBtn.id = "open-search-btn";
+  openBtn.textContent = "Search";
+  openBtn.style.padding = "6px 12px";
+  openBtn.style.fontSize = "14px";
+  openBtn.style.borderRadius = "6px";
+  openBtn.style.background = "#4285f4";
+  openBtn.style.color = "white";
+  openBtn.style.border = "none";
+  openBtn.style.cursor = "pointer";
+
+  // Dropdown input wrapper
+  const dropdownWrapper = document.createElement("div");
+  dropdownWrapper.id = "dropdown-search";
+  dropdownWrapper.style.display = "none";
+  dropdownWrapper.style.marginTop = "8px";
+  dropdownWrapper.style.background = "#1a1a1a";
+  dropdownWrapper.style.padding = "8px";
+  dropdownWrapper.style.border = "1px solid #333";
+  dropdownWrapper.style.borderRadius = "8px";
+
+  // Input + Go button
+  const dropdownInput = document.createElement("input");
+  dropdownInput.id = "dropdown-input";
+  dropdownInput.type = "text";
+  dropdownInput.placeholder = "Search...";
+  dropdownInput.style.padding = "4px 6px";
+  dropdownInput.style.borderRadius = "4px";
+  dropdownInput.style.border = "1px solid #444";
+  dropdownInput.style.background = "#222";
+  dropdownInput.style.color = "#eee";
+
+  const dropdownBtn = document.createElement("button");
+  dropdownBtn.id = "dropdown-btn";
+  dropdownBtn.textContent = "Go";
+  dropdownBtn.style.padding = "4px 10px";
+  dropdownBtn.style.marginLeft = "6px";
+  dropdownBtn.style.borderRadius = "4px";
+  dropdownBtn.style.border = "none";
+  dropdownBtn.style.background = "#4285f4";
+  dropdownBtn.style.color = "white";
+  dropdownBtn.style.cursor = "pointer";
+
+  // Put input + button into wrapper
+  dropdownWrapper.appendChild(dropdownInput);
+  dropdownWrapper.appendChild(dropdownBtn);
+
+  // Put toggle + wrapper into topCenter
+  topCenter.appendChild(openBtn);
+  topCenter.appendChild(dropdownWrapper);
+
+  // Insert into nav (or top-nav depending on your structure)
+  if (nav) {
+    nav.appendChild(topCenter);
+  }
+
+  // toggle dropdown show/hide
+  openBtn.addEventListener("click", () => {
+    dropdownWrapper.style.display =
+      dropdownWrapper.style.display === "block" ? "none" : "block";
+    dropdownInput.focus();
+  });
+
+  // function to run search + close dropdown
+  function performDropdownSearch() {
+    const query = dropdownInput.value.trim();
+    if (!query) return;
+    runSearch(query);
+    dropdownWrapper.style.display = "none";  // close dropdown after search
+  }
+
+  dropdownBtn.addEventListener("click", performDropdownSearch);
+
+  dropdownInput.addEventListener("keypress", (e) => {
+    if (e.key === "Enter") {
+      performDropdownSearch();
+    }
+  });
+});
 </script>
 
 <!-- Main search logic -->
