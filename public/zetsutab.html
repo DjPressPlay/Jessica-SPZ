@@ -424,6 +424,14 @@
     </div>
 
     
+<!-- TOP NAV (inside .top-nav) -->
+<div class="search-wrapper">
+  <button id="search-toggle" class="search-btn">Search ▼</button>
+  <div id="search-dropdown" class="search-dropdown">
+    <input type="text" id="dropdown-input" placeholder="Search..." />
+    <button id="dropdown-btn">Go</button>
+  </div>
+</div>
 
 
     
@@ -532,28 +540,61 @@
 
 <!-- SCRIPT ----------------------------------------------------->
 <script>
-  const appsIcon = document.getElementById('apps-icon');
-  const appsDropdown = document.getElementById('apps-dropdown');
-  const storeLink = document.getElementById('store-link');
-  const storeDropdown = document.getElementById('store-dropdown');
+  document.addEventListener("DOMContentLoaded", () => {
+    const appsIcon = document.getElementById('apps-icon');
+    const appsDropdown = document.getElementById('apps-dropdown');
+    const storeLink = document.getElementById('store-link');
+    const storeDropdown = document.getElementById('store-dropdown');
+    const searchToggle = document.getElementById('search-toggle');
+    const searchDropdown = document.getElementById('search-dropdown');
 
-  // Dropdown toggles
-  appsIcon.addEventListener("click", () => {
-    appsDropdown.style.display = (appsDropdown.style.display === 'block') ? 'none' : 'block';
-  });
-
-  storeLink.addEventListener("click", () => {
-    storeDropdown.style.display = (storeDropdown.style.display === 'block') ? 'none' : 'block';
-  });
-
-  // Global click to close dropdowns
-  document.addEventListener("click", (e) => {
-    if (!appsIcon.contains(e.target) && !appsDropdown.contains(e.target)) {
-      appsDropdown.style.display = 'none';
+    // =====================
+    // Apps toggle
+    // =====================
+    if (appsIcon && appsDropdown) {
+      appsIcon.addEventListener("click", (e) => {
+        e.stopPropagation();
+        appsDropdown.style.display =
+          appsDropdown.style.display === 'block' ? 'none' : 'block';
+      });
     }
-    if (!storeLink.contains(e.target) && !storeDropdown.contains(e.target)) {
-      storeDropdown.style.display = 'none';
+
+    // =====================
+    // Store toggle
+    // =====================
+    if (storeLink && storeDropdown) {
+      storeLink.addEventListener("click", (e) => {
+        e.stopPropagation();
+        storeDropdown.style.display =
+          storeDropdown.style.display === 'block' ? 'none' : 'block';
+      });
     }
+
+    // =====================
+    // Search toggle
+    // =====================
+    if (searchToggle && searchDropdown) {
+      searchToggle.addEventListener("click", (e) => {
+        e.stopPropagation();
+        searchDropdown.style.display =
+          searchDropdown.style.display === 'block' ? 'none' : 'block';
+      });
+    }
+
+    // =====================
+    // Global click → close all dropdowns
+    // =====================
+    document.addEventListener("click", (e) => {
+      if (appsDropdown && !appsIcon.contains(e.target) && !appsDropdown.contains(e.target)) {
+        appsDropdown.style.display = 'none';
+      }
+      if (storeDropdown && !storeLink.contains(e.target) && !storeDropdown.contains(e.target)) {
+        storeDropdown.style.display = 'none';
+      }
+      if (searchDropdown && !searchToggle.contains(e.target) && !searchDropdown.contains(e.target)) {
+        searchDropdown.style.display = 'none';
+      }
+    });
   });
 </script>
 
