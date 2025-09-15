@@ -438,6 +438,74 @@
 }
   
 
+/* Floating Search Icon */
+#z-float-search-icon {
+  position: fixed;
+  top: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 48px;
+  height: 48px;
+  background: radial-gradient(circle, #4285f4 20%, #1a1a1a 80%);
+  border: 2px solid #4285f4;
+  border-radius: 50%;
+  color: #fff;
+  font-size: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 99999;
+  box-shadow: 0 0 12px #4285f4;
+  transition: transform 0.2s ease, box-shadow 0.3s ease;
+}
+
+#z-float-search-icon:hover {
+  transform: translateX(-50%) scale(1.1);
+  box-shadow: 0 0 18px #4285f4;
+}
+
+/* Hidden Search Bar */
+#z-float-search-bar {
+  display: none;
+  position: fixed;
+  top: 70px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #1f1f1f;
+  padding: 12px 16px;
+  border-radius: 32px;
+  border: 1px solid #333;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+  z-index: 99998;
+  display: flex;
+  gap: 12px;
+}
+
+#z-float-search-bar input {
+  width: 320px;
+  background: #121212;
+  border: 1px solid #444;
+  border-radius: 20px;
+  padding: 8px 14px;
+  color: #fff;
+  font-size: 16px;
+  outline: none;
+}
+
+#z-float-search-bar button {
+  padding: 8px 16px;
+  border-radius: 20px;
+  border: none;
+  background: #4285f4;
+  color: #fff;
+  cursor: pointer;
+  font-size: 15px;
+}
+
+#z-float-search-bar button:hover {
+  background: #357ae8;
+}
 
 
 
@@ -593,6 +661,14 @@
   
 
 
+<!-- Floating Search Icon -->
+<div id="z-float-search-icon">🔍</div>
+
+<!-- Hidden Expandable Search Bar -->
+<div id="z-float-search-bar">
+  <input type="text" placeholder="Search Zetsu..." />
+  <button>Go</button>
+</div>
 
 
 
