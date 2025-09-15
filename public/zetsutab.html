@@ -374,7 +374,34 @@
 }
 
 
-    
+    .toolbar-search {
+  display: none !important;  /* force hidden at load */
+  align-items: center;
+  gap: 6px;
+  margin-left: auto; /* keeps it pushed right in nav */
+}
+
+.toolbar-search input {
+  padding: 4px 8px;
+  border-radius: 6px;
+  border: none;
+  outline: none;
+  background: #222;
+  color: #eee;
+  font-size: 14px;
+  width: 150px;
+}
+
+.toolbar-search button {
+  padding: 4px 10px;
+  border-radius: 6px;
+  border: none;
+  background: #4285f4;
+  color: white;
+  font-size: 14px;
+  cursor: pointer;
+}
+
   </style>
 </head>
 <body>
