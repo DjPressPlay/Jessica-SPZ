@@ -603,21 +603,25 @@ document.addEventListener("DOMContentLoaded", () => {
   // Toolbar search toggle
   // =========================
   const resultsContainer = document.getElementById("z-search-results");
-  const toolbarSearch = document.getElementById("toolbar-search");
-  const toolbarInput = document.getElementById("toolbar-input");
-  const toolbarBtn = document.getElementById("toolbar-btn");
+  const toolbarSearch   = document.getElementById("toolbar-search");
+  const toolbarInput    = document.getElementById("toolbar-input");
+  const toolbarBtn      = document.getElementById("toolbar-btn");
 
+  // hide toolbar on load
   if (toolbarSearch) {
-    toolbarSearch.style.display = "none"; // hidden at load
+    toolbarSearch.style.display = "none";
   }
 
+  // observe results visibility
   if (resultsContainer && toolbarSearch) {
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
-          toolbarSearch.style.display = entry.isIntersecting
-            ? "inline-flex" // show when results on screen
-            : "none";       // hide when results not in view
+          if (entry.isIntersecting) {
+            toolbarSearch.style.display = "inline-flex"; // show when results visible
+          } else {
+            toolbarSearch.style.display = "none"; // hide when not visible
+          }
         });
       },
       { threshold: 0 }
@@ -625,8 +629,11 @@ document.addEventListener("DOMContentLoaded", () => {
     observer.observe(resultsContainer);
   }
 
-  // Hook toolbar search into runSearch()
+  // =========================
+  // Toolbar search trigger
+  // =========================
   function triggerSearch() {
+    if (!toolbarInput) return;
     const query = toolbarInput.value.trim();
     if (query) runSearch(query);
   }
