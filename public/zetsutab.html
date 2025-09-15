@@ -586,8 +586,7 @@
 <!-- Hidden Floating Search Bar (uses existing #search-input) -->
 <div id="z-float-search-bar">
   <input id="floating-search-input" type="text" placeholder="Search Zetsu..." />
-      <button id="z-search-btn">Search</button>
-
+  <button id="z-search-btn">Search</button>
 </div>
 
 <!-- SCRIPT ----------------------------------------------------->
@@ -620,28 +619,42 @@
   const zIcon = document.getElementById('z-float-search-icon');
   const zBar = document.getElementById('z-float-search-bar');
   const floatingInput = document.getElementById('floating-search-input');
+  const searchBtn = document.getElementById('z-search-btn');
   const realInput = document.getElementById('search-input'); // Your main input
   const zForm = document.querySelector('.z-search'); // Main search form
 
+  // Toggle bar open/close
   zIcon.addEventListener('click', (e) => {
-    e.stopPropagation(); // Prevent global click from closing it
+    e.stopPropagation();
     const isOpen = zBar.style.display === 'block';
     zBar.style.display = isOpen ? 'none' : 'block';
     if (!isOpen) floatingInput.focus();
   });
 
+  // Hit Enter → transfer value + trigger
   floatingInput.addEventListener('keydown', (e) => {
     if (e.key === 'Enter') {
       e.preventDefault();
-      if (realInput && zForm) {
-        realInput.value = floatingInput.value;
-        zForm.querySelector('button').click(); // Trigger search
-        zBar.style.display = 'none';
-      }
+      triggerZSearch();
     }
   });
 
-  // Optional: Click outside to close floating search
+  // Click Search button → same thing
+  searchBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    triggerZSearch();
+  });
+
+  // Reusable function to copy value and fire main search
+  function triggerZSearch() {
+    if (realInput && zForm) {
+      realInput.value = floatingInput.value;
+      zForm.querySelector('button').click();
+      zBar.style.display = 'none';
+    }
+  }
+
+  // Click outside = close
   document.addEventListener("click", (e) => {
     if (!zBar.contains(e.target) && !zIcon.contains(e.target)) {
       zBar.style.display = 'none';
