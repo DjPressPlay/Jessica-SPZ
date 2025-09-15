@@ -373,13 +373,45 @@
   box-shadow: 0 4px 10px rgba(0,0,0,0.4);
 }
 
+.toolbar-search {
+  display: none; /* hidden by default */
+  align-items: center;
+  gap: 6px;
+}
+
+.toolbar-search input {
+  padding: 4px 8px;
+  border-radius: 6px;
+  border: none;
+  outline: none;
+  background: #222;
+  color: #eee;
+}
+
+.toolbar-search button {
+  padding: 4px 10px;
+  border-radius: 6px;
+  border: none;
+  background: #4285f4;
+  color: white;
+  cursor: pointer;
+}
+
+    
   </style>
 </head>
 <body>
 
   <!-- TOP NAV -->
   <div class="top-nav">
-
+<div class="top-nav">
+  <div class="logo">Zetsu</div>
+  <div class="toolbar-search" id="toolbar-search">
+    <input type="text" id="toolbar-input" placeholder="Search..." />
+    <button id="toolbar-btn">Search</button>
+  </div>
+  <div class="menu">...</div>
+</div>
   
     <!-- Top left ---------------------------------------------->
     <div class="top-left">
@@ -543,6 +575,42 @@
       storeDropdown.style.display = 'none';
     }
   });
+
+
+  document.addEventListener("DOMContentLoaded", () => {
+  const mainSearch = document.querySelector(".main-search"); // wrapper of your big bar
+  const toolbarSearch = document.getElementById("toolbar-search");
+
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          // main search visible → hide toolbar
+          toolbarSearch.style.display = "none";
+        } else {
+          // main search out of view → show toolbar
+          toolbarSearch.style.display = "flex";
+        }
+      });
+    },
+    { threshold: 0 } // triggers as soon as it's not in viewport
+  );
+
+  if (mainSearch) observer.observe(mainSearch);
+
+  // Hook toolbar search to same function
+  const toolbarInput = document.getElementById("toolbar-input");
+  const toolbarBtn = document.getElementById("toolbar-btn");
+
+  toolbarBtn.addEventListener("click", () => {
+    runSearch(toolbarInput.value.trim());
+  });
+
+  toolbarInput.addEventListener("keypress", (e) => {
+    if (e.key === "Enter") runSearch(toolbarInput.value.trim());
+  });
+});
+
 </script>
 
 <script src="ztab-search.js" defer></script>
