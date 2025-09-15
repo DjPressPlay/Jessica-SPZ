@@ -10,10 +10,10 @@ export async function handler(event) {
     // =========================
     // 1. Prepare API keys
     // =========================
-    const googleKey = process.env.GOOGLE_API_KEY;
-    const googleCx  = process.env.GOOGLE_CSE_ID;
-    const newsKey   = process.env.NEWS_API_KEY;
-    const braveKey  = process.env.BRAVE_API_KEY;
+    const googleKey   = process.env.GOOGLE_API_KEY;
+    const googleCx    = process.env.GOOGLE_CSE_ID;
+    const newsKey     = process.env.NEWS_API_KEY;
+    const searchApiKey = process.env.SEARCHAPI_KEY;   // 🔹 new var for SearchApi.io
 
     // =========================
     // 2. Build requests
@@ -43,7 +43,7 @@ export async function handler(event) {
       }));
     }).catch(() => []));
 
-    // Google CSE (run even if keys missing → just return empty)
+    // Google CSE
     const googleUrl = `https://www.googleapis.com/customsearch/v1?key=${googleKey || "MISSING"}&cx=${googleCx || "MISSING"}&q=${encodeURIComponent(query)}`;
     requests.push(fetch(googleUrl).then(r => r.json()).then(data => {
       return (data.items || []).map(i => ({
@@ -65,18 +65,18 @@ export async function handler(event) {
       }));
     }).catch(() => []));
 
-    // Brave Search
-    const braveUrl = `https://api.search.brave.com/res/v1/web/search?q=${encodeURIComponent(query)}`;
-    requests.push(fetch(braveUrl, { headers: { "X-Subscription-Token": braveKey || "MISSING" } })
-      .then(r => r.json()).then(data => {
-        return (data.web?.results || []).map(i => ({
-          title: i.title,
-          link: i.url,
-          snippet: i.description || "",
-          source: "brave"
-        }));
-      }).catch(() => [])
-    );
+    // 🔹 SearchApi.io (replacement for Brave)
+    const searchApiUrl = `https://www.searchapi.io/api/v1/search?q=${encodeURIComponent(query)}&engine=google`;
+    requests.push(fetch(searchApiUrl, {
+      headers: { "Authorization": `Bearer ${searchApiKey || "MISSING"}` }
+    }).then(r => r.json()).then(data => {
+      return (data.organic_results || []).map(i => ({
+        title: i.title,
+        link: i.link,
+        snippet: i.snippet || "",
+        source: "searchapi"
+      }));
+    }).catch(() => []));
 
     // =========================
     // 3. Collect all results
@@ -93,7 +93,7 @@ export async function handler(event) {
     });
 
     // =========================
-    // 4. Pick Warp Result (keyword scoring)
+    // 4. Pick Warp Result
     // =========================
     let warp = null;
     if (items.length > 0) {
@@ -124,4 +124,3 @@ export async function handler(event) {
     return { statusCode: 500, body: JSON.stringify({ error: err.message }) };
   }
 }
-
