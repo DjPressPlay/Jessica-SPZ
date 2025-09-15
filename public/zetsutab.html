@@ -600,6 +600,10 @@
   
 
 
+rewrite this with the update 
+
+
+
 <!-- SCRIPT ----------------------------------------------------->
 <script>
   const appsIcon = document.getElementById('apps-icon');
@@ -623,36 +627,6 @@
     }
     if (!storeLink.contains(e.target) && !storeDropdown.contains(e.target)) {
       storeDropdown.style.display = 'none';
-    }
-  });
-
-  // 🔹 Clear search inputs after button click or Enter
-  document.addEventListener("DOMContentLoaded", () => {
-    const mainInput = document.getElementById("z-start-input");
-    const mainBtn = document.getElementById("z-search-btn");
-
-    const toolbarInput = document.getElementById("toolbar-input");
-    const toolbarBtn = document.getElementById("toolbar-btn");
-
-    function clearAfterSearch() {
-      setTimeout(() => {
-        if (mainInput) mainInput.value = "";
-        if (toolbarInput) toolbarInput.value = "";
-      }, 300); // delay so search still grabs value
-    }
-
-    if (mainBtn && mainInput) {
-      mainBtn.addEventListener("click", clearAfterSearch);
-      mainInput.addEventListener("keypress", (e) => {
-        if (e.key === "Enter") clearAfterSearch();
-      });
-    }
-
-    if (toolbarBtn && toolbarInput) {
-      toolbarBtn.addEventListener("click", clearAfterSearch);
-      toolbarInput.addEventListener("keypress", (e) => {
-        if (e.key === "Enter") clearAfterSearch();
-      });
     }
   });
 </script>
