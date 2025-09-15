@@ -21,47 +21,56 @@ document.addEventListener("DOMContentLoaded", () => {
       resultsContainer.innerHTML = "";
 
       // ======================
-      // Warp Result Highlight
+      // Highlights Section
       // ======================
-      if (data.warp) {
-        const warpDiv = document.createElement("div");
-        warpDiv.className = "result-item";
-        warpDiv.style.border = "2px solid #4285f4"; // highlight border
-        warpDiv.style.padding = "12px";
-        warpDiv.style.borderRadius = "8px";
-        warpDiv.style.marginBottom = "20px";
+      if (data.highlights && data.highlights.length > 0) {
+        const highlightWrapper = document.createElement("div");
+        highlightWrapper.className = "highlight-wrapper";
+        highlightWrapper.style.display = "grid";
+        highlightWrapper.style.gridTemplateColumns = "repeat(auto-fit, minmax(250px, 1fr))";
+        highlightWrapper.style.gap = "16px";
+        highlightWrapper.style.marginBottom = "24px";
 
-        // rename source if it's from SearchApi
-        let warpSource = data.warp.source || "warp";
-        if (warpSource === "searchapi") warpSource = "search-io";
+        data.highlights.forEach((item) => {
+          let source = item.source || "warp";
+          if (source === "searchapi") source = "search-io";
 
-        warpDiv.innerHTML = `
-          <h3><a href="${data.warp.link}" target="_blank">${data.warp.title}</a></h3>
-          <p class="result-snippet">${data.warp.snippet || ""}</p>
-          <small>[${warpSource}]</small>
-        `;
-        resultsContainer.appendChild(warpDiv);
+          const card = document.createElement("div");
+          card.className = "highlight-item";
+          card.style.border = "2px solid #4285f4";
+          card.style.padding = "12px";
+          card.style.borderRadius = "8px";
+          card.style.background = "#1e1e1e";
+
+          card.innerHTML = `
+            <h3><a href="${item.link}" target="_blank">${item.title}</a></h3>
+            <p class="result-snippet">${item.snippet || ""}</p>
+            <small>[${source}]</small>
+          `;
+
+          highlightWrapper.appendChild(card);
+        });
+
+        resultsContainer.appendChild(highlightWrapper);
       }
 
       // ======================
-      // All Results List
+      // Regular Results Section
       // ======================
       if (data.items && data.items.length > 0) {
         data.items.forEach((item) => {
-          // Skip duplicate of warp
-          if (data.warp && item.link === data.warp.link) return;
-
-          // rename source if it's from SearchApi
           let source = item.source || "unknown";
           if (source === "searchapi") source = "search-io";
 
           const div = document.createElement("div");
           div.className = "result-item";
+          div.style.marginBottom = "16px";
           div.innerHTML = `
             <h3><a href="${item.link}" target="_blank">${item.title}</a></h3>
             <p class="result-snippet">${item.snippet || ""}</p>
             <small>[${source}]</small>
           `;
+
           resultsContainer.appendChild(div);
         });
       } else {
