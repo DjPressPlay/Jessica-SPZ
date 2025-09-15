@@ -373,24 +373,20 @@
   box-shadow: 0 4px 10px rgba(0,0,0,0.4);
 }
 
-.toolbar-search {
-  display: none; /* hidden by default */
-  align-items: center;
-  gap: 6px;
-}
-
 .toolbar-search input {
-  padding: 4px 8px;
-  border-radius: 6px;
-  border: none;
-  outline: none;
+  padding: 4px 6px;
+  font-size: 14px;
+  border-radius: 4px;
+  border: 1px solid #444;
   background: #222;
   color: #eee;
+  width: 160px; /* small width, not full size */
 }
 
 .toolbar-search button {
-  padding: 4px 10px;
-  border-radius: 6px;
+  padding: 4px 8px;
+  font-size: 14px;
+  border-radius: 4px;
   border: none;
   background: #4285f4;
   color: white;
@@ -577,40 +573,44 @@
   });
 
 
-  document.addEventListener("DOMContentLoaded", () => {
-  const mainSearch = document.querySelector(".main-search"); // wrapper of your big bar
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const mainSearch = document.querySelector(".main-search"); // wrapper of big search
   const toolbarSearch = document.getElementById("toolbar-search");
+  const toolbarInput = document.getElementById("toolbar-input");
+  const toolbarBtn = document.getElementById("toolbar-btn");
 
+  // hide toolbar search by default
+  toolbarSearch.style.display = "none";
+
+  // observer to toggle toolbar search
   const observer = new IntersectionObserver(
     (entries) => {
       entries.forEach((entry) => {
         if (entry.isIntersecting) {
-          // main search visible → hide toolbar
-          toolbarSearch.style.display = "none";
+          toolbarSearch.style.display = "none";   // hide if main is visible
         } else {
-          // main search out of view → show toolbar
-          toolbarSearch.style.display = "flex";
+          toolbarSearch.style.display = "inline-flex"; // compact inline in nav
         }
       });
     },
-    { threshold: 0 } // triggers as soon as it's not in viewport
+    { threshold: 0 }
   );
 
   if (mainSearch) observer.observe(mainSearch);
 
-  // Hook toolbar search to same function
-  const toolbarInput = document.getElementById("toolbar-input");
-  const toolbarBtn = document.getElementById("toolbar-btn");
+  // Hook toolbar search to same runSearch() as main
+  function triggerSearch() {
+    const query = toolbarInput.value.trim();
+    if (query) runSearch(query);
+  }
 
-  toolbarBtn.addEventListener("click", () => {
-    runSearch(toolbarInput.value.trim());
-  });
-
+  toolbarBtn.addEventListener("click", triggerSearch);
   toolbarInput.addEventListener("keypress", (e) => {
-    if (e.key === "Enter") runSearch(toolbarInput.value.trim());
+    if (e.key === "Enter") triggerSearch();
   });
 });
-
 </script>
 
 <script src="ztab-search.js" defer></script>
+
