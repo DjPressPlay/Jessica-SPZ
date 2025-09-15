@@ -373,6 +373,62 @@
   box-shadow: 0 4px 10px rgba(0,0,0,0.4);
 }
 
+/* Container for dropdown */
+#search-dropdown {
+  display: none; /* hidden by default */
+  position: absolute;
+  top: 100%; /* below the button */
+  left: 0;
+  margin-top: 6px;
+  background: #1f1f1f;
+  border: 1px solid #333;
+  border-radius: 8px;
+  padding: 10px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+  z-index: 9999;
+}
+
+/* Input styling */
+#search-dropdown input {
+  width: 200px;
+  padding: 6px 10px;
+  border: 1px solid #444;
+  border-radius: 6px;
+  background: #222;
+  color: #eee;
+  font-size: 14px;
+  outline: none;
+}
+
+/* Button inside dropdown */
+#search-dropdown button {
+  margin-left: 8px;
+  padding: 6px 12px;
+  border: none;
+  border-radius: 6px;
+  background: #4285f4;
+  color: white;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+#search-dropdown button:hover {
+  background: #3367d6;
+}
+
+/* Search toggle button (top bar) */
+#search-toggle {
+  background: #222;
+  border: 1px solid #444;
+  border-radius: 6px;
+  color: #eee;
+  padding: 6px 12px;
+  cursor: pointer;
+}
+
+#search-toggle:hover {
+  background: #333;
+}
 
 
 
