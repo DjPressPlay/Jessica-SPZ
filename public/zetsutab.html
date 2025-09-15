@@ -580,7 +580,6 @@
   
   
 
-
 <!-- 🔍 Floating Z-Orb -->
 <div id="z-float-search-icon">🔍</div>
 
@@ -588,9 +587,6 @@
 <div id="z-float-search-bar">
   <input id="floating-search-input" type="text" placeholder="Search Zetsu..." />
 </div>
-
-
-
 
 <!-- SCRIPT ----------------------------------------------------->
 <script>
@@ -618,36 +614,37 @@
     }
   });
 
-<script>
+  // 🔵 Floating Search Orb Logic
   const zIcon = document.getElementById('z-float-search-icon');
   const zBar = document.getElementById('z-float-search-bar');
   const floatingInput = document.getElementById('floating-search-input');
   const realInput = document.getElementById('search-input'); // Your main input
   const zForm = document.querySelector('.z-search'); // Main search form
 
-  // Toggle floating bar
-  zIcon.addEventListener('click', () => {
+  zIcon.addEventListener('click', (e) => {
+    e.stopPropagation(); // Prevent global click from closing it
     const isOpen = zBar.style.display === 'block';
     zBar.style.display = isOpen ? 'none' : 'block';
     if (!isOpen) floatingInput.focus();
   });
 
-  // On Enter press → copy to real search bar and trigger form submit
   floatingInput.addEventListener('keydown', (e) => {
     if (e.key === 'Enter') {
       e.preventDefault();
       if (realInput && zForm) {
         realInput.value = floatingInput.value;
         zForm.querySelector('button').click(); // Trigger search
-        zBar.style.display = 'none'; // Auto-close after search
+        zBar.style.display = 'none';
       }
     }
   });
 
-
-  
+  // Optional: Click outside to close floating search
+  document.addEventListener("click", (e) => {
+    if (!zBar.contains(e.target) && !zIcon.contains(e.target)) {
+      zBar.style.display = 'none';
+    }
+  });
 </script>
 
 <script src="ztab-search.js" defer></script>
-
-  
