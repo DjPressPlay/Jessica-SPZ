@@ -595,28 +595,33 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   // =========================
-  // Toolbar search toggle
+  // Toolbar search (dynamic)
   // =========================
   const resultsContainer = document.getElementById("z-search-results");
-  const toolbarSearch   = document.getElementById("toolbar-search");
-  const toolbarInput    = document.getElementById("toolbar-input");
-  const toolbarBtn      = document.getElementById("toolbar-btn");
+  const navRight = document.querySelector(".top-nav .top-right");
 
-  // hide toolbar on load
-  if (toolbarSearch) {
-    toolbarSearch.style.display = "none";
-  }
+  // build toolbar search element
+  const toolbarSearch = document.createElement("div");
+  toolbarSearch.id = "toolbar-search";
+  toolbarSearch.className = "toolbar-search";
+  toolbarSearch.style.display = "none";
+  toolbarSearch.innerHTML = `
+    <input type="text" id="toolbar-input" placeholder="Search..." />
+    <button id="toolbar-btn">Search</button>
+  `;
+  if (navRight) navRight.prepend(toolbarSearch);
+
+  const toolbarInput = toolbarSearch.querySelector("#toolbar-input");
+  const toolbarBtn = toolbarSearch.querySelector("#toolbar-btn");
 
   // observe results visibility
-  if (resultsContainer && toolbarSearch) {
+  if (resultsContainer) {
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            toolbarSearch.style.display = "inline-flex"; // show when results visible
-          } else {
-            toolbarSearch.style.display = "none"; // hide when not visible
-          }
+          toolbarSearch.style.display = entry.isIntersecting
+            ? "inline-flex" // show when results visible
+            : "none";       // hide otherwise
         });
       },
       { threshold: 0 }
@@ -624,11 +629,8 @@ document.addEventListener("DOMContentLoaded", () => {
     observer.observe(resultsContainer);
   }
 
-  // =========================
-  // Toolbar search trigger
-  // =========================
+  // search trigger
   function triggerSearch() {
-    if (!toolbarInput) return;
     const query = toolbarInput.value.trim();
     if (query) runSearch(query);
   }
