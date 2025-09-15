@@ -30,10 +30,15 @@ document.addEventListener("DOMContentLoaded", () => {
         warpDiv.style.padding = "12px";
         warpDiv.style.borderRadius = "8px";
         warpDiv.style.marginBottom = "20px";
+
+        // rename source if it's from SearchApi
+        let warpSource = data.warp.source || "warp";
+        if (warpSource === "searchapi") warpSource = "search-io";
+
         warpDiv.innerHTML = `
           <h3><a href="${data.warp.link}" target="_blank">${data.warp.title}</a></h3>
           <p class="result-snippet">${data.warp.snippet || ""}</p>
-          <small>[${data.warp.source || "warp"}]</small>
+          <small>[${warpSource}]</small>
         `;
         resultsContainer.appendChild(warpDiv);
       }
@@ -46,12 +51,16 @@ document.addEventListener("DOMContentLoaded", () => {
           // Skip duplicate of warp
           if (data.warp && item.link === data.warp.link) return;
 
+          // rename source if it's from SearchApi
+          let source = item.source || "unknown";
+          if (source === "searchapi") source = "search-io";
+
           const div = document.createElement("div");
           div.className = "result-item";
           div.innerHTML = `
             <h3><a href="${item.link}" target="_blank">${item.title}</a></h3>
             <p class="result-snippet">${item.snippet || ""}</p>
-            <small>[${item.source || "unknown"}]</small>
+            <small>[${source}]</small>
           `;
           resultsContainer.appendChild(div);
         });
