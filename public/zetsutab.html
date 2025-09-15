@@ -607,24 +607,51 @@
   const storeLink = document.getElementById('store-link');
   const storeDropdown = document.getElementById('store-dropdown');
 
+  // =========================
   // Dropdown toggles
-  appsIcon.addEventListener("click", () => {
-    appsDropdown.style.display = (appsDropdown.style.display === 'block') ? 'none' : 'block';
-  });
+  // =========================
+  if (appsIcon && appsDropdown) {
+    appsIcon.addEventListener("click", () => {
+      appsDropdown.style.display =
+        (appsDropdown.style.display === "block") ? "none" : "block";
+    });
+  }
 
-  storeLink.addEventListener("click", () => {
-    storeDropdown.style.display = (storeDropdown.style.display === 'block') ? 'none' : 'block';
-  });
+  if (storeLink && storeDropdown) {
+    storeLink.addEventListener("click", () => {
+      storeDropdown.style.display =
+        (storeDropdown.style.display === "block") ? "none" : "block";
+    });
+  }
 
-  // Global click to close dropdowns
+  // Close dropdowns if clicking outside
   document.addEventListener("click", (e) => {
-    if (!appsIcon.contains(e.target) && !appsDropdown.contains(e.target)) {
-      appsDropdown.style.display = 'none';
+    if (appsIcon && appsDropdown &&
+        !appsIcon.contains(e.target) && !appsDropdown.contains(e.target)) {
+      appsDropdown.style.display = "none";
     }
-    if (!storeLink.contains(e.target) && !storeDropdown.contains(e.target)) {
-      storeDropdown.style.display = 'none';
+    if (storeLink && storeDropdown &&
+        !storeLink.contains(e.target) && !storeDropdown.contains(e.target)) {
+      storeDropdown.style.display = "none";
     }
   });
+
+  // =========================
+  // Hook into search.js to clear inputs
+  // =========================
+  // Wrap runSearch so we can clear fields afterwards
+  const originalRunSearch = window.runSearch;
+  window.runSearch = async function(query) {
+    await originalRunSearch(query);
+
+    // ✅ Clear both search bars after search
+    const mainInput = document.getElementById("z-start-input");
+    if (mainInput) mainInput.value = "";
+
+    const toolbarInput = document.getElementById("toolbar-input");
+    if (toolbarInput) toolbarInput.value = "";
+  };
 </script>
 
+<!-- Main search logic -->
 <script src="ztab-search.js" defer></script>
