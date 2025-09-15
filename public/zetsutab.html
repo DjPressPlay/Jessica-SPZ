@@ -607,51 +607,54 @@
   const storeLink = document.getElementById('store-link');
   const storeDropdown = document.getElementById('store-dropdown');
 
-  // =========================
   // Dropdown toggles
-  // =========================
-  if (appsIcon && appsDropdown) {
-    appsIcon.addEventListener("click", () => {
-      appsDropdown.style.display =
-        (appsDropdown.style.display === "block") ? "none" : "block";
-    });
-  }
+  appsIcon.addEventListener("click", () => {
+    appsDropdown.style.display = (appsDropdown.style.display === 'block') ? 'none' : 'block';
+  });
 
-  if (storeLink && storeDropdown) {
-    storeLink.addEventListener("click", () => {
-      storeDropdown.style.display =
-        (storeDropdown.style.display === "block") ? "none" : "block";
-    });
-  }
+  storeLink.addEventListener("click", () => {
+    storeDropdown.style.display = (storeDropdown.style.display === 'block') ? 'none' : 'block';
+  });
 
-  // Close dropdowns if clicking outside
+  // Global click to close dropdowns
   document.addEventListener("click", (e) => {
-    if (appsIcon && appsDropdown &&
-        !appsIcon.contains(e.target) && !appsDropdown.contains(e.target)) {
-      appsDropdown.style.display = "none";
+    if (!appsIcon.contains(e.target) && !appsDropdown.contains(e.target)) {
+      appsDropdown.style.display = 'none';
     }
-    if (storeLink && storeDropdown &&
-        !storeLink.contains(e.target) && !storeDropdown.contains(e.target)) {
-      storeDropdown.style.display = "none";
+    if (!storeLink.contains(e.target) && !storeDropdown.contains(e.target)) {
+      storeDropdown.style.display = 'none';
     }
   });
 
-  // =========================
-  // Hook into search.js to clear inputs
-  // =========================
-  // Wrap runSearch so we can clear fields afterwards
-  const originalRunSearch = window.runSearch;
-  window.runSearch = async function(query) {
-    await originalRunSearch(query);
-
-    // ✅ Clear both search bars after search
+  // 🔹 Clear search inputs after button click or Enter
+  document.addEventListener("DOMContentLoaded", () => {
     const mainInput = document.getElementById("z-start-input");
-    if (mainInput) mainInput.value = "";
+    const mainBtn = document.getElementById("z-search-btn");
 
     const toolbarInput = document.getElementById("toolbar-input");
-    if (toolbarInput) toolbarInput.value = "";
-  };
+    const toolbarBtn = document.getElementById("toolbar-btn");
+
+    function clearAfterSearch() {
+      setTimeout(() => {
+        if (mainInput) mainInput.value = "";
+        if (toolbarInput) toolbarInput.value = "";
+      }, 300); // delay so search still grabs value
+    }
+
+    if (mainBtn && mainInput) {
+      mainBtn.addEventListener("click", clearAfterSearch);
+      mainInput.addEventListener("keypress", (e) => {
+        if (e.key === "Enter") clearAfterSearch();
+      });
+    }
+
+    if (toolbarBtn && toolbarInput) {
+      toolbarBtn.addEventListener("click", clearAfterSearch);
+      toolbarInput.addEventListener("keypress", (e) => {
+        if (e.key === "Enter") clearAfterSearch();
+      });
+    }
+  });
 </script>
 
-<!-- Main search logic -->
 <script src="ztab-search.js" defer></script>
