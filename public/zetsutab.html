@@ -617,6 +617,37 @@
       storeDropdown.style.display = 'none';
     }
   });
+
+<script>
+  const zIcon = document.getElementById('z-float-search-icon');
+  const zBar = document.getElementById('z-float-search-bar');
+  const floatingInput = document.getElementById('floating-search-input');
+  const realInput = document.getElementById('search-input'); // Your main input
+  const zForm = document.querySelector('.z-search'); // Main search form
+
+  // Toggle floating bar
+  zIcon.addEventListener('click', () => {
+    const isOpen = zBar.style.display === 'block';
+    zBar.style.display = isOpen ? 'none' : 'block';
+    if (!isOpen) floatingInput.focus();
+  });
+
+  // On Enter press → copy to real search bar and trigger form submit
+  floatingInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      if (realInput && zForm) {
+        realInput.value = floatingInput.value;
+        zForm.querySelector('button').click(); // Trigger search
+        zBar.style.display = 'none'; // Auto-close after search
+      }
+    }
+  });
+
+
+  
 </script>
 
 <script src="ztab-search.js" defer></script>
+
+  
