@@ -425,16 +425,6 @@
 
     
 
-  <div class="top-center">
-    <button id="search-toggle">Search ▼</button>
-    <div id="search-dropdown" class="search-dropdown">
-      <input type="text" id="dropdown-input" placeholder="Search..." />
-      <button id="dropdown-btn">Go</button>
-    </div>
-  </div>
-
-  <div class="menu">...</div>
-</div>
 
     
   <!-- tools---------------------------------------------->
@@ -585,91 +575,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
   
-<!-- SCRIPT ----------------------------------------------------->
-<script>
-document.addEventListener("DOMContentLoaded", () => {
-  // Dropdown menus (apps / store)
-  const appsIcon = document.getElementById("apps-icon");
-  const appsDropdown = document.getElementById("apps-dropdown");
-  const storeLink = document.getElementById("store-link");
-  const storeDropdown = document.getElementById("store-dropdown");
 
-  if (appsIcon && appsDropdown) {
-    appsIcon.addEventListener("click", () => {
-      appsDropdown.style.display =
-        appsDropdown.style.display === "block" ? "none" : "block";
-    });
-  }
-
-  if (storeLink && storeDropdown) {
-    storeLink.addEventListener("click", () => {
-      storeDropdown.style.display =
-        storeDropdown.style.display === "block" ? "none" : "block";
-    });
-  }
-
-  document.addEventListener("click", (e) => {
-    if (
-      appsDropdown &&
-      appsIcon &&
-      !appsIcon.contains(e.target) &&
-      !appsDropdown.contains(e.target)
-    ) {
-      appsDropdown.style.display = "none";
-    }
-    if (
-      storeDropdown &&
-      storeLink &&
-      !storeLink.contains(e.target) &&
-      !storeDropdown.contains(e.target)
-    ) {
-      storeDropdown.style.display = "none";
-    }
-  });
-
-<script>
-document.addEventListener("DOMContentLoaded", () => {
-  const toggleBtn = document.getElementById("search-toggle");
-  const dropdown  = document.getElementById("search-dropdown");
-  const input     = document.getElementById("dropdown-input");
-  const goBtn     = document.getElementById("dropdown-btn");
-
-  // hide dropdown at load
-  if (dropdown) dropdown.style.display = "none";
-
-  // toggle dropdown on button click
-  toggleBtn.addEventListener("click", () => {
-    if (!dropdown) return;
-    dropdown.style.display =
-      dropdown.style.display === "block" ? "none" : "block";
-  });
-
-  // close dropdown if click outside
-  document.addEventListener("click", (e) => {
-    if (
-      dropdown &&
-      toggleBtn &&
-      !toggleBtn.contains(e.target) &&
-      !dropdown.contains(e.target)
-    ) {
-      dropdown.style.display = "none";
-    }
-  });
-
-  // trigger search
-  function triggerSearch() {
-    const query = input.value.trim();
-    if (query) {
-      runSearch(query);          // call your main search
-      dropdown.style.display = "none"; // close after search
-    }
-  }
-
-  goBtn.addEventListener("click", triggerSearch);
-  input.addEventListener("keypress", (e) => {
-    if (e.key === "Enter") triggerSearch();
-  });
-});
 </script>
 
   
