@@ -374,28 +374,50 @@
 }
 
 
-
-
-.toolbar-search input {
-  padding: 4px 8px;
-  border-radius: 6px;
-  border: none;
-  outline: none;
-  background: #222;
-  color: #eee;
-  font-size: 14px;
-  width: 150px;
+.top-center {
+  position: absolute;
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
 }
 
-.toolbar-search button {
-  padding: 4px 10px;
-  border-radius: 6px;
+#open-search-btn {
+  padding: 6px 12px;
+  font-size: 14px;
   border: none;
+  border-radius: 6px;
   background: #4285f4;
   color: white;
-  font-size: 14px;
   cursor: pointer;
 }
+
+.dropdown-search {
+  display: none;
+  margin-top: 8px;
+  background: #1a1a1a;
+  padding: 8px;
+  border: 1px solid #333;
+  border-radius: 8px;
+}
+
+.dropdown-search input {
+  padding: 4px 6px;
+  border-radius: 4px;
+  border: 1px solid #444;
+  background: #222;
+  color: #eee;
+}
+
+.dropdown-search button {
+  padding: 4px 10px;
+  border: none;
+  border-radius: 4px;
+  background: #4285f4;
+  color: white;
+  cursor: pointer;
+}
+
 
   </style>
 </head>
@@ -443,10 +465,14 @@
 
     
     
-     <div class="toolbar-search" id="toolbar-search">
-  <input type="text" id="toolbar-input" placeholder="Search..." />
-  <button id="toolbar-btn">Search</button>
+<div class="top-center">
+  <button id="open-search-btn">Search</button>
+  <div class="dropdown-search" id="dropdown-search">
+    <input type="text" id="dropdown-input" placeholder="Search..." />
+    <button id="dropdown-btn">Go</button>
+  </div>
 </div>
+
     
   <!-- tools---------------------------------------------->
     <div class="top-right">
@@ -594,54 +620,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // =========================
-  // Toolbar search (dynamic)
-  // =========================
-  const resultsContainer = document.getElementById("z-search-results");
-  const navRight = document.querySelector(".top-nav .top-right");
-
-  // build toolbar search element
-  const toolbarSearch = document.createElement("div");
-  toolbarSearch.id = "toolbar-search";
-  toolbarSearch.className = "toolbar-search";
-  toolbarSearch.style.display = "none";
-  toolbarSearch.innerHTML = `
-    <input type="text" id="toolbar-input" placeholder="Search..." />
-    <button id="toolbar-btn">Search</button>
-  `;
-  if (navRight) navRight.prepend(toolbarSearch);
-
-  const toolbarInput = toolbarSearch.querySelector("#toolbar-input");
-  const toolbarBtn = toolbarSearch.querySelector("#toolbar-btn");
-
-  // observe results visibility
-  if (resultsContainer) {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          toolbarSearch.style.display = entry.isIntersecting
-            ? "inline-flex" // show when results visible
-            : "none";       // hide otherwise
-        });
-      },
-      { threshold: 0 }
-    );
-    observer.observe(resultsContainer);
-  }
-
-  // search trigger
-  function triggerSearch() {
-    const query = toolbarInput.value.trim();
-    if (query) runSearch(query);
-  }
-
-  if (toolbarBtn && toolbarInput) {
-    toolbarBtn.addEventListener("click", triggerSearch);
-    toolbarInput.addEventListener("keypress", (e) => {
-      if (e.key === "Enter") triggerSearch();
-    });
-  }
-});
+ 
 </script>
 
 <!-- Main search logic -->
