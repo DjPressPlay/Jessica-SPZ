@@ -392,12 +392,6 @@
   color: white;
   cursor: pointer;
 }
-.toolbar-search {
-  display: none;   /* hidden until JS shows it */
-  align-items: center;
-  gap: 4px;
-  margin-left: auto; /* push it to the right side of nav */
-}
 
     
   </style>
@@ -406,15 +400,6 @@
 
   <!-- TOP NAV -->
   <div class="top-nav">
-  <div class="top-nav">
-
-  <div class="logo">Zetsu</div>
-  <div class="toolbar-search" id="toolbar-search">
-    <input type="text" id="toolbar-input" placeholder="Search..." />
-    <button id="toolbar-btn">Search</button>
-  </div>
-  <div class="menu">...</div>
-</div>
   
     <!-- Top left ---------------------------------------------->
     <div class="top-left">
@@ -553,80 +538,68 @@
 
 
   
+  
 <!-- SCRIPT ----------------------------------------------------->
 <script>
-document.addEventListener("DOMContentLoaded", () => {
-  // =========================
-  // Dropdown menus
-  // =========================
   const appsIcon = document.getElementById('apps-icon');
   const appsDropdown = document.getElementById('apps-dropdown');
   const storeLink = document.getElementById('store-link');
   const storeDropdown = document.getElementById('store-dropdown');
 
-  if (appsIcon && appsDropdown) {
-    appsIcon.addEventListener("click", () => {
-      appsDropdown.style.display = (appsDropdown.style.display === 'block') ? 'none' : 'block';
-    });
-  }
+  // Dropdown toggles
+  appsIcon.addEventListener("click", () => {
+    appsDropdown.style.display = (appsDropdown.style.display === 'block') ? 'none' : 'block';
+  });
 
-  if (storeLink && storeDropdown) {
-    storeLink.addEventListener("click", () => {
-      storeDropdown.style.display = (storeDropdown.style.display === 'block') ? 'none' : 'block';
-    });
-  }
+  storeLink.addEventListener("click", () => {
+    storeDropdown.style.display = (storeDropdown.style.display === 'block') ? 'none' : 'block';
+  });
 
-  // Close dropdowns if clicking outside
+  // Global click to close dropdowns
   document.addEventListener("click", (e) => {
-    if (appsDropdown && appsIcon && !appsIcon.contains(e.target) && !appsDropdown.contains(e.target)) {
+    if (!appsIcon.contains(e.target) && !appsDropdown.contains(e.target)) {
       appsDropdown.style.display = 'none';
     }
-    if (storeDropdown && storeLink && !storeLink.contains(e.target) && !storeDropdown.contains(e.target)) {
+    if (!storeLink.contains(e.target) && !storeDropdown.contains(e.target)) {
       storeDropdown.style.display = 'none';
     }
   });
 
-  // =========================
-  // Toolbar search toggle
-  // =========================
-  const mainSearch = document.querySelector(".main-search"); // wrapper of the big search
+
+  document.addEventListener("DOMContentLoaded", () => {
+  const mainSearch = document.querySelector(".main-search"); // wrapper of your big bar
   const toolbarSearch = document.getElementById("toolbar-search");
+
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          // main search visible → hide toolbar
+          toolbarSearch.style.display = "none";
+        } else {
+          // main search out of view → show toolbar
+          toolbarSearch.style.display = "flex";
+        }
+      });
+    },
+    { threshold: 0 } // triggers as soon as it's not in viewport
+  );
+
+  if (mainSearch) observer.observe(mainSearch);
+
+  // Hook toolbar search to same function
   const toolbarInput = document.getElementById("toolbar-input");
   const toolbarBtn = document.getElementById("toolbar-btn");
 
-  // make sure toolbar starts hidden
-  if (toolbarSearch) toolbarSearch.style.display = "none";
+  toolbarBtn.addEventListener("click", () => {
+    runSearch(toolbarInput.value.trim());
+  });
 
-  if (mainSearch && toolbarSearch) {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            toolbarSearch.style.display = "none";        // hide if main search visible
-          } else {
-            toolbarSearch.style.display = "inline-flex"; // show when main search not visible
-          }
-        });
-      },
-      { threshold: 0 }
-    );
-    observer.observe(mainSearch);
-  }
-
-  // Hook toolbar search into runSearch()
-  function triggerSearch() {
-    const query = toolbarInput.value.trim();
-    if (query) runSearch(query);
-  }
-
-  if (toolbarBtn && toolbarInput) {
-    toolbarBtn.addEventListener("click", triggerSearch);
-    toolbarInput.addEventListener("keypress", (e) => {
-      if (e.key === "Enter") triggerSearch();
-    });
-  }
+  toolbarInput.addEventListener("keypress", (e) => {
+    if (e.key === "Enter") runSearch(toolbarInput.value.trim());
+  });
 });
+
 </script>
 
-<!-- Main search logic -->
 <script src="ztab-search.js" defer></script>
