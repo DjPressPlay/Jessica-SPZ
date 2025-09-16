@@ -319,44 +319,33 @@
 
 
 
-  .results-container {
-  margin: 30px auto;
-  width: 100vw;              /* take up most of screen width */
-  max-width: 1950px;        /* cap it so it doesn’t go too wide */
-  padding: 24px;
-  background: #1a1a1a;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.4);
-  text-align: left;
-  overflow-y: auto;
-  max-height: 65vh;         /* give results more room */
-}
-
-
 .result-item {
-  margin-bottom: 18px;
-  padding-bottom: 12px;
-  border-bottom: 1px solid #333;
+  background: #1a1a1a;
+  border: 1px solid #333;
+  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 12px;
+  transition: background 0.2s ease;
 }
 
-.result-item h3 {
-  margin: 0 0 6px;
-  font-size: 1.2em;
+.result-item:hover {
+  background: #222;
 }
 
-.result-item a {
-  color: #4cafef;
+.result-item h3 a {
+  color: #4285f4;
   text-decoration: none;
 }
 
-.result-item a:hover {
+.result-item h3 a:hover {
   text-decoration: underline;
 }
 
 .result-snippet {
-  font-size: 0.95em;
   color: #ccc;
+  font-size: 14px;
 }
+
 
     .highlight-container {
   display: grid;
@@ -540,28 +529,9 @@
   
   <!-- Widget Panel 1 ----------------------------------------->
   <div class="widget-panel-1">
-    
+        <div class="z-widget-bar">
 
 
-    <div class="z-widget-bar">
-
-
-          <section id="mini-games">
-  <h2>Mini Games 🎮</h2>
-  <div class="games-grid">
-    <div class="game-card">
-      <img src="game1-thumb.png" alt="Game 1">
-      <h3>Game Title</h3>
-      <button>Play</button>
-    </div>
-    <div class="game-card">
-      <img src="game2-thumb.png" alt="Game 2">
-      <h3>Game Title</h3>
-      <button>Play</button>
-    </div>
-    <!-- more games -->
-  </div>
-</section>
       
       <!-- Google -->
       <a href="https://www.google.com" target="_blank" class="widget-btn"
