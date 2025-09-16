@@ -624,16 +624,39 @@
 
   const resultsBox = document.getElementById('z-search-results');
 
-  // 🟦 Run search (unified)
-  function runSearch(query) {
+  // 🟦 Run search (real fetch to /search route)
+  async function runSearch(query) {
     if (!query) return;
+
     resultsBox.innerHTML = `
       <div class="result-item">
         <h3>Searching for: ${query}</h3>
-        <p class="result-snippet">Placeholder result for "<b>${query}</b>". Connect this to real data or Google Custom Search API.</p>
+        <p class="result-snippet">...</p>
       </div>
     `;
-    window.scrollTo({ top: 200, behavior: 'smooth' });
+
+    try {
+      const res = await fetch(`/search?q=${encodeURIComponent(query)}`);
+      const data = await res.json();
+
+      if (!data?.results?.length) {
+        resultsBox.innerHTML = `<div class="result-item"><p>No results found.</p></div>`;
+        return;
+      }
+
+      resultsBox.innerHTML = data.results.map(item => `
+        <div class="result-item">
+          <h3><a href="${item.url}" target="_blank">${item.title}</a></h3>
+          <p class="result-snippet">${item.snippet}</p>
+        </div>
+      `).join('');
+
+      window.scrollTo({ top: 200, behavior: 'smooth' });
+
+    } catch (err) {
+      resultsBox.innerHTML = `<div class="result-item"><p>Error loading results.</p></div>`;
+      console.error(err);
+    }
   }
 
   // 🟨 Main search (center input)
