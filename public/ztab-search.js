@@ -2,6 +2,8 @@
 document.addEventListener("DOMContentLoaded", () => {
   const input = document.getElementById("z-start-input");
   const button = document.getElementById("z-search-btn");
+  const button = document.getElementById("z-search-btn2");
+
   const resultsContainer = document.getElementById("z-search-results");
 
   async function runSearch(query) {
