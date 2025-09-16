@@ -374,10 +374,11 @@
 }
 
 
+/* Dropdown panel under the icon */
 #search-dropdown {
   display: flex;
-  flex-direction: column;
-  align-items: center;   /* makes children (input + button) center horizontally */
+  flex-direction: column;       /* stack input + button vertically */
+  align-items: center;          /* center children horizontally */
   justify-content: center;
   gap: 8px;
 
@@ -391,11 +392,10 @@
   border-radius: 8px;
   z-index: 999;
 
-  min-width: 240px;      /* keeps box wider than input */
-  text-align: center;    /* centers text inside */
+  min-width: 100px;             /* ensure it doesn't collapse too narrow */
 }
 
-
+/* Input style */
 #z-start-input2 {
   padding: 6px 10px;
   border: 1px solid #555;
@@ -403,41 +403,41 @@
   background: #1e1e1e;
   color: #fff;
   width: 220px;
+  /* center the input inside the block */
   display: block;
-  margin: 0 auto;   /* force the input itself to center */
+  margin: 0 auto;
 }
 
-
-/* Search button styled like a keyboard key */
+/* Button like keyboard key */
 #z-search-btn2 {
   padding: 8px 16px;
   border: 2px solid #888;
   border-radius: 6px;
   background: linear-gradient(#2c2c2c, #1a1a1a);
   color: #f1f1f1;
-  font-family: monospace;  /* keyboard font feel */
+  font-family: monospace;
   font-size: 14px;
   letter-spacing: 1px;
   box-shadow:
-    inset 0 2px 3px rgba(0, 0, 0, 0.6),
+    inset 0 2px 3px rgba(0,0,0,0.6),
     0 2px 0 #000,
-    0 4px 6px rgba(0, 0, 0, 0.4); /* depth like a key */
+    0 4px 6px rgba(0,0,0,0.4);
   cursor: pointer;
   transition: all 0.15s ease-in-out;
+  /* center the button inside the dropdown */
+  display: block;
+  margin: 0 auto;
 }
 
-/* Hover = raised key */
 #z-search-btn2:hover {
   background: linear-gradient(#3a3a3a, #222);
   border-color: #aaa;
-  transform: translateY(-1px);
 }
 
-/* Active = pressed key */
 #z-search-btn2:active {
   transform: translateY(2px);
   box-shadow:
-    inset 0 1px 2px rgba(0, 0, 0, 0.8),
+    inset 0 1px 2px rgba(0,0,0,0.8),
     0 1px 0 #000;
 }
 
