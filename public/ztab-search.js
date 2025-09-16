@@ -87,7 +87,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Button click
 button.addEventListener("click", () => {
-  runSearch(input1.value.trim());
+  runSearch(input.value.trim());
 });
 
 button2.addEventListener("click", () => {
