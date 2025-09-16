@@ -580,6 +580,8 @@
   
   
 
+
+
 <!-- 🔍 Floating Z-Orb -->
 <div id="z-float-search-icon">🔍</div>
 
@@ -613,70 +615,74 @@
     }
   });
 
+  // 🔍 Search Element References
+  const realInput = document.getElementById('z-start-input');           // Main center search
+  const realBtn = document.getElementById('z-search-btn');              // Main center search button
 
+  const floatBar = document.getElementById('z-float-search-bar');       // Floating wrapper
+  const floatInput = document.getElementById('floating-search-input');  // Floating input
+  const floatBtn = document.getElementById('z-float-btn');              // Floating search button
+  const orbIcon = document.getElementById('z-float-search-icon');       // Orb icon
 
-<script>
-  // 🔍 Search Element References Only
-  const realInput   = document.getElementById('z-start-input');            // Center input
-  const realBtn     = document.getElementById('z-search-btn');             // Center search button
-  const floatInput  = document.getElementById('floating-search-input');    // Floating input
-  const floatBtn    = document.getElementById('z-float-btn');              // Floating search button
-  const floatBar    = document.getElementById('z-float-search-bar');       // Floating bar container
-  const orbIcon     = document.getElementById('z-float-search-icon');      // Floating orb
+  const resultsBox = document.getElementById('z-search-results');
 
-  // 🟣 Toggle Floating Search Bar
-  orbIcon.addEventListener('click', (e) => {
-    e.stopPropagation();
-    const open = floatBar.style.display === 'block';
-    floatBar.style.display = open ? 'none' : 'block';
-    if (!open) floatInput.focus();
+  // 🟦 Run search (unified)
+  function runSearch(query) {
+    if (!query) return;
+    resultsBox.innerHTML = `
+      <div class="result-item">
+        <h3>Searching for: ${query}</h3>
+        <p class="result-snippet">Placeholder result for "<b>${query}</b>". Connect this to real data or Google Custom Search API.</p>
+      </div>
+    `;
+    window.scrollTo({ top: 200, behavior: 'smooth' });
+  }
+
+  // 🟨 Main search (center input)
+  realBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    runSearch(realInput.value);
   });
 
-  // 🔵 Click Outside to Close Floating Bar
+  realInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      runSearch(realInput.value);
+    }
+  });
+
+  // 🟪 Floating Orb
+  orbIcon.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const isOpen = floatBar.style.display === 'block';
+    floatBar.style.display = isOpen ? 'none' : 'block';
+    if (!isOpen) floatInput.focus();
+  });
+
+  // 🟩 Floating search triggers
+  floatBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    realInput.value = floatInput.value;
+    runSearch(realInput.value);
+    floatBar.style.display = 'none';
+  });
+
+  floatInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      realInput.value = floatInput.value;
+      runSearch(realInput.value);
+      floatBar.style.display = 'none';
+    }
+  });
+
+  // 🟥 Close floating bar on outside click
   document.addEventListener("click", (e) => {
     if (!floatBar.contains(e.target) && !orbIcon.contains(e.target)) {
       floatBar.style.display = 'none';
     }
   });
-
-  // 🟩 Main Center Button Triggers runSearch()
-  realBtn.addEventListener('click', (e) => {
-    e.preventDefault();
-    if (typeof runSearch === 'function') runSearch(realInput.value);
-  });
-
-  // 🟩 Main Center Input Enter Triggers runSearch()
-  realInput.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter') {
-      e.preventDefault();
-      if (typeof runSearch === 'function') runSearch(realInput.value);
-    }
-  });
-
-  // 🟦 Floating Button Triggers runSearch()
-  floatBtn.addEventListener('click', (e) => {
-    e.preventDefault();
-    const val = floatInput.value.trim();
-    if (val && typeof runSearch === 'function') {
-      realInput.value = val;
-      runSearch(val);
-      floatBar.style.display = 'none';
-    }
-  });
-
-  // 🟦 Floating Input Enter Triggers runSearch()
-  floatInput.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter') {
-      e.preventDefault();
-      const val = floatInput.value.trim();
-      if (val && typeof runSearch === 'function') {
-        realInput.value = val;
-        runSearch(val);
-        floatBar.style.display = 'none';
-      }
-    }
-  });
 </script>
 
-<!-- Your actual search logic -->
+<!-- Optional external script -->
 <script src="ztab-search.js" defer></script>
