@@ -613,7 +613,51 @@
     }
   });
 
-</script>
+const realInput = document.getElementById('z-start-input');           // Main center search
+  const realBtn = document.getElementById('z-search-btn');              // Main center search button
 
+  const floatBar = document.getElementById('z-float-search-bar');       // Floating wrapper
+  const floatInput = document.getElementById('floating-search-input');  // Floating input
+  const floatBtn = document.getElementById('z-float-btn');              // Floating search button
+  const orbIcon = document.getElementById('z-float-search-icon');       // Orb icon
+
+
+// 🟨 Main search (center input)
+  realBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    runSearch(realInput.value);
+  });
+
+  realInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      runSearch(realInput.value);
+    }
+  }); 
+
+// 🟩 Floating search triggers
+  floatBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    realInput.value = floatInput.value;
+    runSearch(realInput.value);
+    floatBar.style.display = 'none';
+  });
+
+  floatInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      realInput.value = floatInput.value;
+      runSearch(realInput.value);
+      floatBar.style.display = 'none';
+    }
+  });
+
+  // 🟥 Close floating bar on outside click
+  document.addEventListener("click", (e) => {
+    if (!floatBar.contains(e.target) && !orbIcon.contains(e.target)) {
+      floatBar.style.display = 'none';
+    }
+  });
+</script>
 <!-- Optional external script -->
 <script src="ztab-search.js" defer></script>
