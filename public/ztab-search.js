@@ -95,7 +95,7 @@ button2.addEventListener("click", () => {
 });
 
 input.addEventListener("keypress", (e) => {
-  if (e.key === "Enter") runSearch(input1.value.trim());
+  if (e.key === "Enter") runSearch(input.value.trim());
 });
 
 input2.addEventListener("keypress", (e) => {
