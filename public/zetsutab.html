@@ -375,6 +375,49 @@
 
 
 
+/* Center the input + button inside the dropdown */
+#search-dropdown {
+  display: flex;
+  flex-direction: column;   /* stack vertical */
+  align-items: center;      /* horizontal center */
+  justify-content: center;  /* vertical center */
+  gap: 8px;                 /* spacing between input and button */
+}
+
+/* Style input to look neat inside dropdown */
+#z-start-input2 {
+  padding: 6px 10px;
+  border: 1px solid #555;
+  border-radius: 4px;
+  background: #1e1e1e;
+  color: #fff;
+  width: 200px;
+  text-align: center;
+}
+
+/* Make the search button look like a keyboard key */
+#z-search-btn2 {
+  padding: 8px 14px;
+  border: 2px solid #888;
+  border-radius: 6px;
+  background: linear-gradient(#2a2a2a, #1a1a1a);
+  color: #eee;
+  font-family: monospace;
+  font-size: 14px;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.6), 0 2px 0 #000;
+  cursor: pointer;
+  transition: all 0.15s ease-in-out;
+}
+
+#z-search-btn2:hover {
+  background: linear-gradient(#3a3a3a, #222);
+  border-color: #aaa;
+}
+
+#z-search-btn2:active {
+  transform: translateY(2px);
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0.8);
+}
 
 
   </style>
