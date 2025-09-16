@@ -589,7 +589,6 @@
   <button id="z-search-btn">Search</button>
 </div>
 
-<!-- SCRIPT ----------------------------------------------------->
 <script>
   const appsIcon = document.getElementById('apps-icon');
   const appsDropdown = document.getElementById('apps-dropdown');
@@ -615,15 +614,29 @@
     }
   });
 
-  // 🔵 Floating Search Orb Logic
+  // 🔵 Floating Orb Logic
   const zIcon = document.getElementById('z-float-search-icon');
   const zBar = document.getElementById('z-float-search-bar');
   const floatingInput = document.getElementById('floating-search-input');
   const searchBtn = document.getElementById('z-search-btn');
-  const realInput = document.getElementById('search-input'); // Your main input
-  const zForm = document.querySelector('.z-search'); // Main search form
+  const realInput = document.getElementById('z-start-input'); // ✅ CORRECT INPUT
+  const resultsBox = document.getElementById('z-search-results'); // Result box
 
-  // Toggle bar open/close
+  // 🔍 Add search to top button
+  searchBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    runSearch(realInput.value);
+  });
+
+  // 🔍 Add search to top input Enter key
+  realInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      runSearch(realInput.value);
+    }
+  });
+
+  // 🔍 Orb → search trigger
   zIcon.addEventListener('click', (e) => {
     e.stopPropagation();
     const isOpen = zBar.style.display === 'block';
@@ -631,35 +644,33 @@
     if (!isOpen) floatingInput.focus();
   });
 
-  // Hit Enter → transfer value + trigger
   floatingInput.addEventListener('keydown', (e) => {
     if (e.key === 'Enter') {
       e.preventDefault();
-      triggerZSearch();
-    }
-  });
-
-  // Click Search button → same thing
-  searchBtn.addEventListener('click', (e) => {
-    e.preventDefault();
-    triggerZSearch();
-  });
-
-  // Reusable function to copy value and fire main search
-  function triggerZSearch() {
-    if (realInput && zForm) {
       realInput.value = floatingInput.value;
-      zForm.querySelector('button').click();
+      runSearch(realInput.value);
       zBar.style.display = 'none';
     }
-  }
+  });
 
-  // Click outside = close
+  // Hide on outside click
   document.addEventListener("click", (e) => {
     if (!zBar.contains(e.target) && !zIcon.contains(e.target)) {
       zBar.style.display = 'none';
     }
   });
+
+  // 🔎 ACTUAL SEARCH HANDLER (dummy output for now)
+  function runSearch(query) {
+    if (!query) return;
+    resultsBox.innerHTML = `
+      <div class="result-item">
+        <h3>Searching for: ${query}</h3>
+        <p class="result-snippet">Placeholder result for "<b>${query}</b>". Connect this to real data or Google Custom Search API.</p>
+      </div>
+    `;
+    window.scrollTo({ top: 200, behavior: 'smooth' });
+  }
 </script>
 
 <script src="ztab-search.js" defer></script>
