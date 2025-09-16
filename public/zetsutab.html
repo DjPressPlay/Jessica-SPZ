@@ -586,7 +586,7 @@
 <!-- Floating Search Bar -->
 <div id="z-float-search-bar">
   <input id="floating-search-input" type="text" placeholder="Search Zetsu..." />
-  <button id="z-float-btn">Search</button>
+    <button id="z-search-btn">Search</button>
 </div>
 
 <script>
@@ -613,96 +613,6 @@
     }
   });
 
-  // 🔍 Search Element References
-  const realInput = document.getElementById('z-start-input');           // Main center search
-  const realBtn = document.getElementById('z-search-btn');              // Main center search button
-
-  const floatBar = document.getElementById('z-float-search-bar');       // Floating wrapper
-  const floatInput = document.getElementById('floating-search-input');  // Floating input
-  const floatBtn = document.getElementById('z-float-btn');              // Floating search button
-  const orbIcon = document.getElementById('z-float-search-icon');       // Orb icon
-
-  const resultsBox = document.getElementById('z-search-results');
-
-  // 🟦 Run search (real fetch to /search route)
-  async function runSearch(query) {
-    if (!query) return;
-
-    resultsBox.innerHTML = `
-      <div class="result-item">
-        <h3>Searching for: ${query}</h3>
-        <p class="result-snippet">...</p>
-      </div>
-    `;
-
-    try {
-      const res = await fetch(`/search?q=${encodeURIComponent(query)}`);
-      const data = await res.json();
-
-      if (!data?.results?.length) {
-        resultsBox.innerHTML = `<div class="result-item"><p>No results found.</p></div>`;
-        return;
-      }
-
-      resultsBox.innerHTML = data.results.map(item => `
-        <div class="result-item">
-          <h3><a href="${item.url}" target="_blank">${item.title}</a></h3>
-          <p class="result-snippet">${item.snippet}</p>
-        </div>
-      `).join('');
-
-      window.scrollTo({ top: 200, behavior: 'smooth' });
-
-    } catch (err) {
-      resultsBox.innerHTML = `<div class="result-item"><p>Error loading results.</p></div>`;
-      console.error(err);
-    }
-  }
-
-  // 🟨 Main search (center input)
-  realBtn.addEventListener('click', (e) => {
-    e.preventDefault();
-    runSearch(realInput.value);
-  });
-
-  realInput.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter') {
-      e.preventDefault();
-      runSearch(realInput.value);
-    }
-  });
-
-  // 🟪 Floating Orb
-  orbIcon.addEventListener('click', (e) => {
-    e.stopPropagation();
-    const isOpen = floatBar.style.display === 'block';
-    floatBar.style.display = isOpen ? 'none' : 'block';
-    if (!isOpen) floatInput.focus();
-  });
-
-  // 🟩 Floating search triggers
-  floatBtn.addEventListener('click', (e) => {
-    e.preventDefault();
-    realInput.value = floatInput.value;
-    runSearch(realInput.value);
-    floatBar.style.display = 'none';
-  });
-
-  floatInput.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter') {
-      e.preventDefault();
-      realInput.value = floatInput.value;
-      runSearch(realInput.value);
-      floatBar.style.display = 'none';
-    }
-  });
-
-  // 🟥 Close floating bar on outside click
-  document.addEventListener("click", (e) => {
-    if (!floatBar.contains(e.target) && !orbIcon.contains(e.target)) {
-      floatBar.style.display = 'none';
-    }
-  });
 </script>
 
 <!-- Optional external script -->
