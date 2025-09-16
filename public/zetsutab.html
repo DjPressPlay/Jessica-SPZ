@@ -319,40 +319,61 @@
 
 
 
-  .results-container {
+  /* Results container stays the same */
+.results-container {
   margin: 30px auto;
-  width: 100vw;              /* take up most of screen width */
-  max-width: 1950px;        /* cap it so it doesn’t go too wide */
+  width: 100vw;
+  max-width: 1950px;
   padding: 24px;
   background: #1a1a1a;
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.4);
   text-align: left;
   overflow-y: auto;
-  max-height: 65vh;         /* give results more room */
+  max-height: 65vh;
 }
 
-
+/* Regular results → card style */
 .result-item {
   margin-bottom: 18px;
-  padding: 16px;                   /* give inside spacing */
-  border: 1px solid #333;          /* border around card */
-  border-radius: 8px;              /* rounded edges */
+  padding: 16px;
+  border: 1px solid #333;          /* full border */
+  border-radius: 8px;              /* rounded like a card */
   background: #1e1e1e;             /* card background */
-  box-shadow: 0 2px 6px rgba(0,0,0,0.25); /* soft card shadow */
+  box-shadow: 0 2px 6px rgba(0,0,0,0.25); /* soft shadow */
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-.result-item h3 {
+/* hover effect to "lift" the card */
+.result-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+}
+
+/* Highlight cards → same shape but accent border */
+.highlight-item {
+  margin-bottom: 18px;
+  padding: 16px;
+  border: 2px solid #4285f4;       /* blue accent */
+  border-radius: 8px;
+  background: #1e1e1e;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.35);
+}
+
+.result-item h3,
+.highlight-item h3 {
   margin: 0 0 6px;
   font-size: 1.2em;
 }
 
-.result-item a {
+.result-item a,
+.highlight-item a {
   color: #4cafef;
   text-decoration: none;
 }
 
-.result-item a:hover {
+.result-item a:hover,
+.highlight-item a:hover {
   text-decoration: underline;
 }
 
@@ -360,6 +381,7 @@
   font-size: 0.95em;
   color: #ccc;
 }
+
 
 
 
