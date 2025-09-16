@@ -374,50 +374,70 @@
 }
 
 
-
-/* Center the input + button inside the dropdown */
+/* Center the input + button inside dropdown */
 #search-dropdown {
   display: flex;
-  flex-direction: column;   /* stack vertical */
-  align-items: center;      /* horizontal center */
-  justify-content: center;  /* vertical center */
-  gap: 8px;                 /* spacing between input and button */
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+
+  position: absolute;
+  top: 100%;
+  left: 50%;                  /* start at center */
+  transform: translateX(-50%); /* shift back by half width */
+  background: #111;
+  padding: 10px;
+  border: 1px solid #444;
+  border-radius: 8px;
+  z-index: 999;
 }
 
-/* Style input to look neat inside dropdown */
+
+/* Input box clean dark look */
 #z-start-input2 {
   padding: 6px 10px;
   border: 1px solid #555;
-  border-radius: 4px;
+  border-radius: 6px;
   background: #1e1e1e;
   color: #fff;
-  width: 200px;
+  width: 220px;
   text-align: center;
 }
 
-/* Make the search button look like a keyboard key */
+/* Search button styled like a keyboard key */
 #z-search-btn2 {
-  padding: 8px 14px;
+  padding: 8px 16px;
   border: 2px solid #888;
   border-radius: 6px;
-  background: linear-gradient(#2a2a2a, #1a1a1a);
-  color: #eee;
-  font-family: monospace;
+  background: linear-gradient(#2c2c2c, #1a1a1a);
+  color: #f1f1f1;
+  font-family: monospace;  /* keyboard font feel */
   font-size: 14px;
-  box-shadow: inset 0 2px 4px rgba(0,0,0,0.6), 0 2px 0 #000;
+  letter-spacing: 1px;
+  box-shadow:
+    inset 0 2px 3px rgba(0, 0, 0, 0.6),
+    0 2px 0 #000,
+    0 4px 6px rgba(0, 0, 0, 0.4); /* depth like a key */
   cursor: pointer;
   transition: all 0.15s ease-in-out;
 }
 
+/* Hover = raised key */
 #z-search-btn2:hover {
   background: linear-gradient(#3a3a3a, #222);
   border-color: #aaa;
+  transform: translateY(-1px);
 }
 
+/* Active = pressed key */
 #z-search-btn2:active {
   transform: translateY(2px);
-  box-shadow: inset 0 1px 2px rgba(0,0,0,0.8);
+  box-shadow:
+    inset 0 1px 2px rgba(0, 0, 0, 0.8),
+    0 1px 0 #000;
 }
+
 
 
   </style>
