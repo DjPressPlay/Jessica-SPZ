@@ -319,20 +319,24 @@
 
 
 
-.result-item {
-  margin-bottom: 18px;
-  padding: 16px;
-  border: 1px solid #333;        /* border around each card */
-  border-radius: 8px;            /* rounded edges like a card */
-  background: #1e1e1e;           /* card background */
-  box-shadow: 0 2px 6px rgba(0,0,0,0.3); /* subtle shadow */
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  .results-container {
+  margin: 30px auto;
+  width: 100vw;              /* take up most of screen width */
+  max-width: 1950px;        /* cap it so it doesn’t go too wide */
+  padding: 24px;
+  background: #1a1a1a;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+  text-align: left;
+  overflow-y: auto;
+  max-height: 65vh;         /* give results more room */
 }
 
-/* hover effect so they "lift" a bit like real cards */
-.result-item:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+
+.result-item {
+  margin-bottom: 18px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #333;
 }
 
 .result-item h3 {
