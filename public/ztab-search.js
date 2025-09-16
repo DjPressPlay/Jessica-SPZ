@@ -86,12 +86,21 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // Button click
-  button.addEventListener("click", () => {
-    runSearch(input.value.trim());
-  });
+button.addEventListener("click", () => {
+  runSearch(input1.value.trim());
+});
 
-  // Enter key
-  input.addEventListener("keypress", (e) => {
-    if (e.key === "Enter") runSearch(input.value.trim());
-  });
+button2.addEventListener("click", () => {
+  runSearch(input2.value.trim());
+});
+
+input.addEventListener("keypress", (e) => {
+  if (e.key === "Enter") runSearch(input1.value.trim());
+});
+
+input2.addEventListener("keypress", (e) => {
+  if (e.key === "Enter") runSearch(input2.value.trim());
+});
+
+  
 });
