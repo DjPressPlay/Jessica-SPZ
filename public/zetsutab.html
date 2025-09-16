@@ -320,31 +320,40 @@
 
 
 .result-item {
-  background: #1a1a1a;
-  border: 1px solid #333;
-  border-radius: 8px;
-  padding: 12px;
-  margin-bottom: 12px;
-  transition: background 0.2s ease;
+  margin-bottom: 18px;
+  padding: 16px;
+  border: 1px solid #333;        /* border around each card */
+  border-radius: 8px;            /* rounded edges like a card */
+  background: #1e1e1e;           /* card background */
+  box-shadow: 0 2px 6px rgba(0,0,0,0.3); /* subtle shadow */
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
+/* hover effect so they "lift" a bit like real cards */
 .result-item:hover {
-  background: #222;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.5);
 }
 
-.result-item h3 a {
-  color: #4285f4;
+.result-item h3 {
+  margin: 0 0 6px;
+  font-size: 1.2em;
+}
+
+.result-item a {
+  color: #4cafef;
   text-decoration: none;
 }
 
-.result-item h3 a:hover {
+.result-item a:hover {
   text-decoration: underline;
 }
 
 .result-snippet {
+  font-size: 0.95em;
   color: #ccc;
-  font-size: 14px;
 }
+
 
 
     .highlight-container {
