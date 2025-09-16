@@ -640,13 +640,13 @@
     }
   });
 
-  // 🔵 Floating Search Orb Logic
+    // 🔵 Floating Search Orb Logic
   const zIcon = document.getElementById('z-float-search-icon');
   const zBar = document.getElementById('z-float-search-bar');
   const floatingInput = document.getElementById('floating-search-input');
   const searchBtn = document.getElementById('z-search-btn');
-  const realInput = document.getElementById('search-input'); // Your main input
-  const zForm = document.querySelector('.z-search'); // Your real form
+  const realInput = document.getElementById('search-input');
+  const zForm = document.querySelector('.z-search');
 
   // Toggle open/close
   zIcon.addEventListener('click', (e) => {
@@ -673,15 +673,7 @@
   function triggerZSearch() {
     if (realInput && zForm) {
       realInput.value = floatingInput.value;
-
-      // Submit the real form directly
-      if (typeof zForm.submit === 'function') {
-        zForm.submit();
-      } else {
-        const submitBtn = zForm.querySelector('button[type="submit"], button');
-        if (submitBtn) submitBtn.click();
-      }
-
+      zForm.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
       zBar.style.display = 'none';
     }
   }
@@ -692,6 +684,7 @@
       zBar.style.display = 'none';
     }
   });
+
 
 
 </script>
