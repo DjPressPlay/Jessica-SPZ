@@ -21,7 +21,7 @@ export async function handler(event) {
     // =========================
     const requests = [];
 
-    // DuckDuckGo (no native images)
+    // DuckDuckGo (no native images, no timestamp)
     const ddgUrl = `https://api.duckduckgo.com/?q=${encodeURIComponent(query)}&format=json&no_html=1&no_redirect=1`;
     requests.push(
       fetch(ddgUrl).then(r => r.json()).then(data => {
@@ -31,13 +31,13 @@ export async function handler(event) {
           link: i.FirstURL || "",
           snippet: i.Text || "",
           source: "duckduckgo",
-          image: "" // crawl or fallback
-       timestamp: i.publishedAt || new Date().toISOString()
+          image: "", // crawl or fallback
+          timestamp: new Date().toISOString()
         }));
       }).catch(() => [])
     );
 
-    // Wikipedia (no native images)
+    // Wikipedia (no native images, no timestamp)
     const wikiUrl = `https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(query)}&format=json`;
     requests.push(
       fetch(wikiUrl).then(r => r.json()).then(data => {
@@ -46,13 +46,13 @@ export async function handler(event) {
           link: `https://en.wikipedia.org/wiki/${encodeURIComponent(i.title)}`,
           snippet: i.snippet,
           source: "wikipedia",
-          image: "" // crawl or fallback
-          timestamp: i.publishedAt || new Date().toISOString()
+          image: "", // crawl or fallback
+          timestamp: new Date().toISOString()
         }));
       }).catch(() => [])
     );
 
-    // Google CSE (has images in pagemap)
+    // Google CSE
     const googleUrl = `https://www.googleapis.com/customsearch/v1?key=${googleKey || "MISSING"}&cx=${googleCx || "MISSING"}&q=${encodeURIComponent(query)}`;
     requests.push(
       fetch(googleUrl).then(r => r.json()).then(data => {
@@ -61,13 +61,13 @@ export async function handler(event) {
           link: i.link,
           snippet: i.snippet,
           source: "google",
-          image: i.pagemap?.cse_image?.[0]?.src || ""
-         timestamp: i.publishedAt || new Date().toISOString()
+          image: i.pagemap?.cse_image?.[0]?.src || "",
+          timestamp: new Date().toISOString()
         }));
       }).catch(() => [])
     );
 
-    // News API (has urlToImage)
+    // News API
     const newsUrl = `https://newsapi.org/v2/everything?q=${encodeURIComponent(query)}&apiKey=${newsKey || "MISSING"}`;
     requests.push(
       fetch(newsUrl).then(r => r.json()).then(data => {
@@ -76,13 +76,13 @@ export async function handler(event) {
           link: i.url,
           snippet: i.description || "",
           source: "news",
-          image: i.urlToImage || ""
-        timestamp: i.publishedAt || new Date().toISOString()
+          image: i.urlToImage || "",
+          timestamp: i.publishedAt || new Date().toISOString()
         }));
       }).catch(() => [])
     );
 
-    // SearchApi.io (has thumbnails)
+    // SearchApi.io
     const searchApiUrl = `https://www.searchapi.io/api/v1/search?q=${encodeURIComponent(query)}&engine=google`;
     requests.push(
       fetch(searchApiUrl, {
@@ -93,8 +93,8 @@ export async function handler(event) {
           link: i.link,
           snippet: i.snippet || "",
           source: "searchapi",
-          image: i.thumbnail || i.snippet_thumbnail || ""
-          timestamp: i.publishedAt || new Date().toISOString()
+          image: i.thumbnail || i.snippet_thumbnail || "",
+          timestamp: new Date().toISOString()
         }));
       }).catch(() => [])
     );
