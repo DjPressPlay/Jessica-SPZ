@@ -329,8 +329,16 @@
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.4);
   text-align: left;
-  overflow-y: auto;
+  overflow-y: scroll;       /* force vertical scrolling */
   max-height: 65vh;
+
+  /* hide scrollbar cross-browser */
+  scrollbar-width: none;    /* Firefox */
+  -ms-overflow-style: none; /* IE/Edge */
+}
+
+.results-container::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
 }
 
 /* Regular results → card style */
