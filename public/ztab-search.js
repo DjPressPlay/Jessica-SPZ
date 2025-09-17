@@ -15,7 +15,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     try {
       const res = await fetch(
-        `/.netlify/functions/search?q=${encodeURIComponent(query)}`
+        `/.netlify/functions/search-with-images?q=${encodeURIComponent(query)}`
       );
 
       if (!res.ok) throw new Error("Search request failed");
