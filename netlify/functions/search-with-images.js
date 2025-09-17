@@ -31,7 +31,7 @@ export async function handler(event) {
           link: i.FirstURL || "",
           snippet: i.Text || "",
           source: "duckduckgo",
-          image: "" // will crawl later
+          timestamp: new Date().toISOString()
         }));
       }).catch(() => [])
     );
@@ -42,46 +42,48 @@ export async function handler(event) {
       fetch(wikiUrl).then(r => r.json()).then(async data => {
         const results = data.query?.search || [];
         const enriched = await Promise.all(results.map(async (i) => {
-          let thumb = "";
+          let thumb;
           try {
             const summaryRes = await fetch(
               `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(i.title)}`
             );
             const summary = await summaryRes.json();
-            thumb = summary.thumbnail?.source || "";
+            thumb = summary.thumbnail?.source;
           } catch {}
           return {
             title: i.title,
             link: `https://en.wikipedia.org/wiki/${encodeURIComponent(i.title)}`,
             snippet: i.snippet,
             source: "wikipedia",
-            image: thumb
+            timestamp: new Date().toISOString(),
+            ...(thumb ? { image: thumb } : {})
           };
         }));
         return enriched;
       }).catch(() => [])
     );
 
-    // Google CSE → has pagemap.cse_image and metatags
+    // Google CSE → cse_image or og:image
     const googleUrl = `https://www.googleapis.com/customsearch/v1?key=${googleKey || "MISSING"}&cx=${googleCx || "MISSING"}&q=${encodeURIComponent(query)}`;
     requests.push(
       fetch(googleUrl).then(r => r.json()).then(data => {
         return (data.items || []).map(i => {
           const pm = i.pagemap || {};
-          const metatagImg = pm.metatags?.[0]?.["og:image"] || "";
-          const cseImg = pm.cse_image?.[0]?.src || "";
+          const metatagImg = pm.metatags?.[0]?.["og:image"];
+          const cseImg = pm.cse_image?.[0]?.src;
           return {
             title: i.title,
             link: i.link,
             snippet: i.snippet,
             source: "google",
-            image: cseImg || metatagImg || ""
+            timestamp: new Date().toISOString(),
+            ...(cseImg || metatagImg ? { image: cseImg || metatagImg } : {})
           };
         });
       }).catch(() => [])
     );
 
-    // News API → urlToImage is native
+    // News API → urlToImage, publishedAt
     const newsUrl = `https://newsapi.org/v2/everything?q=${encodeURIComponent(query)}&apiKey=${newsKey || "MISSING"}`;
     requests.push(
       fetch(newsUrl).then(r => r.json()).then(data => {
@@ -90,12 +92,13 @@ export async function handler(event) {
           link: i.url,
           snippet: i.description || "",
           source: "news",
-          image: i.urlToImage || ""
+          timestamp: i.publishedAt || new Date().toISOString(),
+          ...(i.urlToImage ? { image: i.urlToImage } : {})
         }));
       }).catch(() => [])
     );
 
-    // SearchApi.io → has thumbnail/snippet_thumbnail, else fallback crawl/wiki
+    // SearchApi.io → thumbnail/snippet_thumbnail, publishedAt if present
     const searchApiUrl = `https://www.searchapi.io/api/v1/search?q=${encodeURIComponent(query)}&engine=google`;
     requests.push(
       fetch(searchApiUrl, {
@@ -103,8 +106,7 @@ export async function handler(event) {
       }).then(r => r.json()).then(async data => {
         const results = data.organic_results || [];
         const enriched = await Promise.all(results.map(async (i) => {
-          let img = i.thumbnail || i.snippet_thumbnail || "";
-          // if it’s a wikipedia result and no img yet, fetch wiki summary
+          let img = i.thumbnail || i.snippet_thumbnail;
           if (!img && i.link?.includes("wikipedia.org")) {
             try {
               const title = decodeURIComponent(i.link.split("/wiki/")[1] || "");
@@ -112,7 +114,7 @@ export async function handler(event) {
                 `https://en.wikipedia.org/api/rest_v1/page/summary/${title}`
               );
               const summary = await summaryRes.json();
-              img = summary.thumbnail?.source || "";
+              img = summary.thumbnail?.source;
             } catch {}
           }
           return {
@@ -120,7 +122,8 @@ export async function handler(event) {
             link: i.link,
             snippet: i.snippet || "",
             source: "searchapi",
-            image: img
+            timestamp: i.publishedAt || new Date().toISOString(),
+            ...(img ? { image: img } : {})
           };
         }));
         return enriched;
@@ -186,7 +189,7 @@ export async function handler(event) {
     const addImage = (list) =>
       list.map(i => ({
         ...i,
-        image: i.image || imageMap[i.link] || ""
+        ...(i.image ? {} : (imageMap[i.link] ? { image: imageMap[i.link] } : {}))
       }));
 
     const highlightsWithImages = addImage(highlights);
