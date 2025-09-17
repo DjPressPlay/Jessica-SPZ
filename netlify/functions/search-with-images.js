@@ -21,7 +21,7 @@ export async function handler(event) {
     // =========================
     const requests = [];
 
-    // DuckDuckGo
+    // DuckDuckGo → no native images
     const ddgUrl = `https://api.duckduckgo.com/?q=${encodeURIComponent(query)}&format=json&no_html=1&no_redirect=1`;
     requests.push(
       fetch(ddgUrl).then(r => r.json()).then(data => {
@@ -31,43 +31,57 @@ export async function handler(event) {
           link: i.FirstURL || "",
           snippet: i.Text || "",
           source: "duckduckgo",
-          image: "", // crawl or fallback
-          timestamp: new Date().toISOString()
+          image: "" // will crawl later
         }));
       }).catch(() => [])
     );
 
-    // Wikipedia
+    // Wikipedia → no images in search, but page summary API has thumbnails
     const wikiUrl = `https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(query)}&format=json`;
     requests.push(
-      fetch(wikiUrl).then(r => r.json()).then(data => {
-        return (data.query?.search || []).map(i => ({
-          title: i.title,
-          link: `https://en.wikipedia.org/wiki/${encodeURIComponent(i.title)}`,
-          snippet: i.snippet,
-          source: "wikipedia",
-          image: "", // crawl or fallback
-          timestamp: new Date().toISOString()
+      fetch(wikiUrl).then(r => r.json()).then(async data => {
+        const results = data.query?.search || [];
+        const enriched = await Promise.all(results.map(async (i) => {
+          let thumb = "";
+          try {
+            const summaryRes = await fetch(
+              `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(i.title)}`
+            );
+            const summary = await summaryRes.json();
+            thumb = summary.thumbnail?.source || "";
+          } catch {}
+          return {
+            title: i.title,
+            link: `https://en.wikipedia.org/wiki/${encodeURIComponent(i.title)}`,
+            snippet: i.snippet,
+            source: "wikipedia",
+            image: thumb
+          };
         }));
+        return enriched;
       }).catch(() => [])
     );
 
-    // Google CSE
+    // Google CSE → has pagemap.cse_image and metatags
     const googleUrl = `https://www.googleapis.com/customsearch/v1?key=${googleKey || "MISSING"}&cx=${googleCx || "MISSING"}&q=${encodeURIComponent(query)}`;
     requests.push(
       fetch(googleUrl).then(r => r.json()).then(data => {
-        return (data.items || []).map(i => ({
-          title: i.title,
-          link: i.link,
-          snippet: i.snippet,
-          source: "google",
-          image: i.pagemap?.cse_image?.[0]?.src || "",
-          timestamp: new Date().toISOString()
-        }));
+        return (data.items || []).map(i => {
+          const pm = i.pagemap || {};
+          const metatagImg = pm.metatags?.[0]?.["og:image"] || "";
+          const cseImg = pm.cse_image?.[0]?.src || "";
+          return {
+            title: i.title,
+            link: i.link,
+            snippet: i.snippet,
+            source: "google",
+            image: cseImg || metatagImg || ""
+          };
+        });
       }).catch(() => [])
     );
 
-    // News API
+    // News API → urlToImage is native
     const newsUrl = `https://newsapi.org/v2/everything?q=${encodeURIComponent(query)}&apiKey=${newsKey || "MISSING"}`;
     requests.push(
       fetch(newsUrl).then(r => r.json()).then(data => {
@@ -76,26 +90,40 @@ export async function handler(event) {
           link: i.url,
           snippet: i.description || "",
           source: "news",
-          image: i.urlToImage || "",
-          timestamp: i.publishedAt || new Date().toISOString()
+          image: i.urlToImage || ""
         }));
       }).catch(() => [])
     );
 
-    // SearchApi.io
+    // SearchApi.io → has thumbnail/snippet_thumbnail, else fallback crawl/wiki
     const searchApiUrl = `https://www.searchapi.io/api/v1/search?q=${encodeURIComponent(query)}&engine=google`;
     requests.push(
       fetch(searchApiUrl, {
         headers: { "Authorization": `Bearer ${searchApiKey || "MISSING"}` }
-      }).then(r => r.json()).then(data => {
-        return (data.organic_results || []).map(i => ({
-          title: i.title,
-          link: i.link,
-          snippet: i.snippet || "",
-          source: "searchapi",
-          image: i.thumbnail || i.snippet_thumbnail || "",
-          timestamp: new Date().toISOString()
+      }).then(r => r.json()).then(async data => {
+        const results = data.organic_results || [];
+        const enriched = await Promise.all(results.map(async (i) => {
+          let img = i.thumbnail || i.snippet_thumbnail || "";
+          // if it’s a wikipedia result and no img yet, fetch wiki summary
+          if (!img && i.link?.includes("wikipedia.org")) {
+            try {
+              const title = decodeURIComponent(i.link.split("/wiki/")[1] || "");
+              const summaryRes = await fetch(
+                `https://en.wikipedia.org/api/rest_v1/page/summary/${title}`
+              );
+              const summary = await summaryRes.json();
+              img = summary.thumbnail?.source || "";
+            } catch {}
+          }
+          return {
+            title: i.title,
+            link: i.link,
+            snippet: i.snippet || "",
+            source: "searchapi",
+            image: img
+          };
         }));
+        return enriched;
       }).catch(() => [])
     );
 
@@ -118,9 +146,7 @@ export async function handler(event) {
     const grouped = {};
     items.forEach(item => {
       if (!grouped[item.source]) grouped[item.source] = [];
-      if (grouped[item.source].length < 5) {
-        grouped[item.source].push(item);
-      }
+      if (grouped[item.source].length < 5) grouped[item.source].push(item);
     });
 
     const highlights = [];
@@ -132,15 +158,14 @@ export async function handler(event) {
       }
     });
 
-    // Limit reduced results to 20 max
-    reduced = reduced.slice(0, 20);
+    reduced = reduced.slice(0, 20); // cap
 
     // =========================
-    // 5. Crawl images for highlights + 5 reduced
+    // 5. Crawl fallback for missing images
     // =========================
     const linksToCrawl = [
       ...highlights.filter(i => !i.image).map(i => i.link),
-      ...reduced.slice(0, 5).filter(i => !i.image).map(i => i.link)
+      ...reduced.filter(i => !i.image).map(i => i.link)
     ];
 
     let imageMap = {};
@@ -151,25 +176,18 @@ export async function handler(event) {
       });
       const crawlData = JSON.parse(crawlRes.body)?.results || [];
       crawlData.forEach(entry => {
-        if (entry.url) {
-          imageMap[entry.url] = entry.image || "";
-        }
+        if (entry.url) imageMap[entry.url] = entry.image || "";
       });
     }
 
     // =========================
-    // 6. Add images + fallback
+    // 6. Merge final images
     // =========================
     const addImage = (list) =>
-      list.map(i => {
-        let image = i.image || imageMap[i.link] || "";
-        if (!image) {
-          if (i.source === "wikipedia") image = "/static/wiki.png";
-          else if (i.source === "duckduckgo") image = "/static/duck.png";
-          else image = "/static/placeholder.png";
-        }
-        return { ...i, image };
-      });
+      list.map(i => ({
+        ...i,
+        image: i.image || imageMap[i.link] || ""
+      }));
 
     const highlightsWithImages = addImage(highlights);
     const reducedWithImages = addImage(reduced);
