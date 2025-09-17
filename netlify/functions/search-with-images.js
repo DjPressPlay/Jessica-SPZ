@@ -21,7 +21,7 @@ export async function handler(event) {
     // =========================
     const requests = [];
 
-    // DuckDuckGo (no native images, no timestamp)
+    // DuckDuckGo
     const ddgUrl = `https://api.duckduckgo.com/?q=${encodeURIComponent(query)}&format=json&no_html=1&no_redirect=1`;
     requests.push(
       fetch(ddgUrl).then(r => r.json()).then(data => {
@@ -37,7 +37,7 @@ export async function handler(event) {
       }).catch(() => [])
     );
 
-    // Wikipedia (no native images, no timestamp)
+    // Wikipedia
     const wikiUrl = `https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(query)}&format=json`;
     requests.push(
       fetch(wikiUrl).then(r => r.json()).then(data => {
@@ -127,8 +127,8 @@ export async function handler(event) {
     let reduced = [];
     Object.entries(grouped).forEach(([src, list]) => {
       if (list.length > 0) {
-        highlights.push(list[0]);         // take top 1 as highlight
-        reduced.push(...list.slice(1));   // rest go to normal pool
+        highlights.push(list[0]);
+        reduced.push(...list.slice(1));
       }
     });
 
