@@ -21,7 +21,7 @@ export async function handler(event) {
     // =========================
     const requests = [];
 
-    // DuckDuckGo
+    // DuckDuckGo (no native images)
     const ddgUrl = `https://api.duckduckgo.com/?q=${encodeURIComponent(query)}&format=json&no_html=1&no_redirect=1`;
     requests.push(
       fetch(ddgUrl).then(r => r.json()).then(data => {
@@ -30,12 +30,13 @@ export async function handler(event) {
           title: i.Text || "",
           link: i.FirstURL || "",
           snippet: i.Text || "",
-          source: "duckduckgo"
+          source: "duckduckgo",
+          image: "" // handled later
         }));
       }).catch(() => [])
     );
 
-    // Wikipedia
+    // Wikipedia (no native images)
     const wikiUrl = `https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(query)}&format=json`;
     requests.push(
       fetch(wikiUrl).then(r => r.json()).then(data => {
@@ -43,12 +44,13 @@ export async function handler(event) {
           title: i.title,
           link: `https://en.wikipedia.org/wiki/${encodeURIComponent(i.title)}`,
           snippet: i.snippet,
-          source: "wikipedia"
+          source: "wikipedia",
+          image: "" // handled later
         }));
       }).catch(() => [])
     );
 
-    // Google CSE
+    // Google CSE (has images in pagemap)
     const googleUrl = `https://www.googleapis.com/customsearch/v1?key=${googleKey || "MISSING"}&cx=${googleCx || "MISSING"}&q=${encodeURIComponent(query)}`;
     requests.push(
       fetch(googleUrl).then(r => r.json()).then(data => {
@@ -56,12 +58,13 @@ export async function handler(event) {
           title: i.title,
           link: i.link,
           snippet: i.snippet,
-          source: "google"
+          source: "google",
+          image: i.pagemap?.cse_image?.[0]?.src || ""
         }));
       }).catch(() => [])
     );
 
-    // News API
+    // News API (has urlToImage)
     const newsUrl = `https://newsapi.org/v2/everything?q=${encodeURIComponent(query)}&apiKey=${newsKey || "MISSING"}`;
     requests.push(
       fetch(newsUrl).then(r => r.json()).then(data => {
@@ -69,12 +72,13 @@ export async function handler(event) {
           title: i.title,
           link: i.url,
           snippet: i.description || "",
-          source: "news"
+          source: "news",
+          image: i.urlToImage || ""
         }));
       }).catch(() => [])
     );
 
-    // SearchApi.io
+    // SearchApi.io (has thumbnails)
     const searchApiUrl = `https://www.searchapi.io/api/v1/search?q=${encodeURIComponent(query)}&engine=google`;
     requests.push(
       fetch(searchApiUrl, {
@@ -84,7 +88,8 @@ export async function handler(event) {
           title: i.title,
           link: i.link,
           snippet: i.snippet || "",
-          source: "searchapi"
+          source: "searchapi",
+          image: i.thumbnail || i.snippet_thumbnail || ""
         }));
       }).catch(() => [])
     );
@@ -126,29 +131,35 @@ export async function handler(event) {
     reduced = reduced.slice(0, 20);
 
     // =========================
-    // 5. Crawl images for highlights + 5 reduced
+    // 5. Crawl only items missing images
     // =========================
-    const linksToCrawl = [
-      ...highlights.map(i => i.link),
-      ...reduced.slice(0, 5).map(i => i.link)
-    ];
+    const missing = [...highlights, ...reduced].filter(i => !i.image).map(i => i.link);
 
-    const crawlRes = await crawlHandler({
-      httpMethod: "POST",
-      body: JSON.stringify({ links: linksToCrawl })
-    });
-    const crawlData = JSON.parse(crawlRes.body)?.results || [];
+    let imageMap = {};
+    if (missing.length > 0) {
+      const crawlRes = await crawlHandler({
+        httpMethod: "POST",
+        body: JSON.stringify({ links: missing })
+      });
+      const crawlData = JSON.parse(crawlRes.body)?.results || [];
+      crawlData.forEach(entry => {
+        if (entry.url) {
+          imageMap[entry.url] = entry.image || ""; // might be ""
+        }
+      });
+    }
 
-    const imageMap = {};
-    crawlData.forEach(entry => {
-      if (entry.url && entry.image) {
-        imageMap[entry.url] = entry.image;
-      }
-    });
-
-    // Add images where available
+    // Add images + fallbacks
     const addImage = (list) =>
-      list.map(i => ({ ...i, image: imageMap[i.link] || "" }));
+      list.map(i => {
+        let image = i.image || imageMap[i.link] || "";
+        if (!image) {
+          if (i.source === "wikipedia") image = "/static/wiki.png";
+          else if (i.source === "duckduckgo") image = "/static/duck.png";
+          else image = "/static/placeholder.png";
+        }
+        return { ...i, image };
+      });
 
     const highlightsWithImages = addImage(highlights);
     const reducedWithImages = addImage(reduced);
