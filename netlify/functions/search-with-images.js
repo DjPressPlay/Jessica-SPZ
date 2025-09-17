@@ -131,7 +131,7 @@ export async function handler(event) {
     );
 
     // =========================
-    // 3. Collect and dedupe
+    // 3. Collect, dedupe, sort
     // =========================
     const allResults = await Promise.all(requests);
     let items = allResults.flat();
@@ -142,6 +142,9 @@ export async function handler(event) {
       seen.add(i.link);
       return true;
     });
+
+    // Sort newest → oldest
+    items.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
 
     // =========================
     // 4. Group + Split highlights
