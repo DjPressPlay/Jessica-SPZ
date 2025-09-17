@@ -31,7 +31,7 @@ export async function handler(event) {
           link: i.FirstURL || "",
           snippet: i.Text || "",
           source: "duckduckgo",
-          image: "" // handled later
+          image: "" // crawl or fallback
         }));
       }).catch(() => [])
     );
@@ -45,7 +45,7 @@ export async function handler(event) {
           link: `https://en.wikipedia.org/wiki/${encodeURIComponent(i.title)}`,
           snippet: i.snippet,
           source: "wikipedia",
-          image: "" // handled later
+          image: "" // crawl or fallback
         }));
       }).catch(() => [])
     );
@@ -131,25 +131,30 @@ export async function handler(event) {
     reduced = reduced.slice(0, 20);
 
     // =========================
-    // 5. Crawl only items missing images
+    // 5. Crawl images for highlights + 5 reduced
     // =========================
-    const missing = [...highlights, ...reduced].filter(i => !i.image).map(i => i.link);
+    const linksToCrawl = [
+      ...highlights.filter(i => !i.image).map(i => i.link),
+      ...reduced.slice(0, 5).filter(i => !i.image).map(i => i.link)
+    ];
 
     let imageMap = {};
-    if (missing.length > 0) {
+    if (linksToCrawl.length > 0) {
       const crawlRes = await crawlHandler({
         httpMethod: "POST",
-        body: JSON.stringify({ links: missing })
+        body: JSON.stringify({ links: linksToCrawl })
       });
       const crawlData = JSON.parse(crawlRes.body)?.results || [];
       crawlData.forEach(entry => {
         if (entry.url) {
-          imageMap[entry.url] = entry.image || ""; // might be ""
+          imageMap[entry.url] = entry.image || "";
         }
       });
     }
 
-    // Add images + fallbacks
+    // =========================
+    // 6. Add images + fallback
+    // =========================
     const addImage = (list) =>
       list.map(i => {
         let image = i.image || imageMap[i.link] || "";
@@ -165,7 +170,7 @@ export async function handler(event) {
     const reducedWithImages = addImage(reduced);
 
     // =========================
-    // 6. Return JSON
+    // 7. Return JSON
     // =========================
     return {
       statusCode: 200,
