@@ -103,29 +103,7 @@ export async function handler(event) {
     });
 
     // =========================
-    // 4. Fetch images using crawl.js
-    // =========================
-    const linksToCrawl = items.map(i => i.link);
-    const crawlRes = await crawlHandler({
-      httpMethod: "POST",
-      body: JSON.stringify({ links: linksToCrawl })
-    });
-    const crawlData = JSON.parse(crawlRes.body)?.results || [];
-    const imageMap = {};
-    crawlData.forEach(entry => {
-      if (entry.url && entry.image) {
-        imageMap[entry.url] = entry.image;
-      }
-    });
-
-    // Append image to each result
-    items = items.map(i => ({
-      ...i,
-      image: imageMap[i.link] || ""
-    }));
-
-    // =========================
-    // 5. Group + Return
+    // 4. Group + Split highlights
     // =========================
     const grouped = {};
     items.forEach(item => {
@@ -136,17 +114,54 @@ export async function handler(event) {
     });
 
     const highlights = [];
-    const reduced = [];
+    let reduced = [];
     Object.entries(grouped).forEach(([src, list]) => {
       if (list.length > 0) {
-        highlights.push(list[0]);
-        reduced.push(...list.slice(1));
+        highlights.push(list[0]);         // take top 1 as highlight
+        reduced.push(...list.slice(1));   // rest go to normal pool
       }
     });
 
+    // Limit reduced results to 20 max
+    reduced = reduced.slice(0, 20);
+
+    // =========================
+    // 5. Crawl images for highlights + 5 reduced
+    // =========================
+    const linksToCrawl = [
+      ...highlights.map(i => i.link),
+      ...reduced.slice(0, 5).map(i => i.link)
+    ];
+
+    const crawlRes = await crawlHandler({
+      httpMethod: "POST",
+      body: JSON.stringify({ links: linksToCrawl })
+    });
+    const crawlData = JSON.parse(crawlRes.body)?.results || [];
+
+    const imageMap = {};
+    crawlData.forEach(entry => {
+      if (entry.url && entry.image) {
+        imageMap[entry.url] = entry.image;
+      }
+    });
+
+    // Add images where available
+    const addImage = (list) =>
+      list.map(i => ({ ...i, image: imageMap[i.link] || "" }));
+
+    const highlightsWithImages = addImage(highlights);
+    const reducedWithImages = addImage(reduced);
+
+    // =========================
+    // 6. Return JSON
+    // =========================
     return {
       statusCode: 200,
-      body: JSON.stringify({ highlights, items: reduced })
+      body: JSON.stringify({
+        highlights: highlightsWithImages,
+        items: reducedWithImages
+      })
     };
 
   } catch (err) {
