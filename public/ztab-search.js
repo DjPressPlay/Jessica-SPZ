@@ -3,8 +3,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const input = document.getElementById("z-start-input");
   const button = document.getElementById("z-search-btn");
   const button2 = document.getElementById("z-search-btn2");
-    const input2 = document.getElementById("z-start-input2");
-
+  const input2 = document.getElementById("z-start-input2");
 
   const resultsContainer = document.getElementById("z-search-results");
 
@@ -47,6 +46,7 @@ document.addEventListener("DOMContentLoaded", () => {
           card.style.background = "#1e1e1e";
 
           card.innerHTML = `
+            <img src="${item.image}" alt="preview" style="width:100%; max-height:160px; object-fit:cover; border-radius:4px; margin-bottom:8px;" />
             <h3><a href="${item.link}" target="_blank">${item.title}</a></h3>
             <p class="result-snippet">${item.snippet || ""}</p>
             <small>[${source}]</small>
@@ -69,7 +69,9 @@ document.addEventListener("DOMContentLoaded", () => {
           const div = document.createElement("div");
           div.className = "result-item";
           div.style.marginBottom = "16px";
+
           div.innerHTML = `
+            <img src="${item.image}" alt="preview" style="width:100%; max-height:160px; object-fit:cover; border-radius:4px; margin-bottom:8px;" />
             <h3><a href="${item.link}" target="_blank">${item.title}</a></h3>
             <p class="result-snippet">${item.snippet || ""}</p>
             <small>[${source}]</small>
@@ -86,21 +88,20 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // Button click
-button.addEventListener("click", () => {
-  runSearch(input.value.trim());
-});
+  button.addEventListener("click", () => {
+    runSearch(input.value.trim());
+  });
 
-button2.addEventListener("click", () => {
-  runSearch(input2.value.trim());
-});
+  button2.addEventListener("click", () => {
+    runSearch(input2.value.trim());
+  });
 
-input.addEventListener("keypress", (e) => {
-  if (e.key === "Enter") runSearch(input.value.trim());
-});
+  input.addEventListener("keypress", (e) => {
+    if (e.key === "Enter") runSearch(input.value.trim());
+  });
 
-input2.addEventListener("keypress", (e) => {
-  if (e.key === "Enter") runSearch(input2.value.trim());
-});
+  input2.addEventListener("keypress", (e) => {
+    if (e.key === "Enter") runSearch(input2.value.trim());
+  });
 
-  
 });
