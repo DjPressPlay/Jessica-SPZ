@@ -49,7 +49,7 @@ document.addEventListener("DOMContentLoaded", () => {
             <img src="${item.image}" alt="preview" style="width:100%; max-height:160px; object-fit:cover; border-radius:4px; margin-bottom:8px;" />
             <h3><a href="${item.link}" target="_blank">${item.title}</a></h3>
             <p class="result-snippet">${item.snippet || ""}</p>
-            <small>[${source}]</small>
+            <small>[${source}] — ${item.timestamp ? new Date(item.timestamp).toLocaleString() : ""}</small>
           `;
 
           highlightWrapper.appendChild(card);
@@ -74,7 +74,7 @@ document.addEventListener("DOMContentLoaded", () => {
             <img src="${item.image}" alt="preview" style="width:100%; max-height:160px; object-fit:cover; border-radius:4px; margin-bottom:8px;" />
             <h3><a href="${item.link}" target="_blank">${item.title}</a></h3>
             <p class="result-snippet">${item.snippet || ""}</p>
-            <small>[${source}]</small>
+            <small>[${source}] — ${item.timestamp ? new Date(item.timestamp).toLocaleString() : ""}</small>
           `;
 
           resultsContainer.appendChild(div);
