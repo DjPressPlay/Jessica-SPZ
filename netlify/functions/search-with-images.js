@@ -32,6 +32,7 @@ export async function handler(event) {
           snippet: i.Text || "",
           source: "duckduckgo",
           image: "" // crawl or fallback
+       timestamp: i.publishedAt || new Date().toISOString()
         }));
       }).catch(() => [])
     );
@@ -46,6 +47,7 @@ export async function handler(event) {
           snippet: i.snippet,
           source: "wikipedia",
           image: "" // crawl or fallback
+          timestamp: i.publishedAt || new Date().toISOString()
         }));
       }).catch(() => [])
     );
@@ -60,6 +62,7 @@ export async function handler(event) {
           snippet: i.snippet,
           source: "google",
           image: i.pagemap?.cse_image?.[0]?.src || ""
+         timestamp: i.publishedAt || new Date().toISOString()
         }));
       }).catch(() => [])
     );
@@ -74,6 +77,7 @@ export async function handler(event) {
           snippet: i.description || "",
           source: "news",
           image: i.urlToImage || ""
+        timestamp: i.publishedAt || new Date().toISOString()
         }));
       }).catch(() => [])
     );
@@ -90,6 +94,7 @@ export async function handler(event) {
           snippet: i.snippet || "",
           source: "searchapi",
           image: i.thumbnail || i.snippet_thumbnail || ""
+          timestamp: i.publishedAt || new Date().toISOString()
         }));
       }).catch(() => [])
     );
