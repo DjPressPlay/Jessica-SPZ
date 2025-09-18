@@ -24,7 +24,7 @@ document.addEventListener("DOMContentLoaded", () => {
       resultsContainer.innerHTML = "";
 
       // ======================
-      // Highlights Section (smaller cards)
+      // Highlights Section (grid of small cards)
       // ======================
       if (data.highlights && data.highlights.length > 0) {
         const highlightWrapper = document.createElement("div");
@@ -47,7 +47,7 @@ document.addEventListener("DOMContentLoaded", () => {
           card.style.maxWidth = "160px";
 
           card.innerHTML = `
-            <img src="${item.image}" alt="preview" 
+            <img src="${item.image}" alt="preview"
                  style="width:100%; height:100px; object-fit:cover; border-radius:4px; margin-bottom:6px;" />
             <h4 style="font-size:14px; margin:0 0 4px 0;">
               <a href="${item.link}" target="_blank">${item.title}</a>
@@ -62,7 +62,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
       // ======================
-      // Regular Results Section (YouTube style rows)
+      // Regular Results Section (horizontal rows)
       // ======================
       if (data.items && data.items.length > 0) {
         const resultsWrapper = document.createElement("div");
@@ -75,18 +75,18 @@ document.addEventListener("DOMContentLoaded", () => {
           let source = item.source || "unknown";
           if (source === "searchapi") source = "search-io";
 
-          const div = document.createElement("div");
-          div.className = "result-item";
-          div.style.display = "flex";
-          div.style.alignItems = "flex-start";
-          div.style.border = "1px solid #333";
-          div.style.borderRadius = "6px";
-          div.style.background = "#1e1e1e";
-          div.style.padding = "8px";
-          div.style.gap = "10px";
+          const row = document.createElement("div");
+          row.className = "result-item";
+          row.style.display = "flex";
+          row.style.alignItems = "flex-start";
+          row.style.border = "1px solid #333";
+          row.style.borderRadius = "6px";
+          row.style.background = "#1e1e1e";
+          row.style.padding = "10px";
+          row.style.gap = "12px";
 
-          div.innerHTML = `
-            <img src="${item.image}" alt="preview" 
+          row.innerHTML = `
+            <img src="${item.image}" alt="preview"
                  style="width:160px; height:100px; object-fit:cover; border-radius:4px;" />
             <div style="flex:1;">
               <h3 style="margin:0 0 6px 0; font-size:16px;">
@@ -99,7 +99,7 @@ document.addEventListener("DOMContentLoaded", () => {
             </div>
           `;
 
-          resultsWrapper.appendChild(div);
+          resultsWrapper.appendChild(row);
         });
 
         resultsContainer.appendChild(resultsWrapper);
