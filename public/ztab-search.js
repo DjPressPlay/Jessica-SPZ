@@ -23,16 +23,39 @@ document.addEventListener("DOMContentLoaded", () => {
 
       resultsContainer.innerHTML = "";
 
+      // Shared grid style
+      const gridStyle = `
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 12px;
+        margin-bottom: 24px;
+        justify-content: center;
+      `;
+
+      // Shared card style
+      const cardStyle = `
+        max-width: 220px;
+        border: 2px solid #4285f4;
+        border-radius: 8px;
+        background: #1e1e1e;
+        padding: 10px;
+      `;
+
+      const imageStyle = `
+        width: 100%;
+        height: 120px;
+        object-fit: cover;
+        border-radius: 4px;
+        margin-bottom: 8px;
+      `;
+
       // ======================
       // Highlights Section
       // ======================
       if (data.highlights && data.highlights.length > 0) {
         const highlightWrapper = document.createElement("div");
         highlightWrapper.className = "highlight-wrapper";
-        highlightWrapper.style.display = "grid";
-        highlightWrapper.style.gridTemplateColumns = "repeat(auto-fit, minmax(250px, 1fr))";
-        highlightWrapper.style.gap = "16px";
-        highlightWrapper.style.marginBottom = "24px";
+        highlightWrapper.style = gridStyle;
 
         data.highlights.forEach((item) => {
           let source = item.source || "warp";
@@ -40,16 +63,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
           const card = document.createElement("div");
           card.className = "highlight-item";
-          card.style.border = "2px solid #4285f4";
-          card.style.padding = "12px";
-          card.style.borderRadius = "8px";
-          card.style.background = "#1e1e1e";
+          card.style = cardStyle;
 
           card.innerHTML = `
-            <img src="${item.image}" alt="preview" style="width:100%; max-height:160px; object-fit:cover; border-radius:4px; margin-bottom:8px;" />
+            <img src="${item.image}" alt="preview" style="${imageStyle}" />
             <h3><a href="${item.link}" target="_blank">${item.title}</a></h3>
             <p class="result-snippet">${item.snippet || ""}</p>
-            <small>[${source}]</small>
+            <small>[${source}] ${
+              item.timestamp ? "— " + new Date(item.timestamp).toLocaleString() : ""
+            }</small>
           `;
 
           highlightWrapper.appendChild(card);
@@ -62,23 +84,31 @@ document.addEventListener("DOMContentLoaded", () => {
       // Regular Results Section
       // ======================
       if (data.items && data.items.length > 0) {
+        const resultsWrapper = document.createElement("div");
+        resultsWrapper.className = "result-list";
+        resultsWrapper.style = gridStyle;
+
         data.items.forEach((item) => {
           let source = item.source || "unknown";
           if (source === "searchapi") source = "search-io";
 
           const div = document.createElement("div");
           div.className = "result-item";
-          div.style.marginBottom = "16px";
+          div.style = cardStyle;
 
           div.innerHTML = `
-            <img src="${item.image}" alt="preview" style="width:100%; max-height:160px; object-fit:cover; border-radius:4px; margin-bottom:8px;" />
+            <img src="${item.image}" alt="preview" style="${imageStyle}" />
             <h3><a href="${item.link}" target="_blank">${item.title}</a></h3>
             <p class="result-snippet">${item.snippet || ""}</p>
-            <small>[${source}]</small>
+            <small>[${source}] ${
+              item.timestamp ? "— " + new Date(item.timestamp).toLocaleString() : ""
+            }</small>
           `;
 
-          resultsContainer.appendChild(div);
+          resultsWrapper.appendChild(div);
         });
+
+        resultsContainer.appendChild(resultsWrapper);
       } else {
         resultsContainer.innerHTML += "<p>No results found.</p>";
       }
@@ -103,5 +133,4 @@ document.addEventListener("DOMContentLoaded", () => {
   input2.addEventListener("keypress", (e) => {
     if (e.key === "Enter") runSearch(input2.value.trim());
   });
-
 });
