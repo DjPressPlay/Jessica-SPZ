@@ -65,39 +65,45 @@ document.addEventListener("DOMContentLoaded", () => {
       // Regular Results Section (horizontal rows)
       // ======================
       if (data.items && data.items.length > 0) {
-        const resultsWrapper = document.createElement("div");
-        resultsWrapper.className = "result-list";
-        resultsWrapper.style.display = "flex";
-        resultsWrapper.style.flexDirection = "column";
-        resultsWrapper.style.gap = "12px";
+  const resultsWrapper = document.createElement("div");
+  resultsWrapper.className = "result-list";
+  resultsWrapper.style.display = "flex";
+  resultsWrapper.style.flexDirection = "column";
+  resultsWrapper.style.gap = "12px";
 
-        data.items.forEach((item) => {
-          let source = item.source || "unknown";
-          if (source === "searchapi") source = "search-io";
+  data.items.forEach((item) => {
+    let source = item.source || "unknown";
+    if (source === "searchapi") source = "search-io";
 
-          const row = document.createElement("div");
-          row.className = "result-item";
-          row.style.display = "flex";
-          row.style.alignItems = "flex-start";
-          row.style.border = "1px solid #333";
-          row.style.borderRadius = "6px";
-          row.style.background = "#1e1e1e";
-          row.style.padding = "10px";
-          row.style.gap = "12px";
+    const row = document.createElement("div");
+    row.className = "result-item";
+    row.style.display = "flex";              // 🔥 horizontal box
+    row.style.flexDirection = "row";         // 🔥 left = thumb, right = text
+    row.style.alignItems = "flex-start";
+    row.style.gap = "12px";
 
-          row.innerHTML = `
-            <img src="${item.image}" alt="preview"
-                 style="width:160px; height:100px; object-fit:cover; border-radius:4px;" />
-            <div style="flex:1;">
-              <h3 style="margin:0 0 6px 0; font-size:16px;">
-                <a href="${item.link}" target="_blank">${item.title}</a>
-              </h3>
-              <p class="result-snippet" style="margin:0 0 6px 0; font-size:14px; color:#ccc;">
-                ${item.snippet || ""}
-              </p>
-              <small style="color:#888;">[${source}] ${item.timestamp ? "— " + new Date(item.timestamp).toLocaleString() : ""}</small>
-            </div>
-          `;
+    row.style.marginBottom = "18px";
+    row.style.padding = "16px";
+    row.style.border = "1px solid #333";
+    row.style.borderRadius = "8px";
+    row.style.background = "#1e1e1e";
+    row.style.boxShadow = "0 2px 6px rgba(0,0,0,0.25)";
+
+    row.innerHTML = `
+      <img src="${item.image}" alt="preview"
+           style="width:160px; height:90px; object-fit:cover; border-radius:6px; flex-shrink:0;" />
+      <div style="flex:1;">
+        <h3 style="margin:0 0 6px 0; font-size:16px;">
+          <a href="${item.link}" target="_blank" style="color:#4cafef; text-decoration:none;">
+            ${item.title}
+          </a>
+        </h3>
+        <p class="result-snippet" style="margin:0 0 6px 0; font-size:14px; color:#ccc;">
+          ${item.snippet || ""}
+        </p>
+        <small style="color:#888;">[${source}] ${item.timestamp ? "— " + new Date(item.timestamp).toLocaleString() : ""}</small>
+      </div>
+    `;
 
           resultsWrapper.appendChild(row);
         });
