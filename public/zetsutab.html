@@ -357,13 +357,19 @@
 
 
 .result-item {
+  display: flex;
+  flex-direction: row;
+  gap: 12px;
+  align-items: flex-start;
+
   margin-bottom: 18px;
-  padding: 16px;                   /* give inside spacing */
-  border: 1px solid #333;          /* border around card */
-  border-radius: 8px;              /* rounded edges */
-  background: #1e1e1e;             /* card background */
-  box-shadow: 0 2px 6px rgba(0,0,0,0.25); /* soft card shadow */
+  padding: 16px;
+  border: 1px solid #333;
+  border-radius: 8px;
+  background: #1e1e1e;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.25);
 }
+
 
 .result-item h3 {
   margin: 0 0 6px;
