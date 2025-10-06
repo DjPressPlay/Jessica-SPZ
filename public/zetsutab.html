@@ -317,6 +317,14 @@
 .store-icon { font-size: 20px; margin-bottom: 6px; }
 .store-label { font-size: 13px; color: #eee; }
 
+.app-icon img {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  object-fit: cover;
+  display: block;
+  margin: 0 auto 6px;
+}
 
 
   /* Results container stays the same */
@@ -605,94 +613,96 @@
   <div class="icon-btn" title="Widgets">☰</div>
   <div class="icon-btn" id="apps-icon" title="Apps">⬛</div>
 
-  <!-- Apps ----------------------------------------------->
-  <div class="apps-dropdown" id="apps-dropdown">
-    <div class="app-grid">
-      <div class="app-cell">
-        <a href="https://myaccount.google.com" target="_blank" rel="noopener noreferrer">
-          <div class="app-icon"></div>
-          <div class="app-label">Account</div>
-        </a>
-      </div>
+ <!-- Apps ----------------------------------------------->
+<div class="apps-dropdown" id="apps-dropdown">
+  <div class="app-grid">
 
-      <div class="app-cell">
-        <a href="https://www.google.com" target="_blank" rel="noopener noreferrer">
-          <div class="app-icon"></div>
-          <div class="app-label">Search</div>
-        </a>
-      </div>
+    <div class="app-cell">
+      <a href="https://myaccount.google.com" target="_blank" rel="noopener noreferrer">
+        <div class="app-icon"><img src="https://www.gstatic.com/images/branding/product/1x/avatar_circle_blue_512dp.png" alt="Account"></div>
+        <div class="app-label">Account</div>
+      </a>
+    </div>
 
-      <div class="app-cell">
-        <a href="https://maps.google.com" target="_blank" rel="noopener noreferrer">
-          <div class="app-icon"></div>
-          <div class="app-label">Maps</div>
-        </a>
-      </div>
+    <div class="app-cell">
+      <a href="https://www.google.com" target="_blank" rel="noopener noreferrer">
+        <div class="app-icon"><img src="https://www.google.com/favicon.ico" alt="Search"></div>
+        <div class="app-label">Search</div>
+      </a>
+    </div>
 
-      <div class="app-cell">
-        <a href="https://www.youtube.com" target="_blank" rel="noopener noreferrer">
-          <div class="app-icon"></div>
-          <div class="app-label">YouTube</div>
-        </a>
-      </div>
+    <div class="app-cell">
+      <a href="https://maps.google.com" target="_blank" rel="noopener noreferrer">
+        <div class="app-icon"><img src="https://maps.google.com/favicon.ico" alt="Maps"></div>
+        <div class="app-label">Maps</div>
+      </a>
+    </div>
 
-      <div class="app-cell">
-        <a href="https://play.google.com" target="_blank" rel="noopener noreferrer">
-          <div class="app-icon"></div>
-          <div class="app-label">Play</div>
-        </a>
-      </div>
+    <div class="app-cell">
+      <a href="https://www.youtube.com" target="_blank" rel="noopener noreferrer">
+        <div class="app-icon"><img src="https://www.youtube.com/s/desktop/5b7e10fd/img/favicon_144x144.png" alt="YouTube"></div>
+        <div class="app-label">YouTube</div>
+      </a>
+    </div>
 
-      <div class="app-cell">
-        <a href="https://news.google.com" target="_blank" rel="noopener noreferrer">
-          <div class="app-icon"></div>
-          <div class="app-label">News</div>
-        </a>
-      </div>
+    <div class="app-cell">
+      <a href="https://play.google.com" target="_blank" rel="noopener noreferrer">
+        <div class="app-icon"><img src="https://play-lh.googleusercontent.com/6fMM7Qj1LLJqL5m9_3lYz6eCSFevnTKFt3JAmPmFgjsEJhVu-0aU-TmCj7LbKp_6BA=w240-h480" alt="Play"></div>
+        <div class="app-label">Play</div>
+      </a>
+    </div>
 
-      <div class="app-cell">
-        <a href="https://mail.google.com" target="_blank" rel="noopener noreferrer">
-          <div class="app-icon"></div>
-          <div class="app-label">Gmail</div>
-        </a>
-      </div>
+    <div class="app-cell">
+      <a href="https://news.google.com" target="_blank" rel="noopener noreferrer">
+        <div class="app-icon"><img src="https://news.google.com/favicon.ico" alt="News"></div>
+        <div class="app-label">News</div>
+      </a>
+    </div>
 
-      <div class="app-cell">
-        <a href="https://meet.google.com" target="_blank" rel="noopener noreferrer">
-          <div class="app-icon"></div>
-          <div class="app-label">Meet</div>
-        </a>
-      </div>
+    <div class="app-cell">
+      <a href="https://mail.google.com" target="_blank" rel="noopener noreferrer">
+        <div class="app-icon"><img src="https://ssl.gstatic.com/ui/v1/icons/mail/rfr/logo_gmail_lockup_default_1x_r5.png" alt="Gmail"></div>
+        <div class="app-label">Gmail</div>
+      </a>
+    </div>
 
-      <div class="app-cell">
-        <a href="https://chat.google.com" target="_blank" rel="noopener noreferrer">
-          <div class="app-icon"></div>
-          <div class="app-label">Chat</div>
-        </a>
-      </div>
+    <div class="app-cell">
+      <a href="https://meet.google.com" target="_blank" rel="noopener noreferrer">
+        <div class="app-icon"><img src="https://ssl.gstatic.com/meet/google_meet_2020q4_512px.png" alt="Meet"></div>
+        <div class="app-label">Meet</div>
+      </a>
+    </div>
 
-      <div class="app-cell">
-        <a href="https://contacts.google.com" target="_blank" rel="noopener noreferrer">
-          <div class="app-icon"></div>
-          <div class="app-label">Contacts</div>
-        </a>
-      </div>
+    <div class="app-cell">
+      <a href="https://chat.google.com" target="_blank" rel="noopener noreferrer">
+        <div class="app-icon"><img src="https://ssl.gstatic.com/chat/b9d8a36e3b9a5020f7074edc204f7903.png" alt="Chat"></div>
+        <div class="app-label">Chat</div>
+      </a>
+    </div>
 
-      <div class="app-cell">
-        <a href="https://drive.google.com" target="_blank" rel="noopener noreferrer">
-          <div class="app-icon"></div>
-          <div class="app-label">Drive</div>
-        </a>
-      </div>
+    <div class="app-cell">
+      <a href="https://contacts.google.com" target="_blank" rel="noopener noreferrer">
+        <div class="app-icon"><img src="https://ssl.gstatic.com/images/branding/product/1x/contacts_512dp.png" alt="Contacts"></div>
+        <div class="app-label">Contacts</div>
+      </a>
+    </div>
 
-      <div class="app-cell">
-        <a href="https://workspace.google.com/business/" target="_blank" rel="noopener noreferrer">
-          <div class="app-icon"></div>
-          <div class="app-label">Business</div>
-        </a>
-      </div>
+    <div class="app-cell">
+      <a href="https://drive.google.com" target="_blank" rel="noopener noreferrer">
+        <div class="app-icon"><img src="https://ssl.gstatic.com/images/branding/product/1x/drive_2020q4_512dp.png" alt="Drive"></div>
+        <div class="app-label">Drive</div>
+      </a>
+    </div>
+
+    <div class="app-cell">
+      <a href="https://workspace.google.com/business/" target="_blank" rel="noopener noreferrer">
+        <div class="app-icon"><img src="https://ssl.gstatic.com/images/branding/product/1x/workspace_512dp.png" alt="Business"></div>
+        <div class="app-label">Business</div>
+      </a>
     </div>
   </div>
+</div>
+
     
 
 
