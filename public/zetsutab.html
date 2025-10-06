@@ -211,6 +211,31 @@
 .widget-btn:hover {
   border-color: #4285f4;
 }
+/* Make the whole tile the link, keep your theme */
+.apps-dropdown a.app-link{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  text-decoration:none;
+  color:inherit;
+}
+
+/* Clip corners so icons match your 12px radius */
+.app-icon{ overflow:hidden; }
+
+/* Per-app backgrounds (replace paths with your assets) */
+.app-icon.icon-account  { background: url("/img/apps/account.png")  center/cover no-repeat, #5f6368; }
+.app-icon.icon-search   { background: url("/img/apps/search.png")   center/cover no-repeat, #5f6368; }
+.app-icon.icon-maps     { background: url("/img/apps/maps.png")     center/cover no-repeat, #5f6368; }
+.app-icon.icon-youtube  { background: url("/img/apps/youtube.png")  center/cover no-repeat, #5f6368; }
+.app-icon.icon-play     { background: url("/img/apps/play.png")     center/cover no-repeat, #5f6368; }
+.app-icon.icon-news     { background: url("/img/apps/news.png")     center/cover no-repeat, #5f6368; }
+.app-icon.icon-gmail    { background: url("/img/apps/gmail.png")    center/cover no-repeat, #5f6368; }
+.app-icon.icon-meet     { background: url("/img/apps/meet.png")     center/cover no-repeat, #5f6368; }
+.app-icon.icon-chat     { background: url("/img/apps/chat.png")     center/cover no-repeat, #5f6368; }
+.app-icon.icon-contacts { background: url("/img/apps/contacts.png") center/cover no-repeat, #5f6368; }
+.app-icon.icon-drive    { background: url("/img/apps/drive.png")    center/cover no-repeat, #5f6368; }
+.app-icon.icon-business { background: url("/img/apps/business.png") center/cover no-repeat, #5f6368; }
 
 
     /* FOOTER — 3-1-3 ABSOLUTE CENTERING */
@@ -317,14 +342,6 @@
 .store-icon { font-size: 20px; margin-bottom: 6px; }
 .store-label { font-size: 13px; color: #eee; }
 
-.app-icon img {
-  width: 32px;
-  height: 32px;
-  border-radius: 8px;
-  object-fit: cover;
-  display: block;
-  margin: 0 auto 6px;
-}
 
 
   /* Results container stays the same */
