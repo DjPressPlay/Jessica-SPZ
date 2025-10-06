@@ -666,12 +666,14 @@
   animation: fadeIn 0.3s ease-out;
 }
 
-.results-container {
-  position: relative;
-  overflow-y: auto;
-  max-height: 65vh;
-  padding-top: 10px;
-  scroll-behavior: smooth;
+.results-wrapper {
+  width: 100%;
+  max-width: 1950px;
+  margin: 30px auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow: hidden;
 }
 
 .ai-header {
@@ -929,17 +931,16 @@
     </div>
   </div>
 
-  <!-- AI DIRECT ANSWER CAPSULE -->
-<div id="just-answer-capsule" class="just-answer-capsule" style="display:none;">
-  <div class="ai-header">🤖 Just Answer</div>
-  <div class="ai-text" id="just-answer-result">...</div>
+<!-- Combined container -->
+<div class="results-wrapper">
+  <div id="just-answer-capsule" class="just-answer-capsule" style="display:none;">
+    <div class="ai-header">🤖 Just Answer</div>
+    <div class="ai-text" id="just-answer-result">...</div>
+  </div>
+
+  <div id="z-search-results" class="results-container"></div>
 </div>
 
-
-    <!-- Add this container where you want results to display -->
-<div id="z-search-results" class="results-container"></div>
-
-</div>
 
 
 
