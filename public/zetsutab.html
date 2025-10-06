@@ -1035,6 +1035,52 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 
+
+  const apiKey = "AIzaSyA3kTFeKXNAFhMvCYKfT88R0BXwa_gEblg"; // Replace with your key
+
+async function justAnswer(query) {
+  const response = await fetch("https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=" + apiKey, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      contents: [{
+        role: "user",
+        parts: [{ text: `Answer this question directly in 1-3 sentences, no sources or links:\n\n${query}` }]
+      }],
+      generationConfig: { temperature: 0.2, maxOutputTokens: 120 }
+    })
+  });
+
+  const data = await response.json();
+  return data?.candidates?.[0]?.content?.parts?.[0]?.text || null;
+}
+
+// when search button pressed
+document.getElementById("z-search-btn").addEventListener("click", async () => {
+  const q = document.getElementById("z-start-input").value.trim();
+  if (!q) return;
+
+  // Show loading indicator
+  const capsule = document.getElementById("just-answer-capsule");
+  const capsuleText = document.getElementById("just-answer-result");
+  capsule.style.display = "block";
+  capsuleText.textContent = "🤔 Thinking...";
+
+  // run AI answer
+  const answer = await justAnswer(q);
+
+  if (answer) {
+    capsuleText.textContent = answer;
+  } else {
+    capsule.style.display = "none";
+  }
+
+  // TODO: your normal search logic goes here ↓
+  // runCrawlSearch(q);
+});
+
+
+
 </script>
 <!-- Optional external script -->
 <script src="ztab-search.js" defer></script>
