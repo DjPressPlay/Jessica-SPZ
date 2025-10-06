@@ -935,25 +935,25 @@
 
 
 
+  // PROFILE DROPDOWN — FIXED VERSION
+  document.addEventListener("DOMContentLoaded", () => {
+    const profilePic = document.querySelector(".profile-pic");
+    const profileDropdown = document.querySelector(".dropdown-menu");
 
-  // PROFILE DROPDOWN
-const profilePic = document.querySelector('.profile-pic');
-const profileDropdown = document.querySelector('.dropdown-menu');
+    if (!profilePic || !profileDropdown) return;
 
-profilePic.addEventListener('click', (e) => {
-  e.stopPropagation();
-  const isVisible = profileDropdown.style.display === 'block';
-  profileDropdown.style.display = isVisible ? 'none' : 'block';
-});
+    profilePic.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const isVisible = profileDropdown.style.display === "block";
+      profileDropdown.style.display = isVisible ? "none" : "block";
+    });
 
-// Close when clicking anywhere else
-document.addEventListener('click', (e) => {
-  if (!profilePic.contains(e.target) && !profileDropdown.contains(e.target)) {
-    profileDropdown.style.display = 'none';
-  }
-});
-
-
+    document.addEventListener("click", (e) => {
+      if (!profilePic.contains(e.target) && !profileDropdown.contains(e.target)) {
+        profileDropdown.style.display = "none";
+      }
+    });
+  });
 
 
 </script>
