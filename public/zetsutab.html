@@ -600,32 +600,6 @@
 
 
 
-    /* Profile dropdown (matches apps/store style) */
-.profile-dropdown{
-  display:none;
-  position:absolute;
-  top:48px;            /* aligns with other dropdowns */
-  right:0;             /* anchor to right edge of .top-right */
-  background:#202124;
-  border:1px solid #3c4043;
-  border-radius:12px;
-  padding:12px;
-  box-shadow:0 8px 24px rgba(0,0,0,0.3);
-  z-index:9999;
-  min-width:180px;
-}
-.profile-menu-item{
-  width:100%;
-  padding:10px 12px;
-  background:#2a2a2a;
-  border:1px solid #3c4043;
-  border-radius:8px;
-  color:#eaeaea;
-  text-align:left;
-  cursor:pointer;
-}
-.profile-menu-item:hover{ background:#333; }
-
  </style>
 
 </head>
@@ -778,14 +752,10 @@
 
      
   <!-- Profile ----------------------------------------------->
-<!-- Profile ----------------------------------------------->
-<div class="profile-pic" id="profile-pic" title="Profile"></div>
-
-<!-- Profile dropdown (absolute; won’t affect flex layout) -->
-<div class="profile-dropdown" id="profile-dropdown">
-  <button id="profile-upload-btn" class="profile-menu-item">Change Photo</button>
-  <input type="file" id="profile-file" accept="image/*" hidden>
-</div>
+      <div class="profile-pic" title="Profile"></div>
+    </div>
+  </div> 
+  
 
   
 
