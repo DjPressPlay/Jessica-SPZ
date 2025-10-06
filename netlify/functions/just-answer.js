@@ -1,5 +1,7 @@
 // Returns a short direct answer for a query.
-// Requires env var: GEMINI_API_KEY
+require('dotenv').config();
+const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
+
 const CORS = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Methods": "POST, OPTIONS",
