@@ -1,6 +1,11 @@
-import fetch from "node-fetch"; // only if you’re using ESM
-import dotenv from "dotenv";
-dotenv.config();
+// === just-answer.js ===
+// Uses environment variables cleanly with a const .env-style block
+
+const fetch = require("node-fetch");
+
+const env = {
+  GEMINI_API_KEY: process.env.GEMINI_API_KEY,
+};
 
 const CORS = {
   "Access-Control-Allow-Origin": "*",
@@ -8,12 +13,12 @@ const CORS = {
   "Access-Control-Allow-Headers": "Content-Type",
 };
 
-export async function handler(event) {
+exports.handler = async (event) => {
   if (event.httpMethod === "OPTIONS") {
     return { statusCode: 204, headers: CORS, body: "" };
   }
 
-  const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
+  const { GEMINI_API_KEY } = env;
   if (!GEMINI_API_KEY) {
     return {
       statusCode: 501,
@@ -25,6 +30,7 @@ export async function handler(event) {
   try {
     const body = JSON.parse(event.body || "{}");
     const q = (body.q || "").trim();
+
     if (!q) {
       return {
         statusCode: 400,
@@ -69,4 +75,4 @@ export async function handler(event) {
       body: JSON.stringify({ error: err.message }),
     };
   }
-}
+};
