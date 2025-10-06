@@ -631,6 +631,19 @@
   color: #fff;
 }
 
+.dropdown-item {
+  display: block;
+  color: #eaeaea;
+  padding: 10px 16px;
+  text-decoration: none;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.dropdown-item:hover {
+  background: #333;
+  color: #fff;
+}
 
  </style>
 
@@ -784,11 +797,11 @@
 
 <!-- Profile ----------------------------------------------->
 <div class="profile-container">
-  <div class="profile-pic" title="Profile"></div>
-  <div class="dropdown-menu">
-    <a href="#">View Profile</a>
-    <a href="#">Settings</a>
-    <a href="#">Logout</a>
+  <div class="profile-pic" title="Profile" id="profile-pic"></div>
+  <div class="dropdown-menu" id="profile-menu">
+    <label for="profile-upload" class="dropdown-item">Change Image</label>
+    <input type="file" id="profile-upload" accept="image/*" style="display:none;">
+    <a href="#" id="reset-image" class="dropdown-item">Reset Default</a>
   </div>
 </div>
   </div>
@@ -936,24 +949,52 @@
 
 
   // PROFILE DROPDOWN — FIXED VERSION
-  document.addEventListener("DOMContentLoaded", () => {
-    const profilePic = document.querySelector(".profile-pic");
-    const profileDropdown = document.querySelector(".dropdown-menu");
+document.addEventListener("DOMContentLoaded", () => {
+  const profilePic = document.getElementById("profile-pic");
+  const profileDropdown = document.getElementById("profile-menu");
+  const fileInput = document.getElementById("profile-upload");
+  const resetBtn = document.getElementById("reset-image");
 
-    if (!profilePic || !profileDropdown) return;
+  // Load saved image from localStorage
+  const savedImage = localStorage.getItem("profileImage");
+  if (savedImage) profilePic.style.backgroundImage = `url(${savedImage})`;
 
-    profilePic.addEventListener("click", (e) => {
-      e.stopPropagation();
-      const isVisible = profileDropdown.style.display === "block";
-      profileDropdown.style.display = isVisible ? "none" : "block";
-    });
-
-    document.addEventListener("click", (e) => {
-      if (!profilePic.contains(e.target) && !profileDropdown.contains(e.target)) {
-        profileDropdown.style.display = "none";
-      }
-    });
+  // Toggle dropdown
+  profilePic.addEventListener("click", (e) => {
+    e.stopPropagation();
+    const isVisible = profileDropdown.style.display === "block";
+    profileDropdown.style.display = isVisible ? "none" : "block";
   });
+
+  // Outside click closes
+  document.addEventListener("click", (e) => {
+    if (!profilePic.contains(e.target) && !profileDropdown.contains(e.target)) {
+      profileDropdown.style.display = "none";
+    }
+  });
+
+  // When file chosen → show + save locally
+  fileInput.addEventListener("change", (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const dataURL = event.target.result;
+      profilePic.style.backgroundImage = `url(${dataURL})`;
+      localStorage.setItem("profileImage", dataURL);
+      profileDropdown.style.display = "none";
+    };
+    reader.readAsDataURL(file);
+  });
+
+  // Reset to default placeholder
+  resetBtn.addEventListener("click", (e) => {
+    e.preventDefault();
+    localStorage.removeItem("profileImage");
+    profilePic.style.backgroundImage = 'url("https://placehold.co/64x64")';
+    profileDropdown.style.display = "none";
+  });
+});
 
 
 </script>
