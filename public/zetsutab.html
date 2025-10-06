@@ -597,6 +597,58 @@
     0 1px 0 #000;
 }
 
+/* Profile Container */
+.profile-container {
+  position: relative;
+  display: inline-block;
+}
+
+/* Profile Picture (same base style) */
+.profile-pic {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: url("https://placehold.co/64x64") center/cover no-repeat;
+  border: 2px solid #4285f4;
+  cursor: pointer;
+}
+
+/* Dropdown box */
+.profile-dropdown {
+  display: none;
+  position: absolute;
+  top: 48px;
+  right: 0;
+  background: #202124;
+  border: 1px solid #3c4043;
+  border-radius: 10px;
+  padding: 10px 14px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.4);
+  z-index: 999;
+  text-align: center;
+}
+
+/* File input hidden, label acts as button */
+#profile-upload {
+  display: none;
+}
+
+.upload-label {
+  color: #eaeaea;
+  font-size: 14px;
+  cursor: pointer;
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid #444;
+  background: #1a1a1a;
+  display: inline-block;
+  transition: all 0.2s ease;
+}
+
+.upload-label:hover {
+  background: #333;
+  border-color: #666;
+}
 
 
   </style>
@@ -754,9 +806,16 @@
 
       
   <!-- Profile ----------------------------------------------->
-      <div class="profile-pic" title="Profile"></div>
-    </div>
+    <!-- Profile ----------------------------------------------->
+<div class="profile-container">
+  <div class="profile-pic" id="profile-pic" title="Profile"></div>
+
+  <div class="profile-dropdown" id="profile-dropdown">
+    <label for="profile-upload" class="upload-label">Change Photo</label>
+    <input type="file" id="profile-upload" accept="image/*">
   </div>
+</div>
+
 
   <!-- CENTER ----------------------------------------------->
 <div class="center-content">
@@ -890,6 +949,39 @@
     dropdown.style.display = dropdown.style.display === "block" ? "none" : "block";
   });
 });
+
+
+
+
+
+  
+
+  const profilePic = document.getElementById('profile-pic');
+  const dropdown = document.getElementById('profile-dropdown');
+  const fileInput = document.getElementById('profile-upload');
+
+  // toggle dropdown
+  profilePic.addEventListener('click', () => {
+    dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+  });
+
+  // load new image when user uploads
+  fileInput.addEventListener('change', e => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = evt => {
+        profilePic.style.backgroundImage = `url('${evt.target.result}')`;
+      };
+      reader.readAsDataURL(file);
+      dropdown.style.display = 'none';
+    }
+  });
+
+  // close dropdown when clicking elsewhere
+  document.addEventListener('click', e => {
+    if (!e.target.closest('.profile-container')) dropdown.style.display = 'none';
+  });
 
 
 </script>
