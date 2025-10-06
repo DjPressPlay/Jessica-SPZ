@@ -645,41 +645,38 @@
   color: #fff;
 }
 
-/* AI Capsule container stays pinned while scrolling results */
-#just-answer-capsule {
-  position: sticky;
-  top: 8px;
-  z-index: 20;
-  display: none;
+.just-answer-capsule {
+  margin: 20px auto;
   width: 95%;
   max-width: 720px;
-  margin: 0 auto 16px auto;
-  padding: 18px 20px;
-  border-radius: 14px;
+  background: linear-gradient(145deg, #1b1b1b, #101010);
   border: 1px solid #3c4043;
-  background: rgba(18, 18, 18, 0.85);
-  backdrop-filter: blur(6px);
+  border-radius: 14px;
+  padding: 18px 20px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.4);
   color: #eaeaea;
   font-family: "Segoe UI", sans-serif;
   text-align: left;
-  box-shadow: 0 4px 14px rgba(0,0,0,0.4);
   animation: fadeIn 0.3s ease-out;
 }
 
-.just-answer-capsule{
-  margin:20px auto;width:95%;max-width:720px;
-  background:#121212;border:1px solid #3c4043;border-radius:14px;
-  padding:16px 18px;box-shadow:0 2px 12px rgba(0,0,0,.4)
+.ai-header {
+  font-weight: bold;
+  color: #4285f4;
+  margin-bottom: 8px;
+  font-size: 1.1em;
 }
-.ai-header{font-weight:700;color:#4285f4;margin-bottom:6px;font-size:1.05em}
-.ai-text{font-size:1.02em;line-height:1.5;color:#ddd}
 
+.ai-text {
+  font-size: 1.05em;
+  line-height: 1.5;
+  color: #ddd;
+}
 
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(-10px); }
   to { opacity: 1; transform: translateY(0); }
 }
-
 
     
  </style>
