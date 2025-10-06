@@ -211,31 +211,59 @@
 .widget-btn:hover {
   border-color: #4285f4;
 }
-/* Make the whole tile the link, keep your theme */
-.apps-dropdown a.app-link{
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  text-decoration:none;
-  color:inherit;
+
+
+    
+/* === APP ICONS ==================================================== */
+
+/* Base icon container */
+.app-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  overflow: hidden;                 /* clips rounded corners */
+  background-color: #1e1e1e;        /* fallback base tone */
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-/* Clip corners so icons match your 12px radius */
-.app-icon{ overflow:hidden; }
+/* Online images — use full HTTPS URLs */
+.app-icon.icon-account  { background-image: url("https://www.google.com/images/icons/product/accounts-512.png"); }
+.app-icon.icon-search   { background-image: url("https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_92x30dp.png"); }
+.app-icon.icon-maps     { background-image: url("https://maps.google.com/favicon.ico"); }
+.app-icon.icon-youtube  { background-image: url("https://www.youtube.com/s/desktop/5b7e10fd/img/favicon_144x144.png"); }
+.app-icon.icon-play     { background-image: url("https://www.gstatic.com/android/market_images/web/play_prism_hlock_2x.png"); }
+.app-icon.icon-news     { background-image: url("https://news.google.com/favicon.ico"); }
+.app-icon.icon-gmail    { background-image: url("https://ssl.gstatic.com/ui/v1/icons/mail/rfr/logo_gmail_lockup_default_1x_r5.png"); }
+.app-icon.icon-meet     { background-image: url("https://ssl.gstatic.com/meet/google_meet_2020q4_512px.png"); }
+.app-icon.icon-chat     { background-image: url("https://ssl.gstatic.com/chat/b9d8a36e3b9a5020f7074edc204f7903.png"); }
+.app-icon.icon-contacts { background-image: url("https://ssl.gstatic.com/images/branding/product/1x/contacts_512dp.png"); }
+.app-icon.icon-drive    { background-image: url("https://ssl.gstatic.com/images/branding/product/1x/drive_2020q4_512dp.png"); }
+.app-icon.icon-business { background-image: url("https://ssl.gstatic.com/images/branding/product/1x/workspace_512dp.png"); }
 
-/* Per-app backgrounds (replace paths with your assets) */
-.app-icon.icon-account  { background: url("/img/apps/account.png")  center/cover no-repeat, #5f6368; }
-.app-icon.icon-search   { background: url("/img/apps/search.png")   center/cover no-repeat, #5f6368; }
-.app-icon.icon-maps     { background: url("/img/apps/maps.png")     center/cover no-repeat, #5f6368; }
-.app-icon.icon-youtube  { background: url("/img/apps/youtube.png")  center/cover no-repeat, #5f6368; }
-.app-icon.icon-play     { background: url("/img/apps/play.png")     center/cover no-repeat, #5f6368; }
-.app-icon.icon-news     { background: url("/img/apps/news.png")     center/cover no-repeat, #5f6368; }
-.app-icon.icon-gmail    { background: url("/img/apps/gmail.png")    center/cover no-repeat, #5f6368; }
-.app-icon.icon-meet     { background: url("/img/apps/meet.png")     center/cover no-repeat, #5f6368; }
-.app-icon.icon-chat     { background: url("/img/apps/chat.png")     center/cover no-repeat, #5f6368; }
-.app-icon.icon-contacts { background: url("/img/apps/contacts.png") center/cover no-repeat, #5f6368; }
-.app-icon.icon-drive    { background: url("/img/apps/drive.png")    center/cover no-repeat, #5f6368; }
-.app-icon.icon-business { background: url("/img/apps/business.png") center/cover no-repeat, #5f6368; }
+/* === APP LABELS =================================================== */
+
+.app-label {
+  color: #e8eaed;
+  text-decoration: none;
+  font-size: 12px;
+  line-height: 1.2;
+  text-align: center;
+}
+
+.apps-dropdown a {
+  text-decoration: none;
+  color: inherit;
+}
+
+.apps-dropdown a:hover .app-label {
+  color: #fff;
+}
+
 
 
     /* FOOTER — 3-1-3 ABSOLUTE CENTERING */
