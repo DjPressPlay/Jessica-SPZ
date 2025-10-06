@@ -904,32 +904,6 @@
 
   
 
-  const profilePic = document.getElementById('profile-pic');
-  const dropdown = document.getElementById('profile-dropdown');
-  const fileInput = document.getElementById('profile-upload');
-
-  // toggle dropdown
-  profilePic.addEventListener('click', () => {
-    dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
-  });
-
-  // load new image when user uploads
-  fileInput.addEventListener('change', e => {
-    const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = evt => {
-        profilePic.style.backgroundImage = `url('${evt.target.result}')`;
-      };
-      reader.readAsDataURL(file);
-      dropdown.style.display = 'none';
-    }
-  });
-
-  // close dropdown when clicking elsewhere
-  document.addEventListener('click', e => {
-    if (!e.target.closest('.profile-container')) dropdown.style.display = 'none';
-  });
 
 
 </script>
