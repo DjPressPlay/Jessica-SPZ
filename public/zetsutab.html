@@ -645,33 +645,34 @@
   color: #fff;
 }
 
-/* Keep Gemini capsule visible and independent of search results */
+/* AI Capsule container stays pinned while scrolling results */
 #just-answer-capsule {
   position: sticky;
-  top: 10px;
-  z-index: 9998;
+  top: 8px;
+  z-index: 20;
   display: none;
   width: 95%;
   max-width: 720px;
-  margin: 20px auto;
-  background: linear-gradient(145deg, #1b1b1b, #101010);
-  border: 1px solid #3c4043;
-  border-radius: 14px;
+  margin: 0 auto 16px auto;
   padding: 18px 20px;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.4);
+  border-radius: 14px;
+  border: 1px solid #3c4043;
+  background: rgba(18, 18, 18, 0.85);
+  backdrop-filter: blur(6px);
   color: #eaeaea;
   font-family: "Segoe UI", sans-serif;
   text-align: left;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.4);
   animation: fadeIn 0.3s ease-out;
 }
 
-    #just-answer-capsule {
-  position: sticky;
-  top: 0;
-  backdrop-filter: blur(6px);
-  background: rgba(16,16,16,0.85);
+.results-container {
+  position: relative;
+  overflow-y: auto;
+  max-height: 65vh;
+  padding-top: 10px;
+  scroll-behavior: smooth;
 }
-
 
 .ai-header {
   font-weight: bold;
