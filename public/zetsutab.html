@@ -645,10 +645,15 @@
   color: #fff;
 }
 
-.just-answer-capsule {
-  margin: 20px auto;
+/* Keep Gemini capsule visible and independent of search results */
+#just-answer-capsule {
+  position: sticky;
+  top: 10px;
+  z-index: 9998;
+  display: none;
   width: 95%;
   max-width: 720px;
+  margin: 20px auto;
   background: linear-gradient(145deg, #1b1b1b, #101010);
   border: 1px solid #3c4043;
   border-radius: 14px;
@@ -734,11 +739,6 @@
 
 
     
-<!-- AI DIRECT ANSWER CAPSULE -->
-<div id="just-answer-capsule" class="just-answer-capsule" style="display:none;">
-  <div class="ai-header">🤖 Just Answer</div>
-  <div class="ai-text" id="just-answer-result">...</div>
-</div>
 
 
     
@@ -920,7 +920,12 @@
     </div>
   </div>
 
-  
+  <!-- AI DIRECT ANSWER CAPSULE -->
+<div id="just-answer-capsule" class="just-answer-capsule" style="display:none;">
+  <div class="ai-header">🤖 Just Answer</div>
+  <div class="ai-text" id="just-answer-result">...</div>
+</div>
+
 
     <!-- Add this container where you want results to display -->
 <div id="z-search-results" class="results-container"></div>
