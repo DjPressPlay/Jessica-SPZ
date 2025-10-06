@@ -17,6 +17,42 @@ document.addEventListener("DOMContentLoaded", () => {
         `/.netlify/functions/search-with-images?q=${encodeURIComponent(query)}`
       );
 
+
+      
+
+// --- AI Direct Answer (no client key) ---
+async function runJustAnswer(query) {
+  const cap = document.getElementById("just-answer-capsule");
+  const txt = document.getElementById("just-answer-result");
+  if (!query) return;
+
+  cap.style.display = "block";
+  txt.textContent = "🤔 Thinking...";
+
+  try {
+    const res = await fetch("/.netlify/functions/just-answer", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ q: query })
+    });
+
+    if (!res.ok) throw new Error("AI error");
+    const data = await res.json();
+    const ans = (data.answer || "").trim();
+
+    if (ans) {
+      txt.textContent = ans;
+    } else {
+      cap.style.display = "none";
+    }
+  } catch (e) {
+    cap.style.display = "none";
+  }
+}
+
+
+      
+      
       if (!res.ok) throw new Error("Search request failed");
 
       const data = await res.json();
@@ -117,20 +153,34 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // Button click
-  button.addEventListener("click", () => {
-    runSearch(input.value.trim());
-  });
 
-  button2.addEventListener("click", () => {
-    runSearch(input2.value.trim());
-  });
+  
+ button.addEventListener("click", () => {
+  const q = input.value.trim();
+  runSearch(q);
+  runJustAnswer(q);     // <- add
+});
 
-  input.addEventListener("keypress", (e) => {
-    if (e.key === "Enter") runSearch(input.value.trim());
-  });
+button2.addEventListener("click", () => {
+  const q = input2.value.trim();
+  runSearch(q);
+  runJustAnswer(q);     // <- add
+});
 
-  input2.addEventListener("keypress", (e) => {
-    if (e.key === "Enter") runSearch(input2.value.trim());
-  });
+input.addEventListener("keypress", (e) => {
+  if (e.key === "Enter") {
+    const q = input.value.trim();
+    runSearch(q);
+    runJustAnswer(q);   // <- add
+  }
+});
+
+input2.addEventListener("keypress", (e) => {
+  if (e.key === "Enter") {
+    const q = input2.value.trim();
+    runSearch(q);
+    runJustAnswer(q);   // <- add
+  }
+});
+
 });
