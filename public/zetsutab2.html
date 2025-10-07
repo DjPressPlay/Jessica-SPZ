@@ -1,0 +1,1084 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Zetsu Start</title>
+  <style>
+  html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  background: #121212;
+  font-family: Arial, sans-serif;
+  color: #eaeaea;
+  overflow-x: hidden;  /* stop sideways scroll */
+  overflow-y: auto;    /* allow vertical scroll */
+}
+
+
+    /* TOP NAV */
+    .top-nav {
+      position: absolute;
+      top: 0;
+      width: 100%;
+      padding: 12px 20px;
+      box-sizing: border-box;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 10;
+      background: #000;
+      border-bottom: 1px solid #222;
+    }
+
+    .top-left a {
+      margin-right: 16px;
+      color: #bbb;
+      text-decoration: none;
+    }
+
+    .top-left a:hover {
+      color: #fff;
+    }
+
+    .top-right {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      position: relative;
+    }
+
+    .icon-btn {
+      width: 32px;
+      height: 32px;
+      background: #1e1e1e;
+      border-radius: 50%;
+      border: 1px solid #444;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #ccc;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    .icon-btn:hover {
+      background: #2a2a2a;
+    }
+
+    .profile-pic {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: url("https://placehold.co/64x64") center/cover no-repeat;
+      border: 2px solid #4285f4;
+      cursor: pointer;
+    }
+
+    /* DROPDOWN */
+    .apps-dropdown {
+      display: none;
+      position: absolute;
+      top: 48px;
+      right: 0;
+      width: 320px;
+      background: #202124;
+      border: 1px solid #3c4043;
+      border-radius: 20px;
+      padding: 20px 16px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+      z-index: 9999;
+    }
+
+    .app-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px 12px;
+    }
+
+    .app-cell {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      color: #e8eaed;
+      font-size: 12px;
+      cursor: pointer;
+    }
+
+    .app-icon {
+      width: 40px;
+      height: 40px;
+      background-color: #5f6368;
+      border-radius: 12px;
+      margin-bottom: 6px;
+    }
+
+    .app-label {
+      line-height: 1.2;
+    }
+
+    /* CENTER AREA */
+    .center-content {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -55%);
+      text-align: center;
+    }
+
+    .z-logo {
+      font-size: 4em;
+      font-weight: bold;
+      color: #4285f4;
+      margin-bottom: 20px;
+    }
+
+    .z-search {
+      width: 95vw;
+      max-width: 720px;
+      display: flex;
+      border: 1px solid #444;
+      border-radius: 24px;
+      padding: 10px 18px;
+      background: #1f1f1f;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+      margin: 0 auto;
+    }
+
+    .z-search input {
+      flex: 1;
+      border: none;
+      outline: none;
+      font-size: 1.3em;
+      padding: 10px;
+      background: transparent;
+      color: #fff;
+    }
+
+    .z-search button {
+      margin-left: 10px;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 4px;
+      background: #4285f4;
+      color: white;
+      font-size: 1.1em;
+      cursor: pointer;
+    }
+
+    .z-search button:hover {
+      background: #357ae8;
+    }
+
+
+/* WIDGET PANEL CONTAINER */
+.widget-panel-1 {
+  display: inline-block;
+  margin-top: 18px;             /* closer to search bar */
+  padding: 6px 12px;            /* less padding = less height */
+  border: 1px solid #333;       /* subtle border */
+  border-radius: 12px;          /* rounded rectangle */
+  background: #1a1a1a;          /* dark plate background */
+  box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+  text-align: center;
+
+  height: 45px;                 /* fixed height for rectangle */
+  line-height: 72px;            /* vertically centers content */
+}
+
+
+/* WIDGET BUTTONS */
+.z-widget-bar {
+  display: flex;
+  justify-content: center;
+  gap: 18px;
+}
+
+.widget-btn {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background-size: cover;
+  background-position: center;
+  border: 2px solid #555;
+  cursor: pointer;
+  background-color: #eaeaea;
+  color: #222;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+}
+
+.widget-btn:hover {
+  border-color: #4285f4;
+}
+
+
+    
+/* === APP ICONS ==================================================== */
+
+/* Base icon container */
+.app-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  overflow: hidden;                 /* clips rounded corners */
+  background-color: #1e1e1e;        /* fallback base tone */
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Online images — use full HTTPS URLs */
+.app-icon.icon-account  { background-image: url("https://www.google.com/images/icons/product/accounts-512.png"); }
+.app-icon.icon-search   { background-image: url("https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_92x30dp.png"); }
+.app-icon.icon-maps     { background-image: url("https://maps.google.com/favicon.ico"); }
+.app-icon.icon-youtube  { background-image: url("https://www.youtube.com/s/desktop/5b7e10fd/img/favicon_144x144.png"); }
+.app-icon.icon-play     { background-image: url("https://www.gstatic.com/android/market_images/web/play_prism_hlock_2x.png"); }
+.app-icon.icon-news     { background-image: url("https://news.google.com/favicon.ico"); }
+.app-icon.icon-gmail    { background-image: url("https://ssl.gstatic.com/ui/v1/icons/mail/rfr/logo_gmail_lockup_default_1x_r5.png"); }
+.app-icon.icon-meet     { background-image: url("https://ssl.gstatic.com/meet/google_meet_2020q4_512px.png"); }
+.app-icon.icon-chat     { background-image: url("https://ssl.gstatic.com/chat/b9d8a36e3b9a5020f7074edc204f7903.png"); }
+.app-icon.icon-contacts { background-image: url("https://ssl.gstatic.com/images/branding/product/1x/contacts_512dp.png"); }
+.app-icon.icon-drive    { background-image: url("https://ssl.gstatic.com/images/branding/product/1x/drive_2020q4_512dp.png"); }
+.app-icon.icon-business { background-image: url("https://ssl.gstatic.com/images/branding/product/1x/workspace_512dp.png"); }
+
+/* === APP LABELS =================================================== */
+
+.app-label {
+  color: #e8eaed;
+  text-decoration: none;
+  font-size: 12px;
+  line-height: 1.2;
+  text-align: center;
+}
+
+.apps-dropdown a {
+  text-decoration: none;
+  color: inherit;
+}
+
+.apps-dropdown a:hover .app-label {
+  color: #fff;
+}
+
+
+
+    /* FOOTER — 3-1-3 ABSOLUTE CENTERING */
+    .z-footer {
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+      background: #000;
+      padding: 14px 32px;
+      font-size: 0.9em;
+      box-sizing: border-box;
+    }
+
+    .z-footer-inner {
+      position: relative;
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .footer-left,
+    .footer-right {
+      display: flex;
+      gap: 24px;
+      z-index: 1;
+    }
+
+    .footer-center {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      white-space: nowrap;
+      z-index: 0;
+    }
+
+    .z-footer a {
+      color: #bbb;
+      text-decoration: none;
+    }
+
+    .z-footer a:hover {
+      color: #fff;
+      text-decoration: underline;
+    }
+  /* ABOUT TOOLTIP */
+.about-tooltip {
+  display: none;
+  position: absolute;
+  top: 36px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #1c1c1c;
+  color: #eaeaea;
+  font-size: 14px;
+  padding: 14px 20px;
+  border-radius: 12px;       /* rounded rectangle */
+  border: 1px solid #444;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.6);
+  
+  text-align: center;        /* center text inside */
+  z-index: 1000;
+
+  max-width: 550px;          /* box fits on screen */
+  white-space: normal;       /* allows wrapping */
+  line-height: 1.6;
+}
+
+.about-link:hover .about-tooltip {
+  display: block;
+}
+
+
+
+/* STORE DROPDOWN */
+#store-link { color: #bbb; text-decoration: none; cursor: pointer; }
+#store-link:hover { color: #fff; }
+.store-dropdown {
+  display: none;
+  position: absolute;
+  top: 48px;
+  left: 100px; /* offset to align under "Store" */
+  width: 280px;
+  background: #202124;
+  border: 1px solid #3c4043;
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+  z-index: 9999;
+}
+.store-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+.store-item {
+  background: #2a2a2a;
+  padding: 12px;
+  border-radius: 8px;
+  text-align: center;
+  cursor: pointer;
+}
+.store-item:hover { background: #333; }
+.store-icon { font-size: 20px; margin-bottom: 6px; }
+.store-label { font-size: 13px; color: #eee; }
+
+
+
+  /* Results container stays the same */
+.results-container {
+  margin: 30px auto;
+  width: 100vw;
+  max-width: 1950px;
+  padding: 24px;
+  background: #1a1a1a;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+  text-align: left;
+  overflow-y: scroll;       /* force vertical scrolling */
+  max-height: 65vh;
+
+  /* hide scrollbar cross-browser */
+  scrollbar-width: none;    /* Firefox */
+  -ms-overflow-style: none; /* IE/Edge */
+}
+
+.results-container::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
+}
+
+
+
+    
+
+
+
+
+
+.result-item h3 {
+  margin: 0 0 6px;
+  font-size: 1.2em;
+}
+
+.result-item a {
+  color: #4cafef;
+  text-decoration: none;
+}
+
+.result-item a:hover {
+  text-decoration: underline;
+}
+
+.result-snippet {
+  font-size: 0.95em;
+  color: #ccc;
+}
+
+.result-item small,
+.highlight-item small {
+  display: block;
+  margin-top: 6px;
+  font-size: 0.8em;
+  color: #888; /* softer contrast */
+}
+
+
+
+
+ .highlight-item {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  padding: 16px;
+  margin-bottom: 18px;
+
+  border: 2px solid #4285f4;   /* bold blue border */
+  border-radius: 10px;
+  background: #111;            /* darker background */
+  
+  box-shadow: inset 0 0 6px rgba(66,133,244,0.3); /* faint inner glow */
+  font-family: Arial, sans-serif;
+}
+
+/* Title section */
+.highlight-item h3 {
+  margin: 0 0 10px;
+  font-size: 1.1em;
+  font-weight: bold;
+  color: #4cafef;
+  border-bottom: 1px solid #333;  /* divider */
+  padding-bottom: 6px;
+}
+
+/* Snippet text */
+.highlight-item .result-snippet {
+  flex: 1;
+  font-size: 0.95em;
+  line-height: 1.4;
+  color: #ddd;
+  margin-bottom: 10px;
+}
+
+/* Source tag (bottom of card) */
+.highlight-item small {
+  align-self: flex-end;
+  font-size: 0.8em;
+  color: #aaa;
+  background: #222;
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+    
+/* ✅ highlights stay as small grid cards */
+.highlight-wrapper {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+  justify-content: center;
+}
+
+.highlight-item {
+  max-width: 220px;
+  margin: 0 auto;
+  border: 2px solid #4285f4;
+  border-radius: 8px;
+  background: #1e1e1e;
+  padding: 10px;
+}
+
+/* ✅ results become full-width horizontal rows */
+.result-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.result-item {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 12px;
+
+  /* keep your original card styling */
+  margin: 0 0 12px 0;
+  padding: 16px;
+  border: 1px solid #333;
+  border-radius: 8px;
+  background: #1e1e1e;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+
+  /* undo the 220px clamp */
+  max-width: none;
+  width: 100%;
+}
+
+.result-item img {
+  width: 160px;
+  height: 90px;
+  object-fit: cover;
+  border-radius: 6px;
+  flex-shrink: 0;
+}
+
+
+
+/* Dropdown panel under the icon */
+#search-dropdown {
+  display: flex;
+  flex-direction: column;       /* stack input + button vertically */
+  align-items: center;          /* center children horizontally */
+  justify-content: center;
+  gap: 8px;
+
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #111;
+  padding: 10px;
+  border: 1px solid #444;
+  border-radius: 8px;
+  z-index: 999;
+
+  min-width: 100px;             /* ensure it doesn't collapse too narrow */
+}
+
+/* Input style */
+#z-start-input2 {
+  padding: 6px 10px;
+  border: 1px solid #555;
+  border-radius: 6px;
+  background: #1e1e1e;
+  color: #fff;
+  width: 220px;
+  /* center the input inside the block */
+  display: block;
+  margin: 0 auto;
+}
+
+/* Button like keyboard key */
+#z-search-btn2 {
+  padding: 8px 16px;
+  border: 2px solid #888;
+  border-radius: 6px;
+  background: linear-gradient(#2c2c2c, #1a1a1a);
+  color: #f1f1f1;
+  font-family: monospace;
+  font-size: 14px;
+  letter-spacing: 1px;
+  box-shadow:
+    inset 0 2px 3px rgba(0,0,0,0.6),
+    0 2px 0 #000,
+    0 4px 6px rgba(0,0,0,0.4);
+  cursor: pointer;
+  transition: all 0.15s ease-in-out;
+  /* center the button inside the dropdown */
+  display: block;
+  margin: 0 auto;
+}
+
+#z-search-btn2:hover {
+  background: linear-gradient(#3a3a3a, #222);
+  border-color: #aaa;
+}
+
+#z-search-btn2:active {
+  transform: translateY(2px);
+  box-shadow:
+    inset 0 1px 2px rgba(0,0,0,0.8),
+    0 1px 0 #000;
+}
+
+
+
+
+
+    .profile-container {
+  position: relative;
+}
+
+.dropdown-menu {
+  display: none;
+  position: absolute;
+  top: 48px;
+  right: 0;
+  background: #202124;
+  border: 1px solid #3c4043;
+  border-radius: 12px;
+  width: 180px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+  z-index: 9999;
+}
+
+.dropdown-menu a {
+  display: block;
+  color: #eaeaea;
+  padding: 10px 16px;
+  text-decoration: none;
+  font-size: 14px;
+}
+
+.dropdown-menu a:hover {
+  background: #333;
+  color: #fff;
+}
+
+.dropdown-item {
+  display: block;
+  color: #eaeaea;
+  padding: 10px 16px;
+  text-decoration: none;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.dropdown-item:hover {
+  background: #333;
+  color: #fff;
+}
+
+/* Keep Gemini capsule visible and independent of search results */
+#just-answer-capsule {
+  position: sticky;
+  top: 10px;
+  z-index: 9998;
+  display: none;
+  width: 95%;
+  max-width: 720px;
+  margin: 20px auto;
+  background: linear-gradient(145deg, #1b1b1b, #101010);
+  border: 1px solid #3c4043;
+  border-radius: 14px;
+  padding: 18px 20px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.4);
+  color: #eaeaea;
+  font-family: "Segoe UI", sans-serif;
+  text-align: left;
+  animation: fadeIn 0.3s ease-out;
+}
+
+    #just-answer-capsule {
+  position: sticky;
+  top: 0;
+  backdrop-filter: blur(6px);
+  background: rgba(16,16,16,0.85);
+}
+
+
+.ai-header {
+  font-weight: bold;
+  color: #4285f4;
+  margin-bottom: 8px;
+  font-size: 1.1em;
+}
+
+.ai-text {
+  font-size: 1.05em;
+  line-height: 1.5;
+  color: #ddd;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+
+    
+ </style>
+
+</head>
+<body>
+
+  <!-- TOP NAV -->
+  <div class="top-nav">
+
+    <!-- Top left ---------------------------------------------->
+    <div class="top-left">
+      <!-- ABOUT with hover tooltip -->
+      <a href="#" class="about-link">About
+        <span class="about-tooltip">
+          <b>Zetsu Start</b><br>
+          Version: 1.0.3<br>
+          Last Update: Sept 13, 2025<br>
+          Creator: Zetsumetsu Eoe™ | ZETSUMETSU CORPORATION | Artworqq Kevin Suber
+        </span>
+      </a>
+
+<!-- STORE with dropdown ---------------------------------------------->
+<a href="#" id="store-link">Store ▼</a>
+<div class="store-dropdown" id="store-dropdown">
+  <div class="store-grid">
+
+    <!-- 1. Z-Browser -->
+    <div class="store-item">
+      <a href="https://z-browser.example.com" target="_blank" rel="noopener noreferrer">
+        <div class="store-icon">🖥️</div>
+        <div class="store-label">Z-Browser</div>
+      </a>
+    </div>
+
+    <!-- 2. Elo Devices -->
+    <div class="store-item">
+      <a href="https://elo-devices.example.com" target="_blank" rel="noopener noreferrer">
+        <div class="store-icon">📱</div>
+        <div class="store-label">Elo Devices</div>
+      </a>
+    </div>
+
+    <!-- 3. Zetsu Games -->
+    <div class="store-item">
+      <a href="https://zetsu-games.example.com" target="_blank" rel="noopener noreferrer">
+        <div class="store-icon">🎮</div>
+        <div class="store-label">Zetsu Games</div>
+      </a>
+    </div>
+
+    <!-- 4. Zetsu Books -->
+    <div class="store-item">
+      <a href="https://zetsu-books.example.com" target="_blank" rel="noopener noreferrer">
+        <div class="store-icon">📚</div>
+        <div class="store-label">Zetsu Books</div>
+      </a>
+    </div>
+
+  </div>
+</div>
+
+
+    
+
+
+    
+<!-- tools---------------------------------------------->
+<div class="top-right">
+  <div class="icon-btn" title="Widgets">☰</div>
+  <div class="icon-btn" id="apps-icon" title="Apps">⬛</div>
+
+ <!-- Apps ----------------------------------------------->
+<div class="apps-dropdown" id="apps-dropdown">
+  <div class="app-grid">
+
+    <div class="app-cell">
+      <a href="https://myaccount.google.com" target="_blank" rel="noopener noreferrer">
+        <div class="app-icon"><img src="https://www.gstatic.com/images/branding/product/1x/avatar_circle_blue_512dp.png" alt="Account"></div>
+        <div class="app-label">Account</div>
+      </a>
+    </div>
+
+    <div class="app-cell">
+      <a href="https://www.google.com" target="_blank" rel="noopener noreferrer">
+        <div class="app-icon"><img src="https://www.google.com/favicon.ico" alt="Search"></div>
+        <div class="app-label">Search</div>
+      </a>
+    </div>
+
+    <div class="app-cell">
+      <a href="https://maps.google.com" target="_blank" rel="noopener noreferrer">
+        <div class="app-icon"><img src="https://maps.google.com/favicon.ico" alt="Maps"></div>
+        <div class="app-label">Maps</div>
+      </a>
+    </div>
+
+    <div class="app-cell">
+      <a href="https://www.youtube.com" target="_blank" rel="noopener noreferrer">
+        <div class="app-icon"><img src="https://www.youtube.com/s/desktop/5b7e10fd/img/favicon_144x144.png" alt="YouTube"></div>
+        <div class="app-label">YouTube</div>
+      </a>
+    </div>
+
+    <div class="app-cell">
+      <a href="https://play.google.com" target="_blank" rel="noopener noreferrer">
+        <div class="app-icon"><img src="https://play-lh.googleusercontent.com/6fMM7Qj1LLJqL5m9_3lYz6eCSFevnTKFt3JAmPmFgjsEJhVu-0aU-TmCj7LbKp_6BA=w240-h480" alt="Play"></div>
+        <div class="app-label">Play</div>
+      </a>
+    </div>
+
+    <div class="app-cell">
+      <a href="https://news.google.com" target="_blank" rel="noopener noreferrer">
+        <div class="app-icon"><img src="https://news.google.com/favicon.ico" alt="News"></div>
+        <div class="app-label">News</div>
+      </a>
+    </div>
+
+    <div class="app-cell">
+      <a href="https://mail.google.com" target="_blank" rel="noopener noreferrer">
+        <div class="app-icon"><img src="https://ssl.gstatic.com/ui/v1/icons/mail/rfr/logo_gmail_lockup_default_1x_r5.png" alt="Gmail"></div>
+        <div class="app-label">Gmail</div>
+      </a>
+    </div>
+
+    <div class="app-cell">
+      <a href="https://meet.google.com" target="_blank" rel="noopener noreferrer">
+        <div class="app-icon"><img src="https://ssl.gstatic.com/meet/google_meet_2020q4_512px.png" alt="Meet"></div>
+        <div class="app-label">Meet</div>
+      </a>
+    </div>
+
+    <div class="app-cell">
+      <a href="https://chat.google.com" target="_blank" rel="noopener noreferrer">
+        <div class="app-icon"><img src="https://ssl.gstatic.com/chat/b9d8a36e3b9a5020f7074edc204f7903.png" alt="Chat"></div>
+        <div class="app-label">Chat</div>
+      </a>
+    </div>
+
+    <div class="app-cell">
+      <a href="https://contacts.google.com" target="_blank" rel="noopener noreferrer">
+        <div class="app-icon"><img src="https://ssl.gstatic.com/images/branding/product/1x/contacts_512dp.png" alt="Contacts"></div>
+        <div class="app-label">Contacts</div>
+      </a>
+    </div>
+
+    <div class="app-cell">
+      <a href="https://drive.google.com" target="_blank" rel="noopener noreferrer">
+        <div class="app-icon"><img src="https://ssl.gstatic.com/images/branding/product/1x/drive_2020q4_512dp.png" alt="Drive"></div>
+        <div class="app-label">Drive</div>
+      </a>
+    </div>
+
+    <div class="app-cell">
+      <a href="https://workspace.google.com/business/" target="_blank" rel="noopener noreferrer">
+        <div class="app-icon"><img src="https://ssl.gstatic.com/images/branding/product/1x/workspace_512dp.png" alt="Business"></div>
+        <div class="app-label">Business</div>
+      </a>
+    </div>
+  </div>
+</div>
+
+   
+
+<!-- Profile ----------------------------------------------->
+<div class="profile-container">
+  <div class="profile-pic" title="Profile" id="profile-pic"></div>
+  <div class="dropdown-menu" id="profile-menu">
+    <label for="profile-upload" class="dropdown-item">Change Image</label>
+    <input type="file" id="profile-upload" accept="image/*" style="display:none;">
+    <a href="#" id="reset-image" class="dropdown-item">Reset Default</a>
+  </div>
+</div>
+  </div>
+</div>
+
+  
+
+  
+  <!-- AI DIRECT ANSWER CAPSULE -->
+<div id="just-answer-capsule" class="just-answer-capsule" >
+  <div class="ai-header">🤖 Just Answer</div>
+  <div class="ai-text" id="just-answer-result">...</div>
+</div>
+
+  <!-- CENTER ----------------------------------------------->
+<div class="center-content">
+  <div class="z-logo">🅩 Zetsumetsu Eoe </div>
+
+<!-- SEARCH BAR --> <div class="z-search">
+  <input type="text" placeholder="Information Search Engine" id="z-start-input"> 
+  <button id="z-search-btn">Search</button> 
+</div>
+
+
+  
+  <!-- Widget Panel 1 ----------------------------------------->
+  <div class="widget-panel-1">
+        <div class="z-widget-bar">
+
+
+      
+      <!-- Google -->
+      <a href="https://www.google.com" target="_blank" class="widget-btn"
+         style="background-image:url('https://media.wired.com/photos/65e83cc9b8ffa5f8fa84c893/3:2/w_1920,c_limit/wired-uk-google-watching.jpg');" title="Google"></a>
+
+      <!-- YouTube -->
+      <a href="https://www.youtube.com" target="_blank" class="widget-btn"
+         style="background-image:url('https://assets-prd.ignimgs.com/2024/12/12/youtube-tv-1734028329729.jpg');" title="YouTube"></a>
+
+      <!-- Twitter/X -->
+      <a href="https://x.com" target="_blank" class="widget-btn"
+         style="background-image:url('https://sweetwaternow.nyc3.cdn.digitaloceanspaces.com/wp-content/uploads/2024/01/Depositphotos_676194222_XL-scaled.jpg');" title="X (Twitter)"></a>
+
+      <!-- ICON THAT DROPS DOWN THE EXISTING SEARCH BAR -->
+<div class="z-search2" style="position: relative; display: inline-block;">
+  <span id="z-icon" style="cursor: pointer; font-size: 24px;">🔍</span>
+
+  <div id="search-dropdown" style="
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background: #111;
+    padding: 10px;
+    border: 1px solid #444;
+    border-radius: 4px;
+    z-index: 999;
+  ">
+    <!-- ORIGINAL BAR GOES HERE -->
+    <input type="text" placeholder="Search Zetsu..." id="z-start-input2">
+    <button id="z-search-btn2">Search</button>
+  </div>
+</div>
+
+      <!-- Gh -->
+      <a href="https://www.gamespot.com/" target="_blank" class="widget-btn"
+         style="background-image:url('https://tpc.googlesyndication.com/simgad/10734100778753191416?');" title="Gamespot"></a>
+      
+      <!-- GitHub -->
+      <a href="https://facebook.com" target="_blank" class="widget-btn"
+         style="background-image:url('https://cloudfront-us-east-2.images.arcpublishing.com/reuters/EB2VCRAXLZNCLC3S5GWHHEN6OE.jpg');" title="GitHub"></a>
+
+      <!-- Netlify -->
+      <a href="https://www.instagram.com" target="_blank" class="widget-btn"
+         style="background-image:url('https://www.dumbchat.ai/wp-content/uploads/2022/06/220120-47456-1.jpg');" title="Instagram"></a>
+    </div>
+  </div>
+
+
+
+
+    <!-- Add this container where you want results to display -->
+<div id="z-search-results" class="results-container"></div>
+
+</div>
+
+
+
+
+
+  
+
+  <!-- FOOTER -------------------------------------------------------->
+  <div class="z-footer">
+    <div class="z-footer-inner">
+      <div class="footer-left">
+        <a href="https://jessicaspz.netlify.app/ads">Advertising</a>
+        <a href="https://jessicaspz.netlify.app/biz">Business</a>
+        <a href="https://jessicaspz.netlify.app/how2">How Search works</a>
+      </div>
+      <div class="footer-center">
+        <a href="https://jessicaspz.netlify.app/air&d">Applying AI towards science and the environment</a>
+      </div>
+      <div class="footer-right">
+        <a href="https://jessicaspz.netlify.app/privacy">Privacy</a>
+        <a href="https://jessicaspz.netlify.app/terms">Terms</a>
+        <a href="https://jessicaspz.netlify.app/tabsettings">Settings</a>
+      </div>
+    </div>
+  </div>
+
+
+  
+
+
+
+<script>
+// 🧹 Fix store localStorage override — clear old saved store
+document.addEventListener("DOMContentLoaded", () => {
+  const savedStore = localStorage.getItem("storeItems");
+  
+  // If old data exists, wipe it so your HTML shows properly
+  if (savedStore) {
+    localStorage.removeItem("storeItems");
+    console.log("Cleared old local store data. Reload the page to see your new names.");
+  }
+});
+
+  
+  // 🔄 Dropdown Toggles
+  const appsIcon = document.getElementById('apps-icon');
+  const appsDropdown = document.getElementById('apps-dropdown');
+  const storeLink = document.getElementById('store-link');
+  const storeDropdown = document.getElementById('store-dropdown');
+
+  appsIcon.addEventListener("click", () => {
+    appsDropdown.style.display = (appsDropdown.style.display === 'block') ? 'none' : 'block';
+  });
+
+  storeLink.addEventListener("click", () => {
+    storeDropdown.style.display = (storeDropdown.style.display === 'block') ? 'none' : 'block';
+  });
+
+  document.addEventListener("click", (e) => {
+    if (!appsIcon.contains(e.target) && !appsDropdown.contains(e.target)) {
+      appsDropdown.style.display = 'none';
+    }
+    if (!storeLink.contains(e.target) && !storeDropdown.contains(e.target)) {
+      storeDropdown.style.display = 'none';
+    }
+  });
+
+  
+  document.addEventListener("DOMContentLoaded", () => {
+  document.getElementById("z-icon").addEventListener("click", () => {
+    const dropdown = document.getElementById("search-dropdown");
+    dropdown.style.display = dropdown.style.display === "block" ? "none" : "block";
+  });
+});
+
+
+
+
+  // PROFILE DROPDOWN — FIXED VERSION
+document.addEventListener("DOMContentLoaded", () => {
+  const profilePic = document.getElementById("profile-pic");
+  const profileDropdown = document.getElementById("profile-menu");
+  const fileInput = document.getElementById("profile-upload");
+  const resetBtn = document.getElementById("reset-image");
+
+  // Load saved image from localStorage
+  const savedImage = localStorage.getItem("profileImage");
+  if (savedImage) profilePic.style.backgroundImage = `url(${savedImage})`;
+
+  // Toggle dropdown
+  profilePic.addEventListener("click", (e) => {
+    e.stopPropagation();
+    const isVisible = profileDropdown.style.display === "block";
+    profileDropdown.style.display = isVisible ? "none" : "block";
+  });
+
+  // Outside click closes
+  document.addEventListener("click", (e) => {
+    if (!profilePic.contains(e.target) && !profileDropdown.contains(e.target)) {
+      profileDropdown.style.display = "none";
+    }
+  });
+
+  // When file chosen → show + save locally
+  fileInput.addEventListener("change", (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const dataURL = event.target.result;
+      profilePic.style.backgroundImage = `url(${dataURL})`;
+      localStorage.setItem("profileImage", dataURL);
+      profileDropdown.style.display = "none";
+    };
+    reader.readAsDataURL(file);
+  });
+
+  // Reset to default placeholder
+  resetBtn.addEventListener("click", (e) => {
+    e.preventDefault();
+    localStorage.removeItem("profileImage");
+    profilePic.style.backgroundImage = 'url("https://placehold.co/64x64")';
+    profileDropdown.style.display = "none";
+  });
+});
+
+
+
+
+  
+</script>
+<!-- Optional external script -->
+<script src="ztab-search.js" defer></script>
