@@ -715,11 +715,44 @@
         </span>
       </a>
 
- <!-- STORE with dropdown ---------------------------------------------->
 <!-- STORE with dropdown ---------------------------------------------->
 <a href="#" id="store-link">Store ▼</a>
 <div class="store-dropdown" id="store-dropdown">
-  <div class="store-grid" id="store-grid"></div>
+  <div class="store-grid">
+
+    <!-- 1. Z-Browser -->
+    <div class="store-item">
+      <a href="https://z-browser.example.com" target="_blank" rel="noopener noreferrer">
+        <div class="store-icon">🖥️</div>
+        <div class="store-label">Z-Browser</div>
+      </a>
+    </div>
+
+    <!-- 2. Elo Devices -->
+    <div class="store-item">
+      <a href="https://elo-devices.example.com" target="_blank" rel="noopener noreferrer">
+        <div class="store-icon">📱</div>
+        <div class="store-label">Elo Devices</div>
+      </a>
+    </div>
+
+    <!-- 3. Zetsu Games -->
+    <div class="store-item">
+      <a href="https://zetsu-games.example.com" target="_blank" rel="noopener noreferrer">
+        <div class="store-icon">🎮</div>
+        <div class="store-label">Zetsu Games</div>
+      </a>
+    </div>
+
+    <!-- 4. Zetsu Books -->
+    <div class="store-item">
+      <a href="https://zetsu-books.example.com" target="_blank" rel="noopener noreferrer">
+        <div class="store-icon">📚</div>
+        <div class="store-label">Zetsu Books</div>
+      </a>
+    </div>
+
+  </div>
 </div>
 
 
@@ -1033,29 +1066,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 
-   // === Editable Store Items ===
-  const storeItems = [
-    { name: "Z-Browser", icon: "🖥️", link: "https://z-browser.example.com" },
-    { name: "Elo Devices", icon: "📱", link: "https://elo-devices.example.com" },
-    { name: "Zetsu Games", icon: "🎮", link: "https://zetsu-games.example.com" },
-    { name: "Zetsu Books", icon: "📚", link: "https://zetsu-books.example.com" },
-  ];
-
-  const storeGrid = document.getElementById("store-grid");
-
-  storeItems.forEach(item => {
-    const div = document.createElement("div");
-    div.className = "store-item";
-    div.innerHTML = `
-      <a href="${item.link}" target="_blank" rel="noopener noreferrer">
-        <div class="store-icon">${item.icon}</div>
-        <div class="store-label">${item.name}</div>
-      </a>
-    `;
-    storeGrid.appendChild(div);
-  });
-
-
+  
 </script>
 <!-- Optional external script -->
 <script src="ztab-search.js" defer></script>
