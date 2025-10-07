@@ -981,6 +981,18 @@
 
 
 <script>
+// 🧹 Fix store localStorage override — clear old saved store
+document.addEventListener("DOMContentLoaded", () => {
+  const savedStore = localStorage.getItem("storeItems");
+  
+  // If old data exists, wipe it so your HTML shows properly
+  if (savedStore) {
+    localStorage.removeItem("storeItems");
+    console.log("Cleared old local store data. Reload the page to see your new names.");
+  }
+});
+
+  
   // 🔄 Dropdown Toggles
   const appsIcon = document.getElementById('apps-icon');
   const appsDropdown = document.getElementById('apps-dropdown');
